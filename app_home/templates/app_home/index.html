@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot Sox - working title</title>
+</head>
+<body>
+    <h1>Well done, you see the Hot Sox HomePage !</h1>
+    <div>
+        {% if user %}
+            <p>Hello {{ user.username }}, how are you doing?</p>
+        {% else %}
+            <p>Hello stranger, please log in, or sing up with an account.</p>
+        {% endif %}
+        <a href="/prove-of-concept/">please check out if you can enter here...</a>
+        <br>
+        <br>
+        <hr>
+        {% if user %}
+            <a href="/user/logout/">Log out</a><br>
+            <a href="/user/edit/{{user.pk}}">Edit user</a><br>
+        {% else %}
+            <a href="/user/login/">Log in</a><br>
+        {% endif %}
+        <br>
+        <a href="/user/signup/">Register</a><br>
+
+    </div>
+</body>
+</html>
