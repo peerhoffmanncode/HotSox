@@ -46,6 +46,8 @@ jobs:
         run: pip install -r requirements.txt
       - name: Check pep8 with black
         run: python -m black --check .
+      - name: Run Database MakeMigrations # run migrations to create table in side car db container
+        run: python manage.py makemigrations
       - name: Run Database Migrations # run migrations to create table in side car db container
         run: python manage.py migrate
       - name: Run Djago Tests # running tests
