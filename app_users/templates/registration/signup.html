@@ -1,9 +1,18 @@
-{% extends "base.html" %}
-{% block content %}
-    <h1>User sign up page </h1>
-    <form action="" method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Sign up">
-    </form>
+{% extends "base.html" %} {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-2">
+            <h3>Sign up</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-2">
+            <form method="post" action="">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="btn btn-signup right" type="submit">Sign up</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

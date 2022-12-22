@@ -4,14 +4,16 @@ from django.http import HttpResponse
 
 from django.contrib.auth.decorators import login_required
 
-from app_users.models import HotSoxUserModel
+# from django.contrib.auth.models import User
+from app_users.models import User
 
 
 def home(request):
+    # breakpoint()
     if request.user.username:
-        user = HotSoxUserModel.objects.get(username=request.user.username)
+        user = User.objects.get(username=request.user.username)
         user.username = user.username.title()
-        context = {"user": user.to_json()}
+        context = {"user": user}
     else:
         context = {"user": None}
 

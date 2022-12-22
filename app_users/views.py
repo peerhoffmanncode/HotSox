@@ -2,11 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
 from django.contrib.auth.decorators import login_required
-
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 
-from .models import HotSoxUserModel
+from .models import User
 from .forms import UserSignUpForm, UserEditForm
 
 
@@ -52,7 +51,8 @@ def user_edit(request, pk):
     """
 
     # check if current user is allowed to edit this user
-    user_to_update = get_object_or_404(HotSoxUserModel, pk=pk)
+    user_to_update = get_object_or_404(User, pk=pk)
+
     if request.user.username != user_to_update.username:
         # return to home
         return redirect("/")

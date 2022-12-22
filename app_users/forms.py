@@ -1,12 +1,11 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from .models import HotSoxUserModel
+from .models import User
 
 
 class UserSignUpForm(UserCreationForm):
     class Meta:
-        model = HotSoxUserModel
+        model = User
         fields = [
             "username",
             "email",
