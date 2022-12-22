@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -40,10 +40,28 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
     "django.contrib.staticfiles",
     "app_home",
     "app_users",
 ]
+
+# Requirements for Allauth support
+SITE_ID = 1
+
+# need to prevent "false email addresses to lead to a crash!"
+# TODO: remove this and find proper error handling
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# add these constants to define route for login/ logout destinations
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+
+# register the hotsox_user as user Allauth model!
+AUTH_USER_MODEL = "app_users.User"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -122,10 +140,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# register the hotsox_user as user auth model!
-AUTH_USER_MODEL = "app_users.HotSoxUserModel"
-
-
 # initial work to use jwt token validation soon!
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
@@ -155,7 +169,3 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# add these constants to define route for login/ logout destinations
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/user/login/"

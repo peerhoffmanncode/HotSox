@@ -1,13 +1,23 @@
-{% extends "base.html" %}
-{% block content %}
-    <h1>User sign up page </h1>
-    <form action="" method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Save changes">
-    </form>
-
-    <form action="/" method="GET">
-        <input type="submit" value="Discard changes">
-    </form>
+{% extends "base.html" %} {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-2">
+            <h3>Edit {{user.username.title}}'s profile</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-2">
+            <form method="post" action="">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="btn btn-signup right" type="submit">Edit profile</button>
+            </form>
+        </div>
+        <div class="col-md-8 mt-3 offset-md-2">
+            <form method="get" action="/">
+                <button class="btn btn-signup right" type="submit">cancel</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
