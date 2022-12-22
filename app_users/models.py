@@ -2,12 +2,10 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
-
 from datetime import date, timedelta
 
 
-# Create your models here.
-class HotSoxUserModel(AbstractUser):
+class User(AbstractUser):
     birthday = models.DateField(default=timezone.now, blank=False)
     SEX_CHOICES = (("female", "Female"), ("male", "Male"), ("divers", "Divers"))
     user_sex = models.CharField(max_length=10, choices=SEX_CHOICES, blank=False)

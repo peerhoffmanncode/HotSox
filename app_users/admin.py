@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import HotSoxUserModel
+from .models import User
 
 # Register your models here.
-admin.site.register(HotSoxUserModel)
+admin.site.register(User)
