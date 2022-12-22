@@ -21,7 +21,6 @@ urlpatterns = [
     # User Authentication
     path("user/", include("app_users.urls"), name="user"),
     path("user/", include("allauth.urls"), name="user"),
-
-    #Main Home route
+    # Main Home route
     path("", include("app_home.urls"), name="home"),
 ]
