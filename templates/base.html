@@ -20,7 +20,7 @@
             <ul class="navbar-nav mr-auto">
                 <li class="active nav-item mr-2"><a class="nav-link" href="/">Home</a></li>
                 <li class="nav-item mr-2"><a class="nav-link" href="">About</a></li>
-                {% if user %}
+                {% if user.username %}
                 <li class="nav-item mr-2 d-block d-sm-none"><a class="nav-link" href="/user/logout/">Sign Out</a></li>
                 <li class="nav-item mr-2 d-block d-sm-none"><a class="nav-link" href="/user/edit/{{user.pk}}">Profile</a></li>
                 {% else %}
@@ -30,7 +30,7 @@
             </ul>
         </div>
         <div class="d-none d-md-block">
-            {% if user %}
+            {% if user.username %}
             <a href="/user/logout/">Log out</a>
             <a href="/user/edit/{{user.pk}}">Profile</a>
             {% else %}

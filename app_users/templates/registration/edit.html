@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block content %}
     <h1>User sign up page </h1>
     <form action="" method="POST">
         {% csrf_token %}
@@ -9,5 +10,4 @@
     <form action="/" method="GET">
         <input type="submit" value="Discard changes">
     </form>
-</body>
-</html>
+{% endblock %}
