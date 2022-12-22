@@ -58,7 +58,7 @@ def user_edit(request, pk):
         return redirect("/")
 
     if request.method == "POST":
-        form = UserEditForm(request.POST)
+        form = UserEditForm(request.POST, initial=user_to_update.to_json())
         if form.is_valid():
 
             # store the data in user object

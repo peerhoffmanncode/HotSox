@@ -36,7 +36,7 @@ class HotSoxUserModel(AbstractUser):
             "email": self.email,
             "birthday": self.birthday,
             "user_sex": self.user_sex,
-            "interested_sex": self.user_sex,
+            "interested_sex": self.interested_sex,
             "last_login": self.last_login,
             "date_joined": self.date_joined,
             "is_active": self.is_active,
