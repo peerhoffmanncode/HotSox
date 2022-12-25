@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load account socialaccount %}
+{% load socialaccount %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
@@ -11,7 +12,6 @@
   <div class="row">
     <div class="col-md-8 mt-3 offset-md-2">
       <h3>{% trans "Sign In" %}</h3>
-
       <p>{% blocktrans %}Welcome back. Please log in. If you have not created an account yet, then <a class="link"
           href="{{ signup_url }}">sign up</a>
         first.{% endblocktrans %}</p>
@@ -26,6 +26,12 @@
         <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
         {% endif %}
         <button class="btn btn-signup right" type="submit">{% trans "Sign In" %}</button>
+        <button class="btn btn-outline-info">
+          <a href="{% provider_login_url 'google'%}?next=/">
+            <i class="fab fa-google"></i>
+            Sign In with Google
+          </a>
+        </button>
       </form>
     </div>
   </div>

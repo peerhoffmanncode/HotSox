@@ -1,8 +1,9 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% block content %}
 <div class="container">
     <div class="row">
         <div class="col-md-8 mt-3 offset-md-2">
-            <h3>Sign up</h3>
+            <h3>Sign Up</h3>
         </div>
     </div>
     <div class="row">
@@ -10,7 +11,7 @@
             <form method="post" action="">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button class="btn btn-signup right" type="submit">Sign up</button>
+                <button class="btn btn-signup right" type="submit">Sign Up</button>
             </form>
         </div>
     </div>
