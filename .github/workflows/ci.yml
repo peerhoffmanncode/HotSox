@@ -51,6 +51,8 @@ jobs:
       - name: Run Database Migrations # run migrations to create table in side car db container
         run: python manage.py migrate
       - name: Run Djago Tests # running tests
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: python manage.py test
 
   # package-job: # package job for building and publishing docker images
