@@ -124,6 +124,7 @@ if os.getenv("GITHUB_WORKFLOW"):
             "PASSWORD": "postgres",
             "HOST": "localhost",
             "PORT": "5432",
+        }
     }
 else:
     # check if we have ENV Vars set e.g. env.py/Dockerfile/...?
