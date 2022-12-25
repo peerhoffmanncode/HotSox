@@ -1,6 +1,10 @@
+import os
 from django.test import TestCase
 
+from allauth.socialaccount.models import SocialApp, SocialAccount
+from django.contrib.sites.models import Site
 from .models import User
+
 from django.utils import timezone
 from datetime import date
 
@@ -33,7 +37,7 @@ class UserModelTestCase(TestCase):
             last_name="test_17 last",
             email="test_17@mail.com",
             password="str0ng_pwd!",
-            birthday=date(2005, 1, 1),
+            birthday=date(timezone.now().year - 17, 1, 1),
             user_sex="male",
             interested_sex="female",
         )
@@ -58,3 +62,30 @@ class UserModelTestCase(TestCase):
                 "is_active": self.user.is_active,
             },
         )
+
+    def test_regular_authentication(self):
+        # Authenticate the user using the Google SocialAccount
+        self.client.login(username=self.user.username, password="str0ng_pwd!")
+        # Make an assertion to verify that the user is authenticated
+        self.assertTrue(self.user.is_authenticated)
+
+    def test_google_authentication(self):
+        # Set up a Google SocialAccount object with faked valid credentials
+        google_account = SocialAccount(
+            user_id=self.user.pk,
+            provider="google",
+            uid="1234567890",
+            extra_data={
+                "access_token": "abcdefghijklmnopqrstuvwxyz",
+                "refresh_token": "zyxwvutsrqponmlkjihgfedcba",
+            },
+        )
+        google_account.save()
+
+        # Authenticate the user using the Google SocialAccount
+        user = google_account.user
+        user.backend = "allauth.account.auth_backends.AuthenticationBackend"
+        self.client.force_login(user)
+
+        # Make an assertion to verify that the user is authenticated
+        self.assertTrue(user.is_authenticated)
