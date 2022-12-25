@@ -52,7 +52,7 @@ jobs:
         run: python manage.py migrate
       - name: Run Djago Tests # running tests
         env:
-          SECRET_KEY: ${{ secrets.SECRET_TOKEN }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: python manage.py test
 
   # package-job: # package job for building and publishing docker images
