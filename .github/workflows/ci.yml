@@ -49,10 +49,6 @@ jobs:
       - name: Check pep8 with black
         run: python -m black --check .
       - name: Run Database MakeMigrations # run migrations to create table in side car db container
-        run: python manage.py makemigrations
-      - name: Run Database Migrations # run migrations to create table in side car db container
-        run: python manage.py migrate
-      - name: Run Django Unittests # running tests
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -62,6 +58,10 @@ jobs:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+        run: python manage.py makemigrations
+      - name: Run Database Migrations # run migrations to create table in side car db container
+        run: python manage.py migrate
+      - name: Run Django Unittests # running tests
         run: python manage.py test
 
   # package-job: # package job for building and publishing docker images
