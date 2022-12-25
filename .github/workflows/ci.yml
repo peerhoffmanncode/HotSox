@@ -22,6 +22,8 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: github-actions
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
         ports:
           - 5432:5432 # exposing 5432 port for application to use
         # needed because the postgres container does not provide a healthcheck
@@ -50,9 +52,16 @@ jobs:
         run: python manage.py makemigrations
       - name: Run Database Migrations # run migrations to create table in side car db container
         run: python manage.py migrate
-      - name: Run Djago Tests # running tests
+      - name: Run Django Unittests # running tests
         env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: github-actions
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
         run: python manage.py test
 
   # package-job: # package job for building and publishing docker images
