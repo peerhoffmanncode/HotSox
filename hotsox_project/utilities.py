@@ -3,7 +3,9 @@ from allauth.socialaccount.models import SocialApp
 from django.contrib.sites.models import Site
 
 
-def create_db_entry_social_app(site_name, site_domain, provider, name, client_id, secret):
+def create_db_entry_social_app(
+    site_name, site_domain, provider, name, client_id, secret
+):
     try:
         site = Site.objects.get(domain=site_domain)
     except Site.DoesNotExist:
