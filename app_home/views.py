@@ -20,8 +20,15 @@ def home(request):
     return render(request, "app_home/index.html", context)
 
 
-@login_required(login_url="/user/login")
+# @login_required(login_url="/user/login")
 def prove_of_concept(request):
-    return HttpResponse(
-        f"<h1>Seems like you are logged in! Yeay! </h1><p>Nice job {str(request.user.username).title()}!</p>"
-    )
+    if request.user.is_authenticated:
+        # The user is logged in
+        return HttpResponse(
+            f'<h1>Seems like you are logged in! Yeay! </h1><p>Nice job {str(request.user.username).title()}!</p><br><a href="/">return to home</a>'
+        )
+    else:
+        # The user is not logged in
+        return HttpResponse(
+            '<h1>Please first log in to access this page.</h1><br><a href="/user/login">Sign in</a>'
+        )
