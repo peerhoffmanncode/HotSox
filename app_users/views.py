@@ -101,7 +101,7 @@ def user_validate(request):
     """View to validate a new user.
     if user information are missing, redirect to profile page.
     """
-    #breakpoint()
+    # breakpoint()
 
     # check if current user is allowed to edit this user
     current_user = get_object_or_404(User, pk=request.user.pk)
