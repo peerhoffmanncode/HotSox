@@ -27,7 +27,7 @@
         {% endif %}
         <button class="btn btn-signup right" type="submit">{% trans "Sign In" %}</button>
         <button class="btn btn-outline-info">
-          <a href="{% provider_login_url 'google'%}?next=/">
+          <a href="{% provider_login_url 'google'%}?next=/user/check_user_validation/">
             <i class="fab fa-google"></i>
             Sign In with Google
           </a>
