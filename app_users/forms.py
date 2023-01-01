@@ -8,7 +8,14 @@ from .models import User
 
 def validate_age(form):
     """function the check if a user is older than 18 years"""
-    difference = date.today() - form.cleaned_data["birthday"]
+
+    if isinstance(form, date):
+        # handle case where form = birhtday
+        difference = date.today() - form
+    else:
+        # handle case where form = form object
+        difference = date.today() - form.cleaned_data["birthday"]
+
     # Check if the difference is equal to or greater than 18 years(including leap)
     if round(difference.days / 365.2425, 2) < 18:
         raise ValidationError("You must be at least 18 years old", code="invalid")
@@ -40,9 +47,9 @@ class UserSignUpForm(UserCreationForm):
             "birthday": forms.DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
         }
 
-        def clean(self):
-            # Call the custom validator function
-            validate_age(self)
+    def clean(self):
+        # Call the custom validator function
+        validate_age(self)
 
 
 class UserEditForm(forms.Form):
@@ -50,7 +57,7 @@ class UserEditForm(forms.Form):
     first_name = forms.CharField(max_length=255)
     last_name = forms.CharField(max_length=255)
     birthday = forms.DateField(
-        widget=forms.DateInput(attrs={"type": "date", "format": "%d-%m-%Y"})
+        widget=forms.DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
     )
     SEX_CHOICES = (("female", "Female"), ("male", "Male"), ("divers", "Divers"))
     user_sex = forms.ChoiceField(choices=SEX_CHOICES)

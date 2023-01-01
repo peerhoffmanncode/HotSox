@@ -24,6 +24,7 @@ def user_signup(request):
             # fix the data
             user.first_name = form.cleaned_data["first_name"].title()
             user.last_name = form.cleaned_data["last_name"].title()
+            user.birthday = form.cleaned_data["birthday"]
 
             # check if user is ate least 18 years old
             if user.is_18_years():
