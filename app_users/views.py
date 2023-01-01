@@ -55,9 +55,9 @@ def user_edit(request, pk):
     Authenticate() then user
     """
 
-    # check if current user is allowed to edit this user
     user_to_update = get_object_or_404(User, pk=pk)
 
+    # check if current user is allowed to edit this user
     if request.user.username != user_to_update.username:
         # return to home
         return redirect("/")
@@ -93,7 +93,7 @@ def user_edit(request, pk):
                 )
     else:
         form = UserEditForm(initial=user_to_update.to_json())
-    # show user signup page
+    # show user edit page
     return render(request, "registration/edit.html", {"form": form})
 
 
@@ -102,9 +102,6 @@ def user_validate(request):
     """View to validate a new user.
     if user information are missing, redirect to profile page.
     """
-    # breakpoint()
-
-    # check if current user is allowed to edit this user
     current_user = get_object_or_404(User, pk=request.user.pk)
 
     if (

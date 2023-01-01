@@ -18,6 +18,7 @@ def validate_age(form):
 
     # Check if the difference is equal to or greater than 18 years(including leap)
     if round(difference.days / 365.2425, 2) < 18:
+        # self.add_error('date_of_birth', 'Enter a valid date of birth')
         raise ValidationError("You must be at least 18 years old", code="invalid")
 
 
