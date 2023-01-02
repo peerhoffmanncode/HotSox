@@ -73,10 +73,12 @@ SITE_ID = 1
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # add these constants to define route for login/ logout destinations
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-# register the hotsox_user as user Allauth model!
+
+# register the hotsox_user as user AllAuth model!
 AUTH_USER_MODEL = "app_users.User"
 
 MIDDLEWARE = [

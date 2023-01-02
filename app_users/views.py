@@ -24,6 +24,7 @@ def user_signup(request):
             # fix the data
             user.first_name = form.cleaned_data["first_name"].title()
             user.last_name = form.cleaned_data["last_name"].title()
+            user.birthday = form.cleaned_data["birthday"]
 
             # check if user is ate least 18 years old
             if user.is_18_years():
@@ -34,8 +35,12 @@ def user_signup(request):
                 # redirect to home page
                 return redirect("/")
             else:
-                print("sorry, grow up...")
-                return redirect(reverse("signup"))
+                print(
+                    "sorry, grow up... User:",
+                    user.username,
+                    "you need to be at least 18 years old!",
+                )
+                return render(request, "registration/signup.html", {"form": form})
     else:
         form = UserSignUpForm()
     # show user signup page
@@ -50,9 +55,9 @@ def user_edit(request, pk):
     Authenticate() then user
     """
 
-    # check if current user is allowed to edit this user
     user_to_update = get_object_or_404(User, pk=pk)
 
+    # check if current user is allowed to edit this user
     if request.user.username != user_to_update.username:
         # return to home
         return redirect("/")
@@ -78,9 +83,32 @@ def user_edit(request, pk):
                 # redirect to home page
                 return redirect("/")
             else:
-                print("sorry, grow up...")
-                return redirect(reverse("home"))
+                print(
+                    "sorry, grow up... User:",
+                    user_to_update.username,
+                    "you need to be at least 18 years old!",
+                )
+                return redirect(
+                    reverse("app_users:edit", kwargs={"pk": user_to_update.pk})
+                )
     else:
         form = UserEditForm(initial=user_to_update.to_json())
-    # show user signup page
+    # show user edit page
     return render(request, "registration/edit.html", {"form": form})
+
+
+@login_required(login_url="/")
+def user_validate(request):
+    """View to validate a new user.
+    if user information are missing, redirect to profile page.
+    """
+    current_user = get_object_or_404(User, pk=request.user.pk)
+
+    if (
+        not current_user.is_18_years()
+        or not current_user.user_sex
+        or not current_user.interested_sex
+    ):
+        return redirect(reverse("app_users:edit", kwargs={"pk": current_user.pk}))
+    else:
+        return redirect(reverse("app_home:home"))
