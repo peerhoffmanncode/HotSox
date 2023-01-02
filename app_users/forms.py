@@ -10,7 +10,7 @@ def validate_age(form):
     """function the check if a user is older than 18 years"""
 
     if isinstance(form, date):
-        # handle case where form = birhtday
+        # handle case where form = birthday
         difference = date.today() - form
     else:
         # handle case where form = form object
