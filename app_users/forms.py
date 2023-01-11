@@ -14,7 +14,7 @@ def validate_age(form):
         difference = date.today() - form
     else:
         # handle case where form = form object
-        difference = date.today() - form.cleaned_data["birthday"]
+        difference = date.today() - form.cleaned_data["info_birthday"]
 
     # Check if the difference is equal to or greater than 18 years(including leap)
     if round(difference.days / 365.2425, 2) < 18:
@@ -30,9 +30,7 @@ class UserSignUpForm(UserCreationForm):
             "email",
             "first_name",
             "last_name",
-            "birthday",
-            "user_sex",
-            "interested_sex",
+            "info_birthday",
         ]
 
         labels = {
@@ -40,12 +38,10 @@ class UserSignUpForm(UserCreationForm):
             "email": "Your email address",
             "first_name": "Your first name",
             "last_name": "Your last name",
-            "birthday": "Your birthday",
-            "user_sex": "Your sex",
-            "interested_sex": "What are you looking for",
+            "info_birthday": "Your birthday",
         }
         widgets = {
-            "birthday": forms.DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
+            "info_birthday": forms.DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
         }
 
     def clean(self):
@@ -57,12 +53,9 @@ class UserEditForm(forms.Form):
     email = forms.EmailField()
     first_name = forms.CharField(max_length=255)
     last_name = forms.CharField(max_length=255)
-    birthday = forms.DateField(
+    info_birthday = forms.DateField(
         widget=forms.DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
     )
-    SEX_CHOICES = (("female", "Female"), ("male", "Male"), ("divers", "Divers"))
-    user_sex = forms.ChoiceField(choices=SEX_CHOICES)
-    interested_sex = forms.ChoiceField(choices=SEX_CHOICES)
 
     def clean(self):
         # Call the custom validator function

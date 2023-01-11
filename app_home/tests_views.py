@@ -17,9 +17,7 @@ class Test(TestCase):
             last_name="test last",
             email="test@mail.com",
             password="str0ng_pwd!",
-            birthday=date(2000, 1, 1),
-            user_sex="female",
-            interested_sex="male",
+            info_birthday=date(2000, 1, 1),
         )
         response = self.client.get("/prove-of-concept/")
         self.assertEqual(response.status_code, 200)
@@ -36,9 +34,8 @@ class Test(TestCase):
             last_name="test last",
             email="test@mail.com",
             password="str0ng_pwd!",
-            birthday=date(2000, 1, 1),
-            user_sex="female",
-            interested_sex="male",
+            info_birthday=date(2000, 1, 1),
+
         )
         self.client.force_login(user=user)
         response = self.client.get("/prove-of-concept/")
