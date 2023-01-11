@@ -18,14 +18,12 @@ class UserModelTestCase(TestCase):
             last_name="test last",
             email="test@mail.com",
             password="str0ng_pwd!",
-            birthday=date(2000, 1, 1),
-            user_sex="female",
-            interested_sex="male",
+            info_birthday=date(2000, 1, 1),
         )
 
     def test_str_method(self):
         # Check that the __str__ method returns the expected string
-        self.assertEqual(str(self.user), "[test] test first test last, Female")
+        self.assertEqual(str(self.user), "<User Test First Test Last -> [test]>")
 
     def test_is_18_years_method(self):
         # Check that the is_18_years method returns True for users over 18 years old
@@ -37,9 +35,7 @@ class UserModelTestCase(TestCase):
             last_name="test_17 last",
             email="test_17@mail.com",
             password="str0ng_pwd!",
-            birthday=date(timezone.now().year - 17, 1, 1),
-            user_sex="male",
-            interested_sex="female",
+            info_birthday=date(timezone.now().year - 17, 1, 1),
         )
         # Check that the is_18_years method returns False for users under 18 years old
         self.assertFalse(user_17_years.is_18_years())
@@ -54,9 +50,7 @@ class UserModelTestCase(TestCase):
                 "first_name": self.user.first_name,
                 "last_name": self.user.last_name,
                 "email": self.user.email,
-                "birthday": self.user.birthday,
-                "user_sex": self.user.user_sex,
-                "interested_sex": self.user.interested_sex,
+                "info_birthday": self.user.info_birthday,
                 "last_login": self.user.last_login,
                 "date_joined": self.user.date_joined,
                 "is_active": self.user.is_active,

@@ -24,7 +24,7 @@ def user_signup(request):
             # fix the data
             user.first_name = form.cleaned_data["first_name"].title()
             user.last_name = form.cleaned_data["last_name"].title()
-            user.birthday = form.cleaned_data["birthday"]
+            user.info_birthday = form.cleaned_data["info_birthday"]
 
             # check if user is ate least 18 years old
             if user.is_18_years():
@@ -70,9 +70,7 @@ def user_edit(request, pk):
             user_to_update.first_name = form.cleaned_data["first_name"].title()
             user_to_update.last_name = form.cleaned_data["last_name"].title()
             user_to_update.email = form.cleaned_data["email"]
-            user_to_update.birthday = form.cleaned_data["birthday"]
-            user_to_update.user_sex = form.cleaned_data["user_sex"]
-            user_to_update.interested_sex = form.cleaned_data["interested_sex"]
+            user_to_update.info_birthday = form.cleaned_data["info_birthday"]
 
             # check if user is ate least 18 years old
             if user_to_update.is_18_years():
