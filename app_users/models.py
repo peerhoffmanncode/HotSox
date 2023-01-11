@@ -21,7 +21,7 @@ from .models_choices import (
 
 class User(AbstractUser):
     # fields we inherit from AbstractUser:
-    # username, password,password_conf,email,first_name,last_name, joining_date, last_login, is_staff, is_active, is_superuser
+    # username, password, password_conf, email, first_name, last_name, joining_date, last_login, is_staff, is_active, is_superuser
 
     info_about = models.TextField(help_text="Insert your story in here.", blank=True)
     info_birthday = models.DateField(default=timezone.now, blank=False)
@@ -99,10 +99,8 @@ class Sock(models.Model):
     user = models.ForeignKey(User, related_name="sock", on_delete=models.CASCADE)
     info_joining_date = models.DateField(auto_now_add=True, blank=False)
 
-    info_name = (
-        models.CharField(
-            max_length=255, help_text="What is the socks name?", blank=False
-        ),
+    info_name = models.CharField(
+        max_length=255, help_text="What is the socks name?", blank=False
     )
     info_about = models.TextField(help_text="Insert sock's story in here.", blank=True)
     info_color = models.CharField(
@@ -132,7 +130,9 @@ class Sock(models.Model):
     info_size = models.CharField(
         max_length=20, help_text="Select the size.", choices=SIZE_CHOICES, blank=False
     )
-    info_age = models.IntegerField(help_text="How old is the sock?", blank=False)
+    info_age = models.PositiveSmallIntegerField(
+        help_text="How old is the sock?", blank=False
+    )
     info_separation_date = models.DateField(
         help_text="Lonely since?", default=timezone.now, blank=False
     )
@@ -142,10 +142,10 @@ class Sock(models.Model):
         choices=CONDITION_CHOICES,
         blank=False,
     )
-    info_holes = models.IntegerField(
+    info_holes = models.PositiveSmallIntegerField(
         help_text="How many holes has the sock?", blank=False
     )
-    info_kilometers = models.IntegerField(
+    info_kilometers = models.PositiveSmallIntegerField(
         help_text="How many kilometers has the sock walked?", blank=False
     )
     info_inoutdoor = models.CharField(
@@ -154,7 +154,7 @@ class Sock(models.Model):
         choices=ENVIRONMENT_CHOICES,
         blank=False,
     )
-    info_washed = models.IntegerField(
+    info_washed = models.PositiveSmallIntegerField(
         help_text="How often washed per month?", blank=False
     )
     info_special = models.CharField(
@@ -164,7 +164,7 @@ class Sock(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"<Sock {self.info_name.title()}>"
+        return f"<Sock {self.info_name}>"
 
 
 class SockProfilePicture(models.Model):
@@ -180,8 +180,8 @@ class SockProfilePicture(models.Model):
 
 class SockLike(models.Model):
     # Sock.me.sock.pk = Sock.pk  | sock himself
-    # Sock.like.other.objects.all() = socks i like
-    # Sock.dislike.other.objects.all() = socks i don't like
+    # Sock.like.like.objects.all() = socks i like
+    # Sock.dislike.dislike.objects.all() = socks i don't like
     sock = models.ForeignKey(
         Sock, related_name="me", on_delete=models.CASCADE, blank=False
     )

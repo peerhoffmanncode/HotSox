@@ -44,6 +44,7 @@ class SockLikeInLine(admin.TabularInline):
 class SockAdmin(admin.ModelAdmin):
     fields = [
         "user",
+        "info_name",
         "info_about",
         "info_age",
         "info_brand",
