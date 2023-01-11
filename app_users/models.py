@@ -157,7 +157,7 @@ class Sock(models.Model):
     info_washed = models.IntegerField(
         help_text="How often washed per month?", blank=False
     )
-    info_color = models.CharField(
+    info_special = models.CharField(
         max_length=250,
         help_text="Description of a special interest of the sock.",
         blank=False,
