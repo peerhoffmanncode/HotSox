@@ -41,7 +41,9 @@ class UserSignUpForm(UserCreationForm):
             "info_birthday": "Your birthday",
         }
         widgets = {
-            "info_birthday": forms.DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
+            "info_birthday": forms.DateInput(
+                attrs={"type": "date", "format": "%d-%m-%Y"}
+            ),
         }
 
     def clean(self):

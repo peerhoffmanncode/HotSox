@@ -35,7 +35,6 @@ class Test(TestCase):
             email="test@mail.com",
             password="str0ng_pwd!",
             info_birthday=date(2000, 1, 1),
-
         )
         self.client.force_login(user=user)
         response = self.client.get("/prove-of-concept/")
