@@ -9,7 +9,6 @@ from app_users.models import User
 
 
 def home(request):
-    # breakpoint()
     if request.user.username:
         user = User.objects.get(username=request.user.username)
         user.username = user.username.title()
@@ -18,6 +17,28 @@ def home(request):
         context = {"user": None}
 
     return render(request, "app_home/index.html", context)
+
+
+def about(request):
+    if request.user.username:
+        user = User.objects.get(username=request.user.username)
+        user.username = user.username.title()
+        context = {"user": user}
+    else:
+        context = {"user": None}
+
+    return render(request, "app_home/about.html", context)
+
+
+def swipe(request):
+    if request.user.username:
+        user = User.objects.get(username=request.user.username)
+        user.username = user.username.title()
+        context = {"user": user}
+    else:
+        context = {"user": None}
+
+    return render(request, "app_home/swipe.html", context)
 
 
 # @login_required(login_url="/user/login")
