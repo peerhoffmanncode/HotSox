@@ -12,8 +12,8 @@
                 {{ k }}: {{ v }}
             {% endfor %}
         </div>
-        <a href="{% url 'edit' %}" class="btn">Edit Profile</a>
-        <a href="{% url 'profile_picture' %}" class="btn">Edit Profile Picture</a>
+        <a href="{% url 'app_users:user-profile-update' %}" class="btn">Edit Profile</a>
+        <a href="{% url 'app_users:user-profile-picture' %}" class="btn">Edit Profile Picture</a>
     </div>
 </div>
 {% endblock %}
