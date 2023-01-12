@@ -35,19 +35,26 @@
         </div>
         <div class="d-none d-md-block">
             {% if user.is_authenticated %}
-            <p class="navbar-text my-auto mr-2"><i>{{user.username.title}} is Sock'n'Roll!</i></p>
-            <a href="/user/logout/">Log out</a>
-            <a href="/user/edit/{{user.pk}}">Profile</a>
+            <p class="navbar-text my-auto mr-2"><i>{{user.username.title}} is Sockin'n'Rollin'!</i></p>
+            <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                <img style="width: 25px;" src="{{ user.profile_picture.values.0.profile_picture.url }}"><b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu navbar-right">
+                <li><a href="/user/edit/{{user.pk}}">Profile</a></li>
+                <li><a href="/user/logout/">Log out</a></li>
+            </ul>
             {% else %}
             <p class="navbar-text my-auto mr-2"><i>Wanna ramp up a sockin' life?</i></p>
-            <a href="/user/login/">Sign In</a>
-            <a href="/user/signup/">Sign Up</a>
+            <a href="#" data-toggle="dropdown" class="dropdown-toggle"><b class="caret"></b></a>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li><a href="/user/login/">Sign In</a></li>
+                <li><a href="/user/signup/">Sign Up</a></li>
+        </ul>
             {% endif %}
         </div>
     </nav>
 
     {% block content %}{% endblock %}
-
     <footer></footer>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
