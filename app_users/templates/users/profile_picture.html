@@ -2,24 +2,27 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 mt-3 offset-md-2">
-            <h3>Revise/ edit {{user.username.title}}'s profile</h3>
+            <h3>{{user.username.title}}'s Profile Pictures</h3>
         </div>
     </div>
+    <!-- to be completed with appropriate path to photo -->
+    {% for photos in user.photos %}
+        {{ photo }}
+    {% endfor %}
+
     <div class="row">
         <div class="col-md-8 mt-3 offset-md-2">
             <form method="post" action="">
                 {% csrf_token %}
-                {{ form.as_p }}
-                <button class="btn btn-signup right" type="submit">Store profile</button>
+                {{ form_user_profile_picture.as_p }}
+                <button class="btn btn-signup right" type="submit">Save Picture</button>
             </form>
         </div>
-        {% if user.is_18_years %}
         <div class="col-md-8 mt-3 offset-md-2">
             <form method="get" action="/">
-                <button class="btn btn-signup right" type="submit">cancel</button>
+                <button class="btn btn-signup right" type="submit">Cancel</button>
             </form>
         </div>
-        {% endif %}
     </div>
 </div>
 {% endblock %}

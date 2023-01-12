@@ -1,0 +1,26 @@
+{% extends "base.html" %} {% block content %}
+(renamed from edit.html)
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-2">
+            <h3>Revise/ edit {{user.username.title}}'s profile</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-2">
+            <form method="post" action="">
+                {% csrf_token %}
+                {{ form_user_profile.as_p }}
+                <button class="btn btn-signup right" type="submit">Store profile</button>
+            </form>
+        </div>
+        {% if user.is_18_years %}
+        <div class="col-md-8 mt-3 offset-md-2">
+            <form method="get" action="/">
+                <button class="btn btn-signup right" type="submit">cancel</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

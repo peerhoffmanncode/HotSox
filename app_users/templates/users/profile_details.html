@@ -1,0 +1,24 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-2">
+            <h3>{{user.username.title}}'s Profile</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-2">
+            <!-- backend to provide a nice json for relevant profile details ;) -->
+            {% for k,v in user_details %}
+                {{ k }}: {{ v }}
+            {% endfor %}
+        </div>
+        <a href="{% url 'edit' %}" class="btn">Edit Profile</a>
+        <a href="{% url 'profile_picture' %}" class="btn">Edit Profile Picture</a>
+    </div>
+</div>
+{% endblock %}
+
+
+back to Home
+edit profile
+edit picture
