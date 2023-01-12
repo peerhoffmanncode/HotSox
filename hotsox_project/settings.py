@@ -10,11 +10,16 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+# imports for cloudinary linking and upload of images
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 from pathlib import Path
 import os
 
 if os.path.isfile("env.py"):
     import env
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -44,14 +49,19 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "django.contrib.staticfiles",
+    "cloudinary",
     "allauth.socialaccount.providers.google",
+    # "django_summernote",
+    # "crispy_forms",
     "app_home",
     "app_users",
 ]
 
 # Social accounts login
 SOCIALACCOUNT_LOGIN_ON_GET = False
-AUTHENTICATION_BACKENDS = ["allauth.account.auth_backends.AuthenticationBackend"]
+AUTHENTICATION_BACKENDS = [
+    "allauth.account.auth_backends.AuthenticationBackend"
+]
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": [
@@ -167,7 +177,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # initial work to use jwt token validation soon!
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
@@ -188,7 +200,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
