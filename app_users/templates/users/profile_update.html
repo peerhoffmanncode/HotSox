@@ -1,5 +1,6 @@
-{% extends "base.html" %} {% block content %}
-(renamed from edit.html)
+{% extends "base.html" %} 
+{% load crispy_forms_tags %}
+{% block content %}
 <div class="container">
     <div class="row">
         <div class="col-md-8 mt-3 offset-md-2">
@@ -10,11 +11,9 @@
         <div class="col-md-8 mt-3 offset-md-2">
             <form method="post" action="">
                 {% csrf_token %}
-                {{ form_user_profile.as_p }}
+                {{ form_user_profile|crispy }}
                 <button class="btn" type="submit">Store profile</button>
             </form>
-        </div>
-        <div class="col-md-8 mt-3 offset-md-2">
             <form method="get" action="/">
                 <button class="btn" type="submit">Cancel</button>
             </form>

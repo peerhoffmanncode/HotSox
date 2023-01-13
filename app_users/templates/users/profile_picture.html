@@ -1,4 +1,6 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} 
+{% load crispy_forms_tags %}
+{% block content %}
 <div class="container">
     <div class="row">
         <div class="col-md-8 mt-3 offset-md-4">
@@ -11,14 +13,14 @@
         {% if picture %}
         <div class="col-3">
             <div class="card">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="method" value="delete">
+                    <input type="hidden" name="picture_pk" value="{{picture.pk}}">
+                    <button class="btn card-btn">Delete</button>
+                </form>
                 <img src="{{picture.profile_picture.url}}" alt="">
             </div>
-            <form method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="method" value="delete">
-                <input type="hidden" name="picture_pk" value="{{picture.pk}}">
-                <button class="btn" style="align-items: center;">Delete</button>
-            </form>
         </div>
         {% endif %}
         {% endfor %}
@@ -28,7 +30,7 @@
         <div class="col-md-12 mt-3">
             <form method="POST" action="" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ form_user_profile_picture.as_p }}
+                {{ form_user_profile_picture|crispy }}
                 <input type="hidden" name="method" value="add">
                 <button class="btn btn-signup right" type="submit">Save Picture</button>
             </form>
