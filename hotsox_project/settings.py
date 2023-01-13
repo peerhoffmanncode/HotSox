@@ -53,11 +53,11 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
     "django.contrib.staticfiles",
     "cloudinary",
-    "allauth.socialaccount.providers.google",
+    "crispy_forms",
     # "django_summernote",
-    # "crispy_forms",
     "app_home",
     "app_users",
 ]

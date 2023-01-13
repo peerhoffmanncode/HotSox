@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from datetime import date, timedelta
+from cloudinary import uploader
 from cloudinary.models import CloudinaryField
 
 # CHOICES FOR USER
@@ -61,6 +62,19 @@ class User(AbstractUser):
     def __str__(self) -> str:
         return f"<User {self.first_name.title()} {self.last_name.title()} -> [{self.username}]>"
 
+    def delete(self, *args, **kwargs):
+        """Function to delete a user from the database
+        make sure all UserPorfilePictures are gone too
+        make sure all Sock are gone too
+        """
+        # delete the user profile pictures
+        for profile_picture in self.profile_picture.all():
+            profile_picture.delete()
+        for sock in self.sock.all():
+            sock.delete()
+        # delete itself
+        super().delete(*args, **kwargs)
+
     def is_18_years(self) -> bool:
         """function the check if a user is older than 18 years"""
         difference = date.today() - self.info_birthday
@@ -93,6 +107,12 @@ class UserProfilePicture(models.Model):
     )
     # url = models.URLField(max_length=255, blank=False)
     profile_picture = CloudinaryField("profile picture")
+
+    def delete(self, *args, **kwargs):
+        """Function to delete a UserProfilePicture
+        delete all pictures form the cloud as well!"""
+        uploader.destroy(self.profile_picture.public_id)
+        super().delete(*args, **kwargs)
 
     def __str__(self) -> str:
         return f"<UserProfilePicture from {self.user}>"
@@ -185,6 +205,16 @@ class Sock(models.Model):
 
     def __str__(self) -> str:
         return f"<Sock {self.info_name}>"
+
+    def delete(self, *args, **kwargs):
+        """Function to delete a sock from the database
+        make sure all SockPorfilePictures are gone too
+        """
+        # delete the user profile pictures
+        for profile_picture in self.profile_picture.all():
+            profile_picture.delete()
+        # delete itself
+        super().delete(*args, **kwargs)
 
 
 class SockProfilePicture(models.Model):
