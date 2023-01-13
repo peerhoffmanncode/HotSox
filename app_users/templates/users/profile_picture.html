@@ -12,14 +12,16 @@
         {% for picture in profile_picture_query_set %}
         {% if picture %}
         <div class="col-3">
-            <div class="card">
+            <div class="card text-center">
+                <img src="{{picture.profile_picture.url}}" alt="" class="card-img-top">
+                <div class="card-body">
                 <form method="POST">
                     {% csrf_token %}
                     <input type="hidden" name="method" value="delete">
                     <input type="hidden" name="picture_pk" value="{{picture.pk}}">
                     <button class="btn card-btn">Delete</button>
                 </form>
-                <img src="{{picture.profile_picture.url}}" alt="">
+            </div>
             </div>
         </div>
         {% endif %}
@@ -40,4 +42,8 @@
         </div>
     </div>
 </div>
+<br>
+<br>
+<br>
+<br>
 {% endblock %}
