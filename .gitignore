@@ -1,6 +1,9 @@
 # Exclude python files
 env.py
 
+# Database files
+db.sqlite3
+
 # Editors
 .vscode/
 .idea/

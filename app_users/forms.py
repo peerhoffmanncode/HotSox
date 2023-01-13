@@ -1,20 +1,20 @@
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.forms import ModelForm, DateInput
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.forms import ValidationError
 
 from datetime import date
-from .models import User
+from .models import User, UserProfilePicture, Sock, SockProfilePicture
 
 
 def validate_age(form):
     """function the check if a user is older than 18 years"""
 
     if isinstance(form, date):
-        # handle case where form = birhtday
+        # handle case where form = birthday
         difference = date.today() - form
     else:
         # handle case where form = form object
-        difference = date.today() - form.cleaned_data["birthday"]
+        difference = date.today() - form.cleaned_data["info_birthday"]
 
     # Check if the difference is equal to or greater than 18 years(including leap)
     if round(difference.days / 365.2425, 2) < 18:
@@ -25,14 +25,18 @@ def validate_age(form):
 class UserSignUpForm(UserCreationForm):
     class Meta:
         model = User
-        fields = [
-            "username",
-            "email",
-            "first_name",
-            "last_name",
-            "birthday",
-            "user_sex",
-            "interested_sex",
+        fields = "__all__"
+        exclude = [
+            "password",
+            "date_joined",
+            "last_login",
+            "is_staff",
+            "is_active",
+            "is_superuser",
+            "groups",
+            "user_permissions",
+            "location_latitude",
+            "location_longitude",
         ]
 
         labels = {
@@ -40,12 +44,16 @@ class UserSignUpForm(UserCreationForm):
             "email": "Your email address",
             "first_name": "Your first name",
             "last_name": "Your last name",
-            "birthday": "Your birthday",
-            "user_sex": "Your sex",
-            "interested_sex": "What are you looking for",
+            "info_birthday": "Your birthday",
+            "info_gender": "Your gender",
+            "location_city": "Where do you live?",
+            "social_instagram": "Url to your instagram account",
+            "social_facebook": "Url to your facebook account",
+            "social_twitter": "Url to your twitter account",
+            "social_spotify": "Url to your spotify account",
         }
         widgets = {
-            "birthday": forms.DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
+            "info_birthday": DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
         }
 
     def clean(self):
@@ -53,17 +61,64 @@ class UserSignUpForm(UserCreationForm):
         validate_age(self)
 
 
-class UserEditForm(forms.Form):
-    email = forms.EmailField()
-    first_name = forms.CharField(max_length=255)
-    last_name = forms.CharField(max_length=255)
-    birthday = forms.DateField(
-        widget=forms.DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
-    )
-    SEX_CHOICES = (("female", "Female"), ("male", "Male"), ("divers", "Divers"))
-    user_sex = forms.ChoiceField(choices=SEX_CHOICES)
-    interested_sex = forms.ChoiceField(choices=SEX_CHOICES)
+class UserProfileForm(UserChangeForm):
+    password = None
+
+    class Meta:
+        model = User
+        fields = "__all__"
+        exclude = [
+            "password",
+            "password2",
+            "date_joined",
+            "last_login",
+            "is_staff",
+            "is_active",
+            "is_superuser",
+            "groups",
+            "user_permissions",
+            "location_latitude",
+            "location_longitude",
+        ]
+
+        labels = {
+            "username": "Your username",
+            "email": "Your email address",
+            "first_name": "Your first name",
+            "last_name": "Your last name",
+            "info_birthday": "Your birthday",
+            "info_gender": "Your gender",
+            "location_city": "Where do you live?",
+            "social_instagram": "Url to your instagram account",
+            "social_facebook": "Url to your facebook account",
+            "social_twitter": "Url to your twitter account",
+            "social_spotify": "Url to your spotify account",
+        }
+        widgets = {
+            "info_birthday": DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
+        }
 
     def clean(self):
         # Call the custom validator function
         validate_age(self)
+
+
+class UserProfilePictureForm(ModelForm):
+    class Meta:
+        model = UserProfilePicture
+        fields = "__all__"
+        exclude = ["user"]
+
+
+class SockForm(ModelForm):
+    class Meta:
+        model = Sock
+        fields = "__all__"
+        exclude = ["user", "info_joining_date"]
+
+
+class SockProfilePictureForm(ModelForm):
+    class Meta:
+        model = UserProfilePicture
+        fields = "__all__"
+        exclude = ["sock"]

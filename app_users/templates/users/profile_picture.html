@@ -1,0 +1,49 @@
+{% extends "base.html" %} 
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-4">
+            <h3>{{user.username.title}}'s Profile Pictures</h3>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for picture in profile_picture_query_set %}
+        {% if picture %}
+        <div class="col-3">
+            <div class="card text-center">
+                <img src="{{picture.profile_picture.url}}" alt="" class="card-img-top">
+                <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="method" value="delete">
+                    <input type="hidden" name="picture_pk" value="{{picture.pk}}">
+                    <button class="btn card-btn">Delete</button>
+                </form>
+            </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <!-- add profile picture -->
+    <div class="row">
+        <div class="col-md-12 mt-3">
+            <form method="POST" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form_user_profile_picture|crispy }}
+                <input type="hidden" name="method" value="add">
+                <button class="btn btn-signup right" type="submit">Save Picture</button>
+            </form>
+        </div>
+        <div class="col-md-12 mt-3">
+            <a href="{% url 'app_users:user-profile-details' %}" class="btn">Cancel</a>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<br>
+<br>
+{% endblock %}
