@@ -23,12 +23,8 @@ def user_signup(request):
             user = form_user_profile.save(commit=False)
 
             # fix the data
-            user.first_name = form_user_profile.cleaned_data[
-                "first_name"
-            ].title()
-            user.last_name = form_user_profile.cleaned_data[
-                "last_name"
-            ].title()
+            user.first_name = form_user_profile.cleaned_data["first_name"].title()
+            user.last_name = form_user_profile.cleaned_data["last_name"].title()
 
             # check if user is ate least 18 years old
             if user.is_18_years():
@@ -87,9 +83,7 @@ def user_profile_update(request):
     user_to_update = get_object_or_404(User, pk=request.user.pk)
 
     if request.method == "POST":
-        form_user_profile = UserProfileForm(
-            request.POST, instance=user_to_update
-        )
+        form_user_profile = UserProfileForm(request.POST, instance=user_to_update)
 
         if form_user_profile.is_valid():
             # check if user is >18 years old
@@ -144,9 +138,7 @@ def user_profile_picture(request):
 
             if form_user_profile_picture.is_valid():
                 # create a profile_picture object
-                new_profile_picture = form_user_profile_picture.save(
-                    commit=False
-                )
+                new_profile_picture = form_user_profile_picture.save(commit=False)
                 # set one to many field [user] to current user
                 new_profile_picture.user = user_to_update
                 # store the picture to the database
@@ -156,9 +148,7 @@ def user_profile_picture(request):
         elif request.POST.get("method") == "delete":
             picture_pk = request.POST.get("picture_pk", None)
             if picture_pk:
-                UserProfilePicture_obj = UserProfilePicture.objects.get(
-                    pk=picture_pk
-                )
+                UserProfilePicture_obj = UserProfilePicture.objects.get(pk=picture_pk)
                 UserProfilePicture_obj.delete()
                 return redirect(reverse("app_users:user-profile-picture"))
     else:
