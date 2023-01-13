@@ -6,132 +6,30 @@
         </div>
     </div>
 
-<div class="row">
-    <div class="col-3">
-        <div class="card">
-            {% if profile_picture_query_set.0.profile_picture %}
-            <img src="{{profile_picture_query_set.0.profile_picture.url}}" alt=""> 
-            <form method="PUT" name="pk" value="">
-                <button class="btn" style="align-items: center;">Edit</button>
-            </form>
-            <form method="DELETE" name="pk" value="">
-                <button class="btn" style="align-items: center;">Delete</button>
-            </form>
-            {% endif %}
-        </div>
-    </div>
-    {% if profile_picture_query_set.1.profile_picture.url %}
-    <div class="col-3">
-        <div class="card">
-            <img src="{{profile_picture_query_set.1.profile_picture.url}}" alt=""> 
-            <form method="PUT" name="pk" value="">
-                <button class="btn" style="align-items: center;">Edit</button>
-            </form>
-            <form method="DELETE" name="pk" value="">
+    <div class="row">
+        {% for picture in profile_picture_query_set %}
+        {% if picture %}
+        <div class="col-3">
+            <div class="card">
+                <img src="{{picture.profile_picture.url}}" alt="">
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="method" value="delete">
+                <input type="hidden" name="picture_pk" value="{{picture.pk}}">
                 <button class="btn" style="align-items: center;">Delete</button>
             </form>
         </div>
+        {% endif %}
+        {% endfor %}
     </div>
-    {% endif %}
-    {% if profile_picture_query_set.2.profile_picture %}
-    <div class="col-3">
-        <div class="card">
-            <img src="{{profile_picture_query_set.2.profile_picture.url}}" alt=""> 
-            <form method="PUT" name="pk" value="">
-                <button class="btn" style="align-items: center;">Edit</button>
-            </form>
-            <form method="DELETE" name="pk" value="">
-                <button class="btn" style="align-items: center;">Delete</button>
-            </form>
-        </div>
-    </div>
-    {% endif %}
-    {% if profile_picture_query_set.3.profile_picture %}
-    <div class="col-3">
-        <div class="card">
-            <img src="{{profile_picture_query_set.3.profile_picture.url}}" alt=""> 
-            <form method="PUT" name="pk" value="">
-                <button class="btn" style="align-items: center;">Edit</button>
-            </form>
-            <form method="DELETE" name="pk" value="">
-                <button class="btn" style="align-items: center;">Delete</button>
-            </form>
-        </div>
-    </div>
-    {% endif %}
-</div>
-<div class="row">
-    {% if profile_picture_query_set.4.profile_picture %}
-    <div class="col-3">
-        <div class="card">
-            <img src="{{profile_picture_query_set.4.profile_picture.url}}" alt=""> 
-            <form method="PUT" name="pk" value="">
-                <button class="btn" style="align-items: center;">Edit</button>
-            </form>
-            <form method="DELETE" name="pk" value="">
-                <button class="btn" style="align-items: center;">Delete</button>
-            </form>
-        </div>
-    </div>
-    {% endif %}
-    {% if profile_picture_query_set.5.profile_picture %}
-    <div class="col-3">
-        <div class="card">
-            <img src="{{profile_picture_query_set.5.profile_picture.url}}" alt=""> 
-            <form method="PUT" name="pk" value="">
-                <button class="btn" style="align-items: center;">Edit</button>
-            </form>
-            <form method="DELETE" name="pk" value="">
-                <button class="btn" style="align-items: center;">Delete</button>
-            </form>
-        </div>
-    </div>
-    {% endif %}
-    {% if profile_picture_query_set.6.profile_picture %}
-    <div class="col-3">
-        <div class="card">
-            <img src="{{profile_picture_query_set.6.profile_picture.url}}" alt=""> 
-            <form method="PUT" name="pk" value="">
-                <button class="btn" style="align-items: center;">Edit</button>
-            </form>
-            <form method="DELETE" name="pk" value="">
-                <button class="btn" style="align-items: center;">Delete</button>
-            </form>
-        </div>
-    </div>
-    {% endif %}
-    {% if profile_picture_query_set.7.profile_picture %}
-    <div class="col-3">
-        <div class="card">
-            <img src="{{profile_picture_query_set.7.profile_picture.url}}" alt=""> 
-            <form method="PUT" name="pk" value="">
-                <button class="btn" style="align-items: center;">Edit</button>
-            </form>
-            <form method="DELETE" name="pk" value="">
-                <button class="btn" style="align-items: center;">Delete</button>
-            </form>
-        </div>
-    </div>
-    {% endif %}
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <!-- add profile picture -->
     <div class="row">
         <div class="col-md-12 mt-3">
             <form method="POST" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form_user_profile_picture.as_p }}
+                <input type="hidden" name="method" value="add">
                 <button class="btn btn-signup right" type="submit">Save Picture</button>
             </form>
         </div>
