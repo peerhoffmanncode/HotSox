@@ -117,7 +117,8 @@ class UserProfilePicture(models.Model):
     def delete(self, *args, **kwargs):
         """Function to delete a UserProfilePicture
         delete all pictures form the cloud as well!"""
-        uploader.destroy(self.profile_picture.public_id)
+        if self.profile_picture.public_id:
+            uploader.destroy(self.profile_picture.public_id)
         super().delete(*args, **kwargs)
 
     def __str__(self) -> str:
@@ -237,7 +238,9 @@ class SockProfilePicture(models.Model):
     def delete(self, *args, **kwargs):
         """Function to delete a UserProfilePicture
         delete all pictures form the cloud as well!"""
-        uploader.destroy(self.profile_picture.public_id)
+        if self.profile_picture.public_id:
+            uploader.destroy(self.profile_picture.public_id)
+
         super().delete(*args, **kwargs)
 
 
