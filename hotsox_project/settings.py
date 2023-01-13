@@ -64,7 +64,9 @@ INSTALLED_APPS = [
 
 # Social accounts login
 SOCIALACCOUNT_LOGIN_ON_GET = False
-AUTHENTICATION_BACKENDS = ["allauth.account.auth_backends.AuthenticationBackend"]
+AUTHENTICATION_BACKENDS = [
+    "allauth.account.auth_backends.AuthenticationBackend"
+]
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": [
@@ -122,8 +124,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "hotsox_project.wsgi.application"
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
+WSGI_APPLICATION = "hotsox_project.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -180,7 +183,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # initial work to use jwt token validation soon!
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
