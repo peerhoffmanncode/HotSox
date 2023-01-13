@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from datetime import date, timedelta
+from cloudinary import uploader
 from cloudinary.models import CloudinaryField
 
 # CHOICES FOR USER
@@ -24,9 +25,13 @@ class User(AbstractUser):
     # fields we inherit from AbstractUser:
     # username, password, password_conf, email, first_name, last_name, joining_date, last_login, is_staff, is_active, is_superuser
 
-    info_about = models.TextField(help_text="Insert your story in here.", blank=True)
+    info_about = models.TextField(
+        help_text="Insert your story in here.", blank=True
+    )
     info_birthday = models.DateField(default=timezone.now, blank=False)
-    info_gender = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=False)
+    info_gender = models.CharField(
+        max_length=10, choices=GENDER_CHOICES, blank=False
+    )
     # info_gender_interest = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=False)
     location_city = models.CharField(
         help_text="Where do you live?", max_length=255, blank=False
@@ -61,6 +66,19 @@ class User(AbstractUser):
     def __str__(self) -> str:
         return f"<User {self.first_name.title()} {self.last_name.title()} -> [{self.username}]>"
 
+    def delete(self, *args, **kwargs):
+        """Function to delete a user from the database
+        make sure all UserPorfilePictures are gone too
+        make sure all Sock are gone too
+        """
+        # delete the user profile pictures
+        for profile_picture in self.profile_picture.all():
+            profile_picture.delete()
+        for sock in self.sock.all():
+            sock.delete()
+        # delete itself
+        super().delete(*args, **kwargs)
+
     def is_18_years(self) -> bool:
         """function the check if a user is older than 18 years"""
         difference = date.today() - self.info_birthday
@@ -94,6 +112,12 @@ class UserProfilePicture(models.Model):
     # url = models.URLField(max_length=255, blank=False)
     profile_picture = CloudinaryField("profile picture")
 
+    def delete(self, *args, **kwargs):
+        """Function to delete a UserProfilePicture
+        delete all pictures form the cloud as well!"""
+        uploader.destroy(self.profile_picture.public_id)
+        super().delete(*args, **kwargs)
+
     def __str__(self) -> str:
         return f"<UserProfilePicture from {self.user}>"
 
@@ -101,19 +125,27 @@ class UserProfilePicture(models.Model):
 class UserMatch(models.Model):
     # User.him.user.pk = User.pk  | himself
     # User.matched.other.objects.all() = all Other user !
-    user = models.ForeignKey(User, related_name="him", on_delete=models.CASCADE)
-    other = models.ForeignKey(User, related_name="matched", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, related_name="him", on_delete=models.CASCADE
+    )
+    other = models.ForeignKey(
+        User, related_name="matched", on_delete=models.CASCADE
+    )
 
 
 class Sock(models.Model):
     # User.sock.user.pk = User.pk  | himself
-    user = models.ForeignKey(User, related_name="sock", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, related_name="sock", on_delete=models.CASCADE
+    )
     info_joining_date = models.DateField(auto_now_add=True, blank=False)
 
     info_name = models.CharField(
         max_length=255, help_text="What is the socks name?", blank=False
     )
-    info_about = models.TextField(help_text="Insert sock's story in here.", blank=True)
+    info_about = models.TextField(
+        help_text="Insert sock's story in here.", blank=True
+    )
     info_color = models.CharField(
         max_length=10,
         help_text="Select dominant color.",
@@ -186,6 +218,16 @@ class Sock(models.Model):
     def __str__(self) -> str:
         return f"<Sock {self.info_name}>"
 
+    def delete(self, *args, **kwargs):
+        """Function to delete a sock from the database
+        make sure all SockPorfilePictures are gone too
+        """
+        # delete the user profile pictures
+        for profile_picture in self.profile_picture.all():
+            profile_picture.delete()
+        # delete itself
+        super().delete(*args, **kwargs)
+
 
 class SockProfilePicture(models.Model):
     # Sock.profile_picture.sock.pk = Sock.pk  | sock himself
@@ -227,7 +269,9 @@ class SockLike(models.Model):
 
 class MessageMail(models.Model):
     # User.mail.user.pk = User.pk  | user himself
-    user = models.ForeignKey(User, related_name="mail", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, related_name="mail", on_delete=models.CASCADE
+    )
     subject = models.CharField(max_length=255, blank=False)
     content = models.TextField(blank=False)
     sent_date = models.DateField(auto_now_add=True, blank=False)

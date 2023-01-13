@@ -53,18 +53,20 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
     "django.contrib.staticfiles",
     "cloudinary",
-    "allauth.socialaccount.providers.google",
-    # "django_summernote",
-    # "crispy_forms",
+    "crispy_forms",
+    "django_summernote",
     "app_home",
     "app_users",
 ]
 
 # Social accounts login
 SOCIALACCOUNT_LOGIN_ON_GET = False
-AUTHENTICATION_BACKENDS = ["allauth.account.auth_backends.AuthenticationBackend"]
+AUTHENTICATION_BACKENDS = [
+    "allauth.account.auth_backends.AuthenticationBackend"
+]
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": [
@@ -180,7 +182,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # initial work to use jwt token validation soon!
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
