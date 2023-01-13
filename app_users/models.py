@@ -78,7 +78,7 @@ class User(AbstractUser):
     def get_age(self):
         difference = date.today() - self.info_birthday
         # Check if the difference is equal to or greater than 18 years(including leap)
-        return int(difference.days / 365.2425)
+        return int(round(difference.days / 365.2425, 0))
 
     def is_18_years(self) -> bool:
         """function the check if a user is older than 18 years"""
