@@ -1,0 +1,53 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-2">
+            <h3>{{user.username.title}}'s Profile</h3>
+        </div>
+    </div>
+    <div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-2">
+
+            
+        
+    <div class="circle-container">
+        {% if user.profile_picture.all.0 %}
+        <div class="circle-img">
+            <a href="{% url 'app_users:user-profile-picture' %}">
+                <img src="{{ user.profile_picture.all.0.profile_picture.url }}" alt="">
+            </a>
+        </div>
+        {% else %}
+        <a href="{% url 'app_users:user-profile-picture' %}" class="btn">Add Picture</a>
+        {% endif %}
+    </div>
+</div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-2">
+            {% for k,v in user.to_json.items %}
+            {% if v %}
+                <p><strong>{{ k.title }}:</strong> {{ v }}</p>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+        <br>
+            
+            
+        <div class="row">
+            <div class="col-md-8 mt-3 offset-md-4">
+                    <a href="{% url 'app_users:user-profile-update' %}" class="btn">Edit Profile</a>
+            </div>
+        </div>
+</div>
+<br>
+<br>
+<br>
+{% endblock %}
+
+
+back to Home
+edit profile
+edit picture

@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load account socialaccount %}
 {% load socialaccount %}
+{% load crispy_forms_tags %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
@@ -21,17 +22,19 @@
     <div class="col-md-8 mt-3 offset-md-2">
       <form class="login" method="POST" action="{% url 'account_login' %}">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form|crispy }}
         {% if redirect_field_value %}
         <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
         {% endif %}
-        <button class="btn btn-signup right" type="submit">{% trans "Sign In" %}</button>
-        <button class="btn btn-outline-info">
-          <a href="{% provider_login_url 'google'%}?next=/user/check_user_validation/">
-            <i class="fab fa-google"></i>
-            Sign In with Google
-          </a>
-        </button>
+        <div class="btn-container">
+          <button class="btn btn-signup right" type="submit">{% trans "Sign In" %}</button>
+          <button class=" btn-outline-info">
+            <a href="{% provider_login_url 'google'%}?next=/user/check_user_validation/">
+              <i class="fab fa-google"></i>
+              Sign In with Google
+            </a>
+          </button>
+        </div>
       </form>
     </div>
   </div>

@@ -75,6 +75,11 @@ class User(AbstractUser):
         # delete itself
         super().delete(*args, **kwargs)
 
+    def get_age(self):
+        difference = date.today() - self.info_birthday
+        # Check if the difference is equal to or greater than 18 years(including leap)
+        return int(round(difference.days / 365.2425, 0))
+
     def is_18_years(self) -> bool:
         """function the check if a user is older than 18 years"""
         difference = date.today() - self.info_birthday
@@ -88,15 +93,16 @@ class User(AbstractUser):
         """Function to represent the model as a json dictionary
         !Important: update if changes on the model are made!"""
         return {
-            "pk": self.pk,
             "username": self.username,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
+            "fullname": self.get_full_name(),
             "email": self.email,
-            "info_birthday": self.info_birthday,
-            "last_login": self.last_login,
-            "date_joined": self.date_joined,
-            "is_active": self.is_active,
+            "about": self.info_about,
+            "age": self.get_age(),
+            "city": self.location_city,
+            "instagram": self.social_instagram,
+            "facebook": self.social_facebook,
+            "twitter": self.social_twitter,
+            "spotify": self.social_spotify,
         }
 
 
@@ -111,7 +117,8 @@ class UserProfilePicture(models.Model):
     def delete(self, *args, **kwargs):
         """Function to delete a UserProfilePicture
         delete all pictures form the cloud as well!"""
-        uploader.destroy(self.profile_picture.public_id)
+        if self.profile_picture.public_id:
+            uploader.destroy(self.profile_picture.public_id)
         super().delete(*args, **kwargs)
 
     def __str__(self) -> str:
@@ -231,7 +238,9 @@ class SockProfilePicture(models.Model):
     def delete(self, *args, **kwargs):
         """Function to delete a UserProfilePicture
         delete all pictures form the cloud as well!"""
-        uploader.destroy(self.profile_picture.public_id)
+        if self.profile_picture.public_id:
+            uploader.destroy(self.profile_picture.public_id)
+
         super().delete(*args, **kwargs)
 
 

@@ -129,27 +129,32 @@ def user_profile_picture(request):
         profile_picture_query_set = [""]
 
     if request.method == "POST":
-        form_user_profile_picture = UserProfilePictureForm(
-            request.POST,
-            request.FILES,
-            initial={"user": user_to_update},
-        )
+        if request.POST.get("method") == "add":
+            form_user_profile_picture = UserProfilePictureForm(
+                request.POST,
+                request.FILES,
+                initial={"user": user_to_update},
+            )
 
-        if form_user_profile_picture.is_valid():
-            # create a profile_picture object
-            new_profile_picture = form_user_profile_picture.save(commit=False)
-            # set one to many field [user] to current user
-            new_profile_picture.user = user_to_update
-            # store the picture to the database
-            new_profile_picture.save()
-            # redirect to user profile details page
-            return redirect(reverse("app_users:user-profile-details"))
-
+            if form_user_profile_picture.is_valid():
+                # create a profile_picture object
+                new_profile_picture = form_user_profile_picture.save(commit=False)
+                # set one to many field [user] to current user
+                new_profile_picture.user = user_to_update
+                # store the picture to the database
+                new_profile_picture.save()
+                # redirect to user profile details page
+                return redirect(reverse("app_users:user-profile-picture"))
+        elif request.POST.get("method") == "delete":
+            picture_pk = request.POST.get("picture_pk", None)
+            if picture_pk:
+                UserProfilePicture_obj = UserProfilePicture.objects.get(pk=picture_pk)
+                UserProfilePicture_obj.delete()
+                return redirect(reverse("app_users:user-profile-picture"))
     else:
         form_user_profile_picture = UserProfilePictureForm(
             initial={
                 "user": user_to_update,
-                "profile_picture_query_set": profile_picture_query_set,
             },
         )
 
