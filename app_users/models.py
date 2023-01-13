@@ -228,6 +228,12 @@ class SockProfilePicture(models.Model):
     def __str__(self) -> str:
         return f"<SockProfilePicture from {self.sock}>"
 
+    def delete(self, *args, **kwargs):
+        """Function to delete a UserProfilePicture
+        delete all pictures form the cloud as well!"""
+        uploader.destroy(self.profile_picture.public_id)
+        super().delete(*args, **kwargs)
+
 
 class SockLike(models.Model):
     # Sock.me.sock.pk = Sock.pk  | sock himself
