@@ -11,16 +11,14 @@
             <form method="post" action="">
                 {% csrf_token %}
                 {{ form_user_profile.as_p }}
-                <button class="btn btn-signup right" type="submit">Store profile</button>
+                <button class="btn" type="submit">Store profile</button>
             </form>
         </div>
-        {% if user.is_18_years %}
         <div class="col-md-8 mt-3 offset-md-2">
             <form method="get" action="/">
-                <button class="btn btn-signup right" type="submit">cancel</button>
+                <button class="btn" type="submit">Cancel</button>
             </form>
         </div>
-        {% endif %}
     </div>
 </div>
 {% endblock %}
