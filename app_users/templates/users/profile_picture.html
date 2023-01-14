@@ -1,4 +1,4 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="container">
@@ -15,13 +15,13 @@
             <div class="card text-center">
                 <img src="{{picture.profile_picture.url}}" alt="" class="card-img-top">
                 <div class="card-body">
-                <form method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="method" value="delete">
-                    <input type="hidden" name="picture_pk" value="{{picture.pk}}">
-                    <button class="btn card-btn">Delete</button>
-                </form>
-            </div>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="method" value="delete">
+                        <input type="hidden" name="picture_pk" value="{{picture.pk}}">
+                        <button class="btn card-btn">Delete</button>
+                    </form>
+                </div>
             </div>
         </div>
         {% endif %}
@@ -38,7 +38,7 @@
             </form>
         </div>
         <div class="col-md-12 mt-3">
-            <a href="{% url 'app_users:user-profile-details' %}" class="btn">Cancel</a>
+            <a href="{% url 'app_users:user-profile-details' %}" class="btn">Done</a>
         </div>
     </div>
 </div>
