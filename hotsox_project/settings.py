@@ -88,6 +88,8 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+LOGIN_URL = "/user/login/"
+LOGOUT_URL = "/user/login/"
 
 
 # register the hotsox_user as user AllAuth model!

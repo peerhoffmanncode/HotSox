@@ -5,137 +5,118 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 
+from django.views.generic import TemplateView, ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from .models import User, UserProfilePicture
 from .forms import UserSignUpForm, UserProfileForm, UserProfilePictureForm
 
 
-def user_signup(request):
+class UserSignUp(TemplateView):
     """View to sign up a new user.
     We will gather information from from.UserSignUpForm
     Next store this new user to the db via ORM and then
     login() then newly created user
     """
-    if request.method == "POST":
+
+    model = User
+    template_name = "users/signup.html"
+
+    def post(self, request, *args, **kwargs):
         form_user_profile = UserSignUpForm(request.POST)
 
         if form_user_profile.is_valid():
             # create a user object from the form
             user = form_user_profile.save(commit=False)
-
             # fix the data
             user.first_name = form_user_profile.cleaned_data["first_name"].title()
             user.last_name = form_user_profile.cleaned_data["last_name"].title()
+            # store the user to the database
+            user.save()
+            # log user in via django login
+            login(request, user)
+            # redirect to user profile picture page
+            return redirect(reverse("app_users:user-profile-picture"))
 
-            # check if user is ate least 18 years old
-            if user.is_18_years():
-                # store the user to the database
-                user.save()
-                # log user in via django login
-                login(request, user)
-                # redirect to user profile picture page
-                return redirect(reverse("app_users:user-profile-picture"))
-            else:
-                print(
-                    "sorry, grow up... User:",
-                    user.username,
-                    "you need to be at least 18 years old!",
-                )
-                return render(
-                    request,
-                    "users/signup.html",
-                    {
-                        "form_user_profile": form_user_profile,
-                    },
-                )
-    else:
+    def get(self, request, *args, **kwargs):
         form_user_profile = UserSignUpForm()
 
-    # show user signup page
-    return render(
-        request,
-        "users/signup.html",
-        {
-            "form_user_profile": form_user_profile,
-        },
-    )
+        # show user signup page
+        return render(
+            request,
+            "users/signup.html",
+            {
+                "form_user_profile": form_user_profile,
+            },
+        )
 
 
-@login_required(login_url="/user/login")
-def user_profile_details(request):
-    """View to show the details new user."""
+class UserProfileDetails(LoginRequiredMixin, TemplateView):
+    """View to show a user's details."""
 
-    user_to_update = get_object_or_404(User, pk=request.user.pk)
-    return render(
-        request,
-        "users/profile_details.html",
-        {"user": user_to_update},
-    )
+    model = User
+    template_name = "users/profile_details.html"
 
 
-@login_required(login_url="/user/login")
-def user_profile_update(request):
+class UserProfileUpdate(LoginRequiredMixin, TemplateView):
     """View to edit a new user.
     We will gather information from from.UserSignUpForm
     Next store this new user to the db via ORM and then
     Authenticate() then user
     """
 
-    user_to_update = get_object_or_404(User, pk=request.user.pk)
+    model = User
+    template_name = "users/profile_update.html"
 
-    if request.method == "POST":
+    def post(self, request, *args, **kwargs):
+        user_to_update = get_object_or_404(User, pk=request.user.pk)
         form_user_profile = UserProfileForm(request.POST, instance=user_to_update)
 
         if form_user_profile.is_valid():
-            # check if user is >18 years old
+            # store the user to the database
+            user_to_update = form_user_profile.save()
+            # log user in via django login
+            login(request, user_to_update)
+            # redirect to user profile details page
+            return redirect(reverse("app_users:user-profile-details"))
 
-            if user_to_update.is_18_years():
-                # store the user to the database
-                user_to_update = form_user_profile.save()
-                # log user in via django login
-                login(request, user_to_update)
-                # redirect to user profile details page
-                return redirect(reverse("app_users:user-profile-details"))
-            else:
-                print(
-                    "sorry, grow up... User:",
-                    user_to_update.username,
-                    "you need to be at least 18 years old!",
-                )
-                return redirect(reverse("app_users:user-profile-update"))
-
-    else:
+    def get(self, request, *args, **kwargs):
+        user_to_update = get_object_or_404(User, pk=request.user.pk)
         form_user_profile = UserProfileForm(instance=user_to_update)
 
-    # show user profile update page
-    return render(
-        request,
-        "users/profile_update.html",
-        {
-            "form_user_profile": form_user_profile,
-        },
-    )
+        # show user profile update page
+        return render(
+            request,
+            "users/profile_update.html",
+            {
+                "form_user_profile": form_user_profile,
+            },
+        )
 
 
-@login_required(login_url="/user/login")
-def user_profile_picture(request):
+class UserProfilePictureUpdate(LoginRequiredMixin, TemplateView):
     """View to edit/add a new profile picture to a user."""
-    # get current user
-    user_to_update = get_object_or_404(User, pk=request.user.pk)
-    # get all profile pictures from current user
-    profile_picture_query_set = user_to_update.profile_picture.all()
 
-    # check if profile_picture_query_set is not True
-    if not profile_picture_query_set:
-        profile_picture_query_set = [""]
+    model = User
+    template_name = "users/profile_update.html"
 
-    if request.method == "POST":
+    def post(self, request, *args, **kwargs):
+        # get current user
+        user_to_update = get_object_or_404(User, pk=request.user.pk)
+        # get all profile pictures from current user
+        profile_picture_query_set = user_to_update.profile_picture.all()
+
+        # check if profile_picture_query_set is not True
+        if not profile_picture_query_set:
+            profile_picture_query_set = [""]
+
         if request.POST.get("method") == "add":
+            # create form
             form_user_profile_picture = UserProfilePictureForm(
                 request.POST,
                 request.FILES,
                 initial={"user": user_to_update},
             )
-
             if form_user_profile_picture.is_valid():
                 # create a profile_picture object
                 new_profile_picture = form_user_profile_picture.save(commit=False)
@@ -145,28 +126,35 @@ def user_profile_picture(request):
                 new_profile_picture.save()
                 # redirect to user profile details page
                 return redirect(reverse("app_users:user-profile-picture"))
+
         elif request.POST.get("method") == "delete":
             picture_pk = request.POST.get("picture_pk", None)
             if picture_pk:
                 UserProfilePicture_obj = UserProfilePicture.objects.get(pk=picture_pk)
                 UserProfilePicture_obj.delete()
                 return redirect(reverse("app_users:user-profile-picture"))
-    else:
+
+    def get(self, request, *args, **kwargs):
+        # get current user
+        user_to_update = get_object_or_404(User, pk=request.user.pk)
+        # get all profile pictures from current user
+        profile_picture_query_set = user_to_update.profile_picture.all()
+        # create form
         form_user_profile_picture = UserProfilePictureForm(
             initial={
                 "user": user_to_update,
             },
         )
 
-    # show user profile picture page
-    return render(
-        request,
-        "users/profile_picture.html",
-        {
-            "profile_picture_query_set": profile_picture_query_set,
-            "form_user_profile_picture": form_user_profile_picture,
-        },
-    )
+        # show user profile picture page
+        return render(
+            request,
+            "users/profile_picture.html",
+            {
+                "profile_picture_query_set": profile_picture_query_set,
+                "form_user_profile_picture": form_user_profile_picture,
+            },
+        )
 
 
 @login_required(login_url="/user/login")

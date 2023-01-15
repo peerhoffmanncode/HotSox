@@ -18,6 +18,15 @@ class Test(TestCase):
             email="test@mail.com",
             password="str0ng_pwd!",
             info_birthday=date(2000, 1, 1),
+            info_about="I like to collect rubber ducks",
+            info_gender="male",
+            location_city="Rainbow City",
+            location_latitude=0,
+            location_longitude=0,
+            social_instagram="https://www.instagram.com/quirk_unicorn/",
+            social_facebook="https://www.facebook.com/quirk_unicorn/",
+            social_twitter="https://www.twitter.com/quirk_unicorn/",
+            social_spotify="https://www.spotify.com/quirk_unicorn/",
         )
         response = self.client.get("/prove-of-concept/")
         self.assertEqual(response.status_code, 200)
@@ -35,14 +44,20 @@ class Test(TestCase):
             email="test@mail.com",
             password="str0ng_pwd!",
             info_birthday=date(2000, 1, 1),
+            info_about="I like to collect rubber ducks",
+            info_gender="male",
+            location_city="Rainbow City",
+            location_latitude=0,
+            location_longitude=0,
+            social_instagram="https://www.instagram.com/quirk_unicorn/",
+            social_facebook="https://www.facebook.com/quirk_unicorn/",
+            social_twitter="https://www.twitter.com/quirk_unicorn/",
+            social_spotify="https://www.spotify.com/quirk_unicorn/",
         )
         self.client.force_login(user=user)
         response = self.client.get("/prove-of-concept/")
-        # request = response.request
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.content,
             b'<h1>Seems like you are logged in! Yeay! </h1><p>Nice job Test!</p><br><a href="/">return to home</a>',
         )
-
-    # # login(user)
