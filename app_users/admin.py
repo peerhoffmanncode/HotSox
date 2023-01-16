@@ -25,7 +25,27 @@ class UserMatchInLine(admin.TabularInline):
 
 
 class UserAdmin(admin.ModelAdmin):
-    fields = ["username", "first_name", "last_name", "email"]
+    fields = [
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+        "info_about",
+        "info_birthday",
+        "info_gender",
+        "location_city",
+        "location_latitude",
+        "location_longitude",
+        "social_instagram",
+        "social_facebook",
+        "social_twitter",
+        "social_spotify",
+        "date_joined",
+        "last_login",
+        "is_staff",
+        "is_active",
+        "is_superuser",
+    ]
     inlines = [UserProfilePictureInLine, UserMatchInLine]
 
 
