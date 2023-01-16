@@ -1,4 +1,4 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="container">
@@ -14,7 +14,7 @@
                 {{ form_user_profile|crispy }}
                 <button class="btn" type="submit">Store profile</button>
             </form>
-            <form method="get" action="/">
+            <form method="get" action="{% url 'app_users:user-profile-details' %}">
                 <button class="btn" type="submit">Cancel</button>
             </form>
         </div>

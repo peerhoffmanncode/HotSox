@@ -53,10 +53,17 @@
 }
 
 .circle-img {
-    /* background: url(https://res.cloudinary.com/ddvfqbtpr/image/upload/v1673640500/oud1slcn7fczdlwezvbj.png) no-repeat center center; */
-    width: 200px;
-    height: 200px;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     overflow: hidden;
-    /* justify-content: center; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circle-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }

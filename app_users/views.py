@@ -113,8 +113,16 @@ class UserProfilePictureUpdate(LoginRequiredMixin, TemplateView):
         if not profile_picture_query_set:
             profile_picture_query_set = [""]
 
-        if request.POST.get("method") == "add":
-            # create form
+        if request.POST.get("method") == "delete":
+            # delete the selected picture!
+            picture_pk = request.POST.get("picture_pk", None)
+            if picture_pk:
+                UserProfilePicture_obj = UserProfilePicture.objects.get(pk=picture_pk)
+                UserProfilePicture_obj.delete()
+                return redirect(reverse("app_users:user-profile-picture"))
+
+        elif request.POST.get("method") == "add":
+            # add the selected picture!
             form_user_profile_picture = UserProfilePictureForm(
                 request.POST,
                 request.FILES,
@@ -131,13 +139,6 @@ class UserProfilePictureUpdate(LoginRequiredMixin, TemplateView):
                 return redirect(reverse("app_users:user-profile-picture"))
             # in case of invalid go here
             return redirect(reverse("app_users:user-profile-picture"))
-
-        elif request.POST.get("method") == "delete":
-            picture_pk = request.POST.get("picture_pk", None)
-            if picture_pk:
-                UserProfilePicture_obj = UserProfilePicture.objects.get(pk=picture_pk)
-                UserProfilePicture_obj.delete()
-                return redirect(reverse("app_users:user-profile-picture"))
 
     def get(self, request, *args, **kwargs):
         # get current user
