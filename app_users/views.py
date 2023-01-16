@@ -36,6 +36,8 @@ class UserSignUp(TemplateView):
             login(request, user)
             # redirect to user profile picture page
             return redirect(reverse("app_users:user-profile-picture"))
+        # in case of invalid go here
+        return redirect(reverse("app_users:user-signup"))
 
     def get(self, request, *args, **kwargs):
         form_user_profile = UserSignUpForm()
@@ -78,6 +80,8 @@ class UserProfileUpdate(LoginRequiredMixin, TemplateView):
             login(request, user_to_update)
             # redirect to user profile details page
             return redirect(reverse("app_users:user-profile-details"))
+        # in case of invalid go here
+        return redirect(reverse("app_users:user-profile-update"))
 
     def get(self, request, *args, **kwargs):
         user_to_update = get_object_or_404(User, pk=request.user.pk)
@@ -125,6 +129,8 @@ class UserProfilePictureUpdate(LoginRequiredMixin, TemplateView):
                 new_profile_picture.save()
                 # redirect to user profile details page
                 return redirect(reverse("app_users:user-profile-picture"))
+            # in case of invalid go here
+            return redirect(reverse("app_users:user-profile-picture"))
 
         elif request.POST.get("method") == "delete":
             picture_pk = request.POST.get("picture_pk", None)
