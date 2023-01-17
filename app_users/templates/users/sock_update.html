@@ -1,0 +1,23 @@
+{% extends "user_base.html" %}
+{% block title %} {{ user.username.title }}'s sock - {{ sock.info_name }}' {% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-2">
+            <h3>Edit {{sock.info_name.title}}'s profile</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-2">
+            <form method="post" action="">
+                {% csrf_token %}
+                {{ form_sock_profile|crispy }}
+                <button class="btn" type="submit">Store profile</button>
+            </form>
+            <form method="get" action="{% url 'app_users:sock-profile-details' %}">
+                <button class="btn" type="submit">Cancel</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
