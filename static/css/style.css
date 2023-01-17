@@ -67,3 +67,27 @@
     height: 100%;
     object-fit: cover;
 }
+
+.prev-btn {
+    height: 100%;
+}
+
+.nxt-btn {
+    height: 100%;
+}
+
+.prev-arrow {
+    background: url("../left_arrow.jpg") no-repeat center;
+    background-size: 50% auto;
+    /* margin-top: 10rem; */
+    height: 100%;
+}
+
+.nxt-arrow {
+    background: url("../right_arrow.jpg") no-repeat center;
+    background-size: 50% auto;
+    /* background-attachment: fixed; */
+    /* margin-top: 10rem; */
+    height: 100%;
+}
+
