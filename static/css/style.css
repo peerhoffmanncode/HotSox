@@ -53,11 +53,19 @@
 }
 
 .circle-img {
-    width: 200px;
-    height: 200px;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     overflow: hidden;
-    /* justify-content: center; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circle-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .prev-btn {
@@ -81,5 +89,5 @@
     /* background-attachment: fixed; */
     /* margin-top: 10rem; */
     height: 100%;
-
 }
+
