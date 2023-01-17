@@ -1,6 +1,7 @@
 # HotSox
 
 ## Repository
+
 https://github.com/Python-E03/hot-sox-teamrando
 
 ## Objective
@@ -12,10 +13,12 @@ https://github.com/Python-E03/hot-sox-teamrando
 ### Future Features
 
 ## Technologies Used
+
 We are based on Django 3.2 (4.1.4), Postgres and Docker.
 We use Cloudinary as CDN host
 
 ## Testing
+
 We rely on Unittesting in Django. Tests are done for methods of the ORM models, and business logic (views)
 
 ## Bugs
@@ -25,9 +28,11 @@ We rely on Unittesting in Django. Tests are done for methods of the ORM models, 
 ### Remaining Bugs
 
 ## Deployment
-Possible deployment platforms could be heroki, goodle cloud or aws.
+
+Possible deployment platforms could be heroku, google cloud or aws.
 
 ## Credits
+
 Python:
 https://www.python.org
 
