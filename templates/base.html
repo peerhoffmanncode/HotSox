@@ -23,7 +23,7 @@
 
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav mr-auto">
-                <li class="active nav-item mr-2"><a class="nav-link" href="{% url 'app_home:index' %}">Home</a></li>
+                <li class="active nav-item mr-2"><a class="nav-link" href="{% url 'app_home:swipe' %}">Swipe!</a></li>
                 <li class="nav-item mr-2"><a class="nav-link" href="{% url 'app_home:about' %}">About</a></li>
                 {% if user.is_authenticated %}
                 <li class="nav-item mr-2 d-block d-sm-none"><a class="nav-link" href="/user/logout/">Sign Out</a></li>
@@ -39,8 +39,8 @@
             {% if user.is_authenticated %}
             <p class="navbar-text my-auto mr-2"><i>{{user.username.title}} is Sockin'n'Rollin'!</i></p>
             <a href="#" data-toggle="dropdown" class="dropdown-toggle" style="text-decoration: none;">
-                <img style="width: 60px; border-radius: 50%;" src="{{ user.profile_picture.values.0.profile_picture.url }}"><b
-                    class="caret"></b>
+                <img style="width: 60px; border-radius: 50%;"
+                    src="{{ user.profile_picture.values.0.profile_picture.url }}"><b class="caret"></b>
             </a>
             <ul class="dropdown-menu dropdown-menu-right" style="font-size:120%;">
                 <li><a href="{% url 'app_users:user-profile-details' %}">Profile</a></li>
