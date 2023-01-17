@@ -19,9 +19,9 @@
 
     <div class="row">
         <div class="col-md">
-            {% for k,v in user.to_json.items %}
-            {% if v %}
-                <p><strong>{{ k.title }}:</strong> {{ v }}</p>
+            {% for key, value in user.to_json.items %}
+            {% if value %}
+                <p><strong>{{ key.title }}:</strong> {{ value }}</p>
             {% endif %}
             {% endfor %}
         </div>

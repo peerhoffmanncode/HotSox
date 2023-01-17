@@ -1,0 +1,15 @@
+{% extends "user_base.html" %}
+{% block title %} {{ user.username.title }}'s socks' {% endblock %}
+{% block content %}
+    List of all socks goes here
+
+    <!-- for loop for sock iteration -->
+    <!-- user.get_socks -->
+    {% for sock in user.getsocks %}
+        <a href="sock/{{pk}}/details"><img src="sock.get_picture_urls.0" alt=""></a>
+        <!-- sock.info_name -->
+        <!-- sends id of SOCK to backend -->
+
+    {% endfor %}
+
+{% endblock %}

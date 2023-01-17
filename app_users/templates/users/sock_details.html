@@ -1,0 +1,16 @@
+{% extends "user_base.html" %}
+{% block title %} {{ user.username.title }}'s sock - {{ sock.info_name }}' {% endblock %}
+{% block content %}
+    
+<div class="row">
+    <div class="col-md">
+        {% for key, value in sock.to_json.items %}
+        {% if value %}
+            <p><strong>{{ key.title }}:</strong> {{ value }}</p>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}
