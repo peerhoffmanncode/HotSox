@@ -34,7 +34,26 @@
                 {% csrf_token %}
                 {{ form_user_profile_picture|crispy }}
                 <input type="hidden" name="method" value="add">
-                <button class="btn btn-signup right" type="submit">Save Picture</button>
+                <!--<button class="btn btn-signup right" type="submit">Save Picture</button>-->
+
+                <script>
+                    document.querySelector("#id_profile_picture").addEventListener("change", async function () {
+                        const file = this.files[0];
+                        const formData = new FormData();
+                        formData.append("profile_picture", file);
+                        formData.append("csrfmiddlewaretoken", '{{ csrf_token }}');
+                        formData.append("method", 'add');
+                        await fetch("{% url 'app_users:user-profile-picture' %}", {
+                            method: "POST",
+                            body: formData,
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}',
+                            }
+                        });
+                        window.location.reload();
+                    });
+
+                </script>
             </form>
         </div>
         <div class="col-md-12 mt-3">
