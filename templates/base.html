@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-    <title>HotSox</title>
+    <title>{% block title %} Hotsox {% endblock %}</title>
 </head>
 
 <body>
@@ -56,7 +56,6 @@
             {% endif %}
         </div>
     </nav>
-
     {% block content %}{% endblock %}
 
     <footer></footer>
