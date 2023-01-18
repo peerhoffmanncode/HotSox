@@ -39,8 +39,7 @@
             {% if user.is_authenticated %}
             <p class="navbar-text my-auto mr-2"><i>{{user.username.title}} is Sockin'n'Rollin'!</i></p>
             <a href="#" data-toggle="dropdown" class="dropdown-toggle" style="text-decoration: none;">
-                <img style="width: 60px; border-radius: 50%;"
-                    src="{{ user.profile_picture.values.0.profile_picture.url }}"><b class="caret"></b>
+                <img style="width: 60px; border-radius: 50%;" src="{{ user.get_picture_urls.0 }}"><b class="caret"></b>
             </a>
             <ul class="dropdown-menu dropdown-menu-right" style="font-size:120%;">
                 <li><a href="{% url 'app_users:user-profile-details' %}">Profile</a></li>

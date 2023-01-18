@@ -284,7 +284,6 @@ class SockProfilePictureUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView)
                 request.FILES,
                 initial={"sock": sock_to_update},
             )
-            breakpoint()
             if form_sock_profile_picture.is_valid():
                 # create a profile_picture object
                 new_profile_picture = form_sock_profile_picture.save(commit=False)
