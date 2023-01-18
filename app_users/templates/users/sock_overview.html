@@ -1,15 +1,19 @@
 {% extends "user_base.html" %}
 {% block title %} {{ user.username.title }}'s socks' {% endblock %}
-{% block content %}
-    List of all socks goes here
+{% block user_content %}
 
-    <!-- for loop for sock iteration -->
-    <!-- user.get_socks -->
-    {% for sock in user.getsocks %}
-        <a href="sock/{{pk}}/details"><img src="sock.get_picture_urls.0" alt=""></a>
-        <!-- sock.info_name -->
-        <!-- sends id of SOCK to backend -->
-
+<div class="row">
+    {% for sock in user.get_socks %}
+    {% if sock %}
+    <div class="col-3">
+        <div class="card text-center">
+            <a href="{% url 'app_users:sock-details' sock.pk %}">
+                <img src="{{sock.get_picture_urls.0}}" alt="" class="card-img-top">
+                <p>{{sock.info_name}}</p>
+            </a>
+        </div>
+    </div>
+    {% endif %}
     {% endfor %}
-
+</div>
 {% endblock %}

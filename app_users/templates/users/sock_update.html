@@ -1,6 +1,7 @@
 {% extends "user_base.html" %}
 {% block title %} {{ user.username.title }}'s sock - {{ sock.info_name }}' {% endblock %}
-{% block content %}
+{% load crispy_forms_tags %}
+{% block user_content %}
 <div class="container">
     <div class="row">
         <div class="col-md-8 mt-3 offset-md-2">
@@ -14,9 +15,11 @@
                 {{ form_sock_profile|crispy }}
                 <button class="btn" type="submit">Store profile</button>
             </form>
-            <form method="get" action="{% url 'app_users:sock-profile-details' %}">
+            <!--
+            <form method="get" action="{% url 'app_users:sock-details' sock.pk %}">
                 <button class="btn" type="submit">Cancel</button>
             </form>
+            -->
         </div>
     </div>
 </div>

@@ -110,15 +110,21 @@ class UserProfilePictureForm(ModelForm):
         exclude = ["user"]
 
 
-class SockForm(ModelForm):
+class SockProfileForm(ModelForm):
     class Meta:
         model = Sock
         fields = "__all__"
         exclude = ["user", "info_joining_date"]
 
+        widgets = {
+            "info_separation_date": DateInput(
+                attrs={"type": "date", "format": "%d-%m-%Y"}
+            ),
+        }
+
 
 class SockProfilePictureForm(ModelForm):
     class Meta:
-        model = UserProfilePicture
+        model = SockProfilePicture
         fields = "__all__"
         exclude = ["sock"]

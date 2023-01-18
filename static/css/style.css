@@ -2,7 +2,7 @@
 .btn {
     display: block;
     width: 115px;
-    height: 25px;
+    height: 32px;
     background: #4E9CAF;
     padding: 10px;
     text-align: center;
@@ -90,4 +90,3 @@
     /* margin-top: 10rem; */
     height: 100%;
 }
-
