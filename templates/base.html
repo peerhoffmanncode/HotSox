@@ -8,12 +8,13 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-    <title>HotSox</title>
+    <title>{% block title %} Hotsox {% endblock %}</title>
 </head>
+
 <body>
     <!--Nav-->
     <nav class="navbar navbar-light navbar-expand-sm bg-light">
-        <a href="/" class="navbar-brand">
+        <a href="{% url 'app_home:index' %}" class="navbar-brand">
             HotSox</a>
 
         <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
@@ -22,8 +23,8 @@
 
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav mr-auto">
-                <li class="active nav-item mr-2"><a class="nav-link" href="/">Home</a></li>
-                <li class="nav-item mr-2"><a class="nav-link" href="">About</a></li>
+                <li class="active nav-item mr-2"><a class="nav-link" href="{% url 'app_home:swipe' %}">Swipe!</a></li>
+                <li class="nav-item mr-2"><a class="nav-link" href="{% url 'app_home:about' %}">About</a></li>
                 {% if user.is_authenticated %}
                 <li class="nav-item mr-2 d-block d-sm-none"><a class="nav-link" href="/user/logout/">Sign Out</a></li>
                 <li class="nav-item mr-2 d-block d-sm-none"><a class="nav-link"
@@ -37,10 +38,10 @@
         <div class="d-none d-md-block">
             {% if user.is_authenticated %}
             <p class="navbar-text my-auto mr-2"><i>{{user.username.title}} is Sockin'n'Rollin'!</i></p>
-            <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-                <img style="width: 25px;" src="{{ user.profile_picture.values.0.profile_picture.url }}"><b class="caret"></b>
+            <a href="#" data-toggle="dropdown" class="dropdown-toggle" style="text-decoration: none;">
+                <img style="width: 60px; border-radius: 50%;" src="{{ user.get_picture_urls.0 }}"><b class="caret"></b>
             </a>
-            <ul class="dropdown-menu dropdown-menu-right">
+            <ul class="dropdown-menu dropdown-menu-right" style="font-size:120%;">
                 <li><a href="{% url 'app_users:user-profile-details' %}">Profile</a></li>
                 <li><a href="/user/logout/">Log out</a></li>
             </ul>
@@ -50,11 +51,10 @@
             <ul class="dropdown-menu dropdown-menu-right">
                 <li><a href="/user/login/">Sign In</a></li>
                 <li><a href="/user/signup/">Sign Up</a></li>
-        </ul>
+            </ul>
             {% endif %}
         </div>
     </nav>
-
     {% block content %}{% endblock %}
 
     <footer></footer>

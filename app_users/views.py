@@ -1,141 +1,147 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.contrib.auth import login
 
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, logout, authenticate
-from django.contrib import messages
+from django.views.generic import TemplateView, DetailView
 
-from .models import User, UserProfilePicture
-from .forms import UserSignUpForm, UserProfileForm, UserProfilePictureForm
+from .validator import HotSoxLogInAndValidationCheckMixin
+from .models import User, UserProfilePicture, Sock, SockProfilePicture
+from .forms import (
+    UserSignUpForm,
+    UserProfileForm,
+    UserProfilePictureForm,
+    SockProfileForm,
+    SockProfilePictureForm,
+)
 
 
-def user_signup(request):
+class UserSignUp(TemplateView):
     """View to sign up a new user.
     We will gather information from from.UserSignUpForm
     Next store this new user to the db via ORM and then
     login() then newly created user
     """
-    if request.method == "POST":
+
+    model = User
+    template_name = "users/signup.html"
+
+    def post(self, request, *args, **kwargs):
         form_user_profile = UserSignUpForm(request.POST)
 
         if form_user_profile.is_valid():
             # create a user object from the form
             user = form_user_profile.save(commit=False)
-
             # fix the data
             user.first_name = form_user_profile.cleaned_data["first_name"].title()
             user.last_name = form_user_profile.cleaned_data["last_name"].title()
+            # store the user to the database
+            user.save()
+            # log user in via django login
+            login(request, user)
+            # redirect to user profile picture page
+            return redirect(reverse("app_users:user-profile-picture"))
+        # in case of invalid go here
+        return redirect(reverse("app_users:user-signup"))
 
-            # check if user is ate least 18 years old
-            if user.is_18_years():
-                # store the user to the database
-                user.save()
-                # log user in via django login
-                login(request, user)
-                # redirect to user profile picture page
-                return redirect(reverse("app_users:user-profile-picture"))
-            else:
-                print(
-                    "sorry, grow up... User:",
-                    user.username,
-                    "you need to be at least 18 years old!",
-                )
-                return render(
-                    request,
-                    "users/signup.html",
-                    {
-                        "form_user_profile": form_user_profile,
-                    },
-                )
-    else:
+    def get(self, request, *args, **kwargs):
         form_user_profile = UserSignUpForm()
 
-    # show user signup page
-    return render(
-        request,
-        "users/signup.html",
-        {
-            "form_user_profile": form_user_profile,
-        },
-    )
+        # show user signup page
+        return render(
+            request,
+            "users/signup.html",
+            {
+                "form_user_profile": form_user_profile,
+            },
+        )
 
 
-@login_required(login_url="/user/login")
-def user_profile_details(request):
-    """View to show the details new user."""
+class UserProfileDetails(HotSoxLogInAndValidationCheckMixin, TemplateView):
+    """View to show a user's details."""
 
-    user_to_update = get_object_or_404(User, pk=request.user.pk)
-    return render(
-        request,
-        "users/profile_details.html",
-        {"user": user_to_update},
-    )
+    model = User
+    template_name = "users/profile_details.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["left_arrow_go_to_url"] = ""  # reverse("app_home:index")
+        context["right_arrow_go_to_url"] = reverse("app_users:user-profile-update")
+        return context
 
 
-@login_required(login_url="/user/login")
-def user_profile_update(request):
-    """View to edit a new user.
+class UserProfileUpdate(TemplateView):
+    """View to edit details of a user.
     We will gather information from from.UserSignUpForm
-    Next store this new user to the db via ORM and then
-    Authenticate() then user
+    we  store this user to the db via ORM and try to
+    login() then user!
+    This View is not protected by the LoginMixIn!
+    It needs to be available for users who are not validated!
     """
 
-    user_to_update = get_object_or_404(User, pk=request.user.pk)
+    model = User
+    template_name = "users/profile_update.html"
 
-    if request.method == "POST":
+    def post(self, request, *args, **kwargs):
+        user_to_update = get_object_or_404(User, pk=request.user.pk)
         form_user_profile = UserProfileForm(request.POST, instance=user_to_update)
 
         if form_user_profile.is_valid():
-            # check if user is >18 years old
+            # store the user to the database
+            user_to_update = form_user_profile.save()
+            # log user in via django login
+            login(request, user_to_update)
+            # redirect to user profile details page
+            return redirect(reverse("app_users:user-profile-details"))
+        # in case of invalid go here
+        return redirect(reverse("app_users:user-profile-update"))
 
-            if user_to_update.is_18_years():
-                # store the user to the database
-                user_to_update = form_user_profile.save()
-                # log user in via django login
-                login(request, user_to_update)
-                # redirect to user profile details page
-                return redirect(reverse("app_users:user-profile-details"))
-            else:
-                print(
-                    "sorry, grow up... User:",
-                    user_to_update.username,
-                    "you need to be at least 18 years old!",
-                )
-                return redirect(reverse("app_users:user-profile-update"))
-
-    else:
+    def get(self, request, *args, **kwargs):
+        user_to_update = get_object_or_404(User, pk=request.user.pk)
         form_user_profile = UserProfileForm(instance=user_to_update)
 
-    # show user profile update page
-    return render(
-        request,
-        "users/profile_update.html",
-        {
-            "form_user_profile": form_user_profile,
-        },
-    )
+        # show user profile update page
+        return render(
+            request,
+            "users/profile_update.html",
+            {
+                "form_user_profile": form_user_profile,
+                "left_arrow_go_to_url": reverse("app_users:user-profile-details"),
+                "right_arrow_go_to_url": reverse("app_users:sock-overview"),
+            },
+        )
 
 
-@login_required(login_url="/user/login")
-def user_profile_picture(request):
+class UserProfilePictureUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView):
     """View to edit/add a new profile picture to a user."""
-    # get current user
-    user_to_update = get_object_or_404(User, pk=request.user.pk)
-    # get all profile pictures from current user
-    profile_picture_query_set = user_to_update.profile_picture.all()
 
-    # check if profile_picture_query_set is not True
-    if not profile_picture_query_set:
-        profile_picture_query_set = [""]
+    model = User
+    template_name = "users/profile_picture.html"
 
-    if request.method == "POST":
-        if request.POST.get("method") == "add":
+    def post(self, request, *args, **kwargs):
+        # get current user
+        user_to_update = get_object_or_404(User, pk=request.user.pk)
+        # get all profile pictures from current user
+        profile_picture_query_set = user_to_update.get_all_pictures()
+
+        # check if profile_picture_query_set is not True
+        if not profile_picture_query_set:
+            profile_picture_query_set = [""]
+
+        if request.POST.get("method") == "delete":
+            # delete the selected picture!
+            picture_pk = request.POST.get("picture_pk", None)
+            if picture_pk:
+                UserProfilePicture_obj = UserProfilePicture.objects.get(pk=picture_pk)
+                UserProfilePicture_obj.delete()
+                return redirect(reverse("app_users:user-profile-picture"))
+
+        elif request.POST.get("method") == "add":
+            # add the selected picture!
             form_user_profile_picture = UserProfilePictureForm(
                 request.POST,
                 request.FILES,
                 initial={"user": user_to_update},
             )
-
             if form_user_profile_picture.is_valid():
                 # create a profile_picture object
                 new_profile_picture = form_user_profile_picture.save(commit=False)
@@ -145,38 +151,174 @@ def user_profile_picture(request):
                 new_profile_picture.save()
                 # redirect to user profile details page
                 return redirect(reverse("app_users:user-profile-picture"))
-        elif request.POST.get("method") == "delete":
-            picture_pk = request.POST.get("picture_pk", None)
-            if picture_pk:
-                UserProfilePicture_obj = UserProfilePicture.objects.get(pk=picture_pk)
-                UserProfilePicture_obj.delete()
-                return redirect(reverse("app_users:user-profile-picture"))
-    else:
+            # in case of invalid go here
+            return redirect(reverse("app_users:user-profile-picture"))
+
+    def get(self, request, *args, **kwargs):
+        # get current user
+        user_to_update = get_object_or_404(User, pk=request.user.pk)
+        # get all profile pictures from current user
+        profile_picture_query_set = user_to_update.get_all_pictures()
+        # create form
         form_user_profile_picture = UserProfilePictureForm(
             initial={
                 "user": user_to_update,
             },
         )
 
-    # show user profile picture page
-    return render(
-        request,
-        "users/profile_picture.html",
-        {
-            "profile_picture_query_set": profile_picture_query_set,
-            "form_user_profile_picture": form_user_profile_picture,
-        },
-    )
+        # show user profile picture page
+        return render(
+            request,
+            "users/profile_picture.html",
+            {
+                "profile_picture_query_set": profile_picture_query_set,
+                "form_user_profile_picture": form_user_profile_picture,
+            },
+        )
 
 
-@login_required(login_url="/user/login")
-def user_validate(request):
-    """View to validate a new user.
-    if user information are missing, redirect to profile page.
+class SockProfileOverview(HotSoxLogInAndValidationCheckMixin, TemplateView):
+    """View to show all socks's of a User."""
+
+    model = User
+    template_name = "users/sock_overview.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["left_arrow_go_to_url"] = reverse("app_users:user-profile-update")
+        context["right_arrow_go_to_url"] = ""
+        return context
+
+
+class SockProfileDetails(HotSoxLogInAndValidationCheckMixin, DetailView):
+    """View to show a socks's details."""
+
+    model = Sock
+    template_name = "users/sock_details.html"
+
+    def get_context_data(self, **kwargs):
+        print(kwargs["object"])
+        context = super().get_context_data(**kwargs)
+        context["left_arrow_go_to_url"] = reverse("app_users:sock-overview")
+        context["right_arrow_go_to_url"] = reverse(
+            "app_users:sock-update", kwargs={"pk": kwargs["object"].pk}
+        )
+        return context
+
+
+class SockProfileUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView):
+    """View to edit a sock.
+    We will gather information from from.SockForm
+    Next store this sock to the db via ORM
     """
-    current_user = get_object_or_404(User, pk=request.user.pk)
 
-    if not current_user.is_18_years():
-        return redirect(reverse("app_users:user-profile-update"))
-    else:
-        return redirect(reverse("app_home:index"))
+    model = Sock
+    template_name = "users/sock_update.html"
+
+    def post(self, request, pk):
+        sock_to_update = get_object_or_404(Sock, pk=pk)
+        form_sock_profile = SockProfileForm(request.POST, instance=sock_to_update)
+
+        if form_sock_profile.is_valid():
+            # store the sock to the database
+            sock_to_update = form_sock_profile.save()
+            # redirect to sock profile details page
+            return redirect(
+                reverse("app_users:sock-details", kwargs={"pk": sock_to_update.pk})
+            )
+        # in case of invalid go here
+        return redirect(
+            reverse("app_users:sock-update", kwargs={"pk": sock_to_update.pk})
+        )
+
+    def get(self, request, pk):
+
+        sock_to_update = get_object_or_404(Sock, pk=pk)
+        form_sock_profile = SockProfileForm(instance=sock_to_update)
+
+        # show sock profile update page
+        return render(
+            request,
+            "users/sock_update.html",
+            {
+                "form_sock_profile": form_sock_profile,
+                "sock": sock_to_update,
+                "left_arrow_go_to_url": reverse(
+                    "app_users:sock-details", kwargs={"pk": sock_to_update.pk}
+                ),
+                "right_arrow_go_to_url": "",
+            },
+        )
+
+
+class SockProfilePictureUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView):
+    """View to edit/add a new profile picture to a user."""
+
+    model = Sock
+    template_name = "users/sock_picture.html"
+
+    def post(self, request, pk):
+        # get current user
+        sock_to_update = get_object_or_404(Sock, pk=pk)
+        # get all profile pictures from current user
+        profile_picture_query_set = sock_to_update.get_all_pictures()
+
+        # check if profile_picture_query_set is not True
+        if not profile_picture_query_set:
+            profile_picture_query_set = [""]
+
+        if request.POST.get("method") == "delete":
+            # delete the selected picture!
+            picture_pk = request.POST.get("picture_pk", None)
+            if picture_pk:
+                SockProfilePicture_obj = SockProfilePicture.objects.get(pk=picture_pk)
+                SockProfilePicture_obj.delete()
+                return redirect(
+                    reverse("app_users:sock-picture", kwargs={"pk": sock_to_update.pk})
+                )
+
+        elif request.POST.get("method") == "add":
+            # add the selected picture!
+            form_sock_profile_picture = SockProfilePictureForm(
+                request.POST,
+                request.FILES,
+                initial={"sock": sock_to_update},
+            )
+            if form_sock_profile_picture.is_valid():
+                # create a profile_picture object
+                new_profile_picture = form_sock_profile_picture.save(commit=False)
+                # set one to many field [user] to current user
+                new_profile_picture.sock = sock_to_update
+                # store the picture to the database
+                new_profile_picture.save()
+                # redirect to user profile details page
+                return redirect(
+                    reverse("app_users:sock-picture", kwargs={"pk": sock_to_update.pk})
+                )
+            # in case of invalid go here
+            return redirect(
+                reverse("app_users:sock-picture", kwargs={"pk": sock_to_update.pk})
+            )
+
+    def get(self, request, pk):
+        # get current user
+        sock_to_update = get_object_or_404(Sock, pk=pk)
+        # get all profile pictures from current user
+        profile_picture_query_set = sock_to_update.get_all_pictures()
+        # create form
+        form_sock_profile_picture = SockProfilePictureForm(
+            initial={
+                "sock": sock_to_update,
+            },
+        )
+
+        # show user profile picture page
+        return render(
+            request,
+            "users/sock_picture.html",
+            {
+                "profile_picture_query_set": profile_picture_query_set,
+                "form_sock_profile_picture": form_sock_profile_picture,
+                "sock": sock_to_update,
+            },
+        )

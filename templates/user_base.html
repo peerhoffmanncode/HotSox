@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-md-2 ">
+            {% if left_arrow_go_to_url %}
+            <a href="{{ left_arrow_go_to_url }}">
+                <div class="prev-btn prev-arrow"></div>
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="col-xl-6 ">
+            {% block user_content %}
+            {% endblock %}
+        </div>
+
+        <div class="col-md-2">
+            {% if right_arrow_go_to_url %}
+            <a href="{{ right_arrow_go_to_url }}">
+                <div class="nxt-btn nxt-arrow"></div>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

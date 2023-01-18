@@ -1,22 +1,22 @@
 {% extends "user_base.html" %}
+{% block title %} {{ user.username.title }}'s sock - {{ sock.info_name }}' {% endblock %}
 {% load crispy_forms_tags %}
-{% block title %} Update Profile {% endblock %}
 {% block user_content %}
 <div class="container">
     <div class="row">
         <div class="col-md-8 mt-3 offset-md-2">
-            <h3>Revise/ edit {{user.username.title}}'s profile</h3>
+            <h3>Edit {{sock.info_name.title}}'s profile</h3>
         </div>
     </div>
     <div class="row">
         <div class="col-md-8 mt-3 offset-md-2">
             <form method="post" action="">
                 {% csrf_token %}
-                {{ form_user_profile|crispy }}
+                {{ form_sock_profile|crispy }}
                 <button class="btn" type="submit">Store profile</button>
             </form>
             <!--
-            <form method="get" action="{% url 'app_users:user-profile-details' %}">
+            <form method="get" action="{% url 'app_users:sock-details' sock.pk %}">
                 <button class="btn" type="submit">Cancel</button>
             </form>
             -->

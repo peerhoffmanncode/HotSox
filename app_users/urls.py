@@ -3,13 +3,36 @@ from . import views
 
 app_name = "app_users"
 urlpatterns = [
-    path("signup/", views.user_signup, name="user-signup"),
-    path("check_user_validation/", views.user_validate, name="user-validate"),
-    path("profile/details", views.user_profile_details, name="user-profile-details"),
-    path("profile/update", views.user_profile_update, name="user-profile-update"),
-    path("profile/picture", views.user_profile_picture, name="user-profile-picture"),
+    path("signup/", views.UserSignUp.as_view(), name="user-signup"),
+    path(
+        "profile/details",
+        views.UserProfileDetails.as_view(),
+        name="user-profile-details",
+    ),
+    path(
+        "profile/update", views.UserProfileUpdate.as_view(), name="user-profile-update"
+    ),
+    path(
+        "profile/picture",
+        views.UserProfilePictureUpdate.as_view(),
+        name="user-profile-picture",
+    ),
     # path("matched/", views.user_matched, name="user-matched"),
-    # path("sock/add/", views., name="sock-add"),
-    # path("sock/profile/", views., name="sock-profile"),
+    path("sock/overview/", views.SockProfileOverview.as_view(), name="sock-overview"),
+    path(
+        "sock/<int:pk>/details/",
+        views.SockProfileDetails.as_view(),
+        name="sock-details",
+    ),
+    path(
+        "sock/<int:pk>/update/",
+        views.SockProfileUpdate.as_view(),
+        name="sock-update",
+    ),
+    path(
+        "sock/<int:pk>/picture/",
+        views.SockProfilePictureUpdate.as_view(),
+        name="sock-picture",
+    ),
     # path("sock/matched/", views., name="sock-matched"),
 ]

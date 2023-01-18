@@ -6,6 +6,7 @@ from django.utils import timezone
 from datetime import date, timedelta
 from cloudinary import uploader
 from cloudinary.models import CloudinaryField
+from django.db.models import Q
 
 # CHOICES FOR USER
 from .models_choices import (
@@ -105,8 +106,51 @@ class User(AbstractUser):
             "spotify": self.social_spotify,
         }
 
+    def get_all_pictures(self):
+        """
+        Function to get all profile pictures as an object list.
+        Returns a queryset
+        """
+        return self.profile_picture.all()
+
+    def get_picture_urls(self):
+        """Function to get all profile pictures urls as a list. Returns a list"""
+        return [
+            profile_picture.profile_picture.url
+            for profile_picture in self.profile_picture.all()
+        ]
+
+    def get_matches(self):
+        """
+        Function to get all user matches.
+        Retrieves all UserMatch objects associated with the User instance.
+        Returns a queryset
+        """
+        matches = UserMatch.objects.filter(Q(user=self) | Q(other=self))
+        return matches
+
+    def get_socks(self):
+        """Retrieves all Sock objects related to the User and returns a queryset"""
+        return self.sock.all()
+
+    def get_mail_messages(self):
+        """Retrieves all MessageMail objects related to the User and returns a queryset"""
+        return self.mail.all()
+
+    def get_chat_messages(self):
+        """
+        Retrieves all MessageChat objects associated with the User instance.
+        It will check both fields user and other to see if the user is associated with the message.
+
+        Returns:
+            QuerySet: A queryset of MessageChat objects associated with the User instance
+        """
+        messages = MessageChat.objects.filter(Q(user=self) | Q(other=self))
+        return messages
+
 
 class UserProfilePicture(models.Model):
+
     # User.profile_picture.user.pk = User.pk  | himself
     user = models.ForeignKey(
         User, related_name="profile_picture", on_delete=models.CASCADE
@@ -209,6 +253,64 @@ class Sock(models.Model):
         help_text="Description of a special interest of the sock.",
         blank=False,
     )
+
+    def to_json(self) -> dict:
+        """Function to represent the model as a json dictionary
+        !Important: update if changes on the model are made!"""
+        return {
+            "Name": self.info_name,
+            "My story": self.info_about,
+            "My dominant color": self.info_color,
+            "My fabric": self.info_fabric,
+            "My fabric's thickness": self.info_fabric_thickness,
+            "My brand": self.info_brand,
+            "I am of type": self.info_type,
+            "My size": self.info_size,
+            "My age": self.info_age,
+            "Lonely since": self.info_separation_date,
+            "My condition": self.info_condition,
+            "Kilometers I walked": self.info_kilometers,
+            "My usage": self.info_inoutdoor,
+            "How often was i washed": self.info_washed,
+            "My specialty": self.info_special,
+        }
+
+    def get_all_pictures(self):
+        """
+        Retrieves all SockProfilePicture objects associated with the Sock instance.
+
+        Returns:
+            QuerySet: A queryset of SockProfilePicture objects associated with the Sock instance
+        """
+        profile_pictures = self.profile_picture.all()
+        return profile_pictures
+
+    def get_picture_urls(self):
+        """Function to get all profile pictures urls as a list. Returns a list"""
+        return [
+            profile_picture.profile_picture.url
+            for profile_picture in self.profile_picture.all()
+        ]
+
+    def get_likes(self):
+        """
+        Retrieves all Sock instances that the current Sock instance has liked.
+
+        Returns:
+            QuerySet: A queryset of Sock instances liked by the current Sock instance
+        """
+        likes = Sock.objects.filter(like__sock=self)
+        return likes
+
+    def get_dislikes(self):
+        """
+        Retrieves all Sock instances that the current Sock instance has disliked.
+
+        Returns:
+            QuerySet: A queryset of Sock instances disliked by the current Sock instance
+        """
+        dislikes = Sock.objects.filter(dislike__sock=self)
+        return dislikes
 
     def __str__(self) -> str:
         return f"<Sock {self.info_name}>"

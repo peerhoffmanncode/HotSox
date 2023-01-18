@@ -88,6 +88,8 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+LOGIN_URL = "/user/login/"
+LOGOUT_URL = "/user/login/"
 
 
 # register the hotsox_user as user AllAuth model!
@@ -143,23 +145,28 @@ if os.getenv("GITHUB_WORKFLOW"):
     }
 else:
     # check if we have ENV Vars set e.g. env.py/Dockerfile/...?
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST"),
+            "PORT": os.getenv("DB_PORT"),
+        },
+    }
     # DATABASES = {
     #     "default": {
     #         "ENGINE": "django.db.backends.postgresql",
-    #         "NAME": os.getenv("DB_NAME"),
-    #         "USER": os.getenv("DB_USER"),
-    #         "PASSWORD": os.getenv("DB_PASSWORD"),
-    #         "HOST": os.getenv("DB_HOST"),
-    #         "PORT": os.getenv("DB_PORT"),
-    #     }
+    #         "NAME": "postgres",
+    #         "USER": "postgres",
+    #         "PASSWORD": "postgres",
+    #         "HOST": "localhost",
+    #         "PORT": "5432",
+    #     },
     # }
-    # temporary fix to testing!
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+    # TEST = True
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

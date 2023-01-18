@@ -2,7 +2,7 @@
 .btn {
     display: block;
     width: 115px;
-    height: 25px;
+    height: 32px;
     background: #4E9CAF;
     padding: 10px;
     text-align: center;
@@ -53,10 +53,40 @@
 }
 
 .circle-img {
-    /* background: url(https://res.cloudinary.com/ddvfqbtpr/image/upload/v1673640500/oud1slcn7fczdlwezvbj.png) no-repeat center center; */
-    width: 200px;
-    height: 200px;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     overflow: hidden;
-    /* justify-content: center; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circle-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.prev-btn {
+    height: 100%;
+}
+
+.nxt-btn {
+    height: 100%;
+}
+
+.prev-arrow {
+    background: url("../left_arrow.jpg") no-repeat center;
+    background-size: 50% auto;
+    /* margin-top: 10rem; */
+    height: 100%;
+}
+
+.nxt-arrow {
+    background: url("../right_arrow.jpg") no-repeat center;
+    background-size: 50% auto;
+    /* background-attachment: fixed; */
+    /* margin-top: 10rem; */
+    height: 100%;
 }
