@@ -197,13 +197,54 @@ class SockProfileDetails(HotSoxLogInAndValidationCheckMixin, DetailView):
     template_name = "users/sock_details.html"
 
     def get_context_data(self, **kwargs):
-        print(kwargs["object"])
         context = super().get_context_data(**kwargs)
         context["left_arrow_go_to_url"] = reverse("app_users:sock-overview")
         context["right_arrow_go_to_url"] = reverse(
             "app_users:sock-update", kwargs={"pk": kwargs["object"].pk}
         )
         return context
+
+
+class SockProfileCreate(HotSoxLogInAndValidationCheckMixin, TemplateView):
+    """Add a new sock.
+    We will gather information from from.SockForm
+    Next store this sock to the db via ORM"""
+
+    model = Sock
+    template_name = "users/sock_update.html"
+    # 1. redirect to sock_update form. User fills in and submits
+
+    def get(self, request):
+        form_sock_profile = SockProfileForm(initial={"user": request.user})
+
+        # show sock profile update page
+        return render(
+            request,
+            "users/sock_update.html",
+            {
+                "form_sock_profile": form_sock_profile,
+                "sock": "",
+                "left_arrow_go_to_url": "",
+                "right_arrow_go_to_url": "",
+            },
+        )
+
+    def post(self, request):
+        form_sock_profile = SockProfileForm(
+            request.POST, initial={"user": request.user}
+        )
+
+        if form_sock_profile.is_valid():
+            # store the sock to the database
+            sock_to_add = form_sock_profile.save(commit=False)
+            sock_to_add.user = request.user
+            sock_to_add.save()
+            # redirect to sock profile details page
+            return redirect(
+                reverse("app_users:sock-picture", kwargs={"pk": sock_to_add.pk})
+            )
+        # in case of invalid go here
+        return redirect(reverse("app_users:sock-create"))
 
 
 class SockProfileUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView):
