@@ -192,20 +192,19 @@ class SockProfileOverview(HotSoxLogInAndValidationCheckMixin, TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        # get current user
-
+        # check if delete or add
         if request.POST.get("method") == "delete":
-            # delete the selected picture!
+            # delete the selected sock!
             sock_pk = request.POST.get("sock_pk", None)
 
             if sock_pk:
-                breakpoint()
-                sock_obj = get_object_or_404(Sock, pk=request.POST.get("sock_pk"))
+                sock_obj = get_object_or_404(Sock, pk=sock_pk)
                 sock_obj.delete()
+                # return back to sock overview
                 return redirect(reverse("app_users:sock-overview"))
 
         elif request.POST.get("method") == "add":
-            # add the selected picture!
+            # redirect to sock creation
             return redirect(reverse("app_users:sock-create"))
 
 
