@@ -173,6 +173,8 @@ class UserProfilePictureUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView)
             {
                 "profile_picture_query_set": profile_picture_query_set,
                 "form_user_profile_picture": form_user_profile_picture,
+                "left_arrow_go_to_url": "",
+                "right_arrow_go_to_url": reverse("app_users:user-profile-details"),
             },
         )
 
@@ -188,6 +190,22 @@ class SockProfileOverview(HotSoxLogInAndValidationCheckMixin, TemplateView):
         context["left_arrow_go_to_url"] = reverse("app_users:user-profile-update")
         context["right_arrow_go_to_url"] = ""
         return context
+
+    def post(self, request, *args, **kwargs):
+        # check if delete or add
+        if request.POST.get("method") == "delete":
+            # delete the selected sock!
+            sock_pk = request.POST.get("sock_pk", None)
+
+            if sock_pk:
+                sock_obj = get_object_or_404(Sock, pk=sock_pk)
+                sock_obj.delete()
+                # return back to sock overview
+                return redirect(reverse("app_users:sock-overview"))
+
+        elif request.POST.get("method") == "add":
+            # redirect to sock creation
+            return redirect(reverse("app_users:sock-create"))
 
 
 class SockProfileDetails(HotSoxLogInAndValidationCheckMixin, DetailView):
