@@ -379,5 +379,9 @@ class SockProfilePictureUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView)
                 "profile_picture_query_set": profile_picture_query_set,
                 "form_sock_profile_picture": form_sock_profile_picture,
                 "sock": sock_to_update,
+                "left_arrow_go_to_url": "",
+                "right_arrow_go_to_url": reverse(
+                    "app_users:sock-details", kwargs={"pk": sock_to_update.pk}
+                ),
             },
         )
