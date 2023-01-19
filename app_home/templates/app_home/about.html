@@ -4,22 +4,62 @@
 
 <head>
     <title>About Page - HotSox - The ultimate destination for sock enthusiasts!</title>
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+        }
+
+        .bg {
+            /* The image used */
+            background-image: url("/static/about/professionalSox.jpeg");
+            /* Full height */
+            height: 100%;
+            /* Center and scale the image nicely */
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: 0.7;
+        }
+
+        .text-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgb(0, 0, 0);
+            text-align: center;
+            font-size: 20px;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Welcome to HotSox! :P</h1>
-    <p>The ultimate destination for sock enthusiasts and environmental crusaders.</p>
-    <p>Are you tired of constantly losing your favorite socks to the abyss known as the laundry machine? Are you sick of
-        buying new socks only to have them disappear within a week? Well, my friend, you've come to the right place.</p>
-    <p>At HotSox, we believe that every sock deserves a loving home and even more loving match, and we're on a mission to reunite lost socks with
-        their rightful owners. Our state-of-the-art matching system uses advanced algorithms to connect sock owners with
-        their missing mates. Plus, by keeping your socks together, you'll be doing your part to save the environment.
-        Think about all the resources that go into making new socks. It's like a hug for the planet.</p>
-    <p>But we're not just about socks, we're about community. Our website features a forum where you can connect with
-        other sock enthusiasts, share tips and tricks for keeping your socks together, and even organize sock-themed
-        meetups.</p>
-    <p>So why wait? Join the sock revolution today and never lose a sock again. And remember, together we can make the
-        world a better place, one sock at a time.</p>
+    <div class="bg"></div>
+    <div class="text-overlay">
+        <h1>Welcome to HotSox! :P</h1>
+        <p>The ultimate destination for sock enthusiasts and environmental crusaders.</p>
+        <p>Are you tired of constantly losing your favorite socks to the abyss known as the laundry machine? Are you
+            sick of
+            buying new socks only to have them disappear within a week? Well, my friend, you've come to the right place.
+        </p>
+        <p>At HotSox, we believe that every sock deserves a loving home and even more loving match, and we're on a
+            mission
+            to reunite lost socks with
+            their rightful owners. Our state-of-the-art matching system uses advanced algorithms to connect sock owners
+            with
+            their missing mates. Plus, by keeping your socks together, you'll be doing your part to save the
+            environment.
+            Think about all the resources that go into making new socks. It's like a hug for the planet.</p>
+        <p>But we're not just about socks, we're about community. Our website features a forum where you can connect
+            with
+            other sock enthusiasts, share tips and tricks for keeping your socks together, and even organize sock-themed
+            meetups.</p>
+        <p>So why wait? Join the sock revolution today and never lose a sock again. And remember, together we can make
+            the
+            world a better place, one sock at a time.</p>
+    </div>
 </body>
 
 </html>
