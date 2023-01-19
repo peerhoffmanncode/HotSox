@@ -242,7 +242,7 @@ class SockProfileCreate(HotSoxLogInAndValidationCheckMixin, TemplateView):
             {
                 "form_sock_profile": form_sock_profile,
                 "sock": "",
-                "left_arrow_go_to_url": "",
+                "left_arrow_go_to_url": reverse("app_users:sock-overview"),
                 "right_arrow_go_to_url": "",
             },
         )
