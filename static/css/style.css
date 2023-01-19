@@ -68,25 +68,47 @@
     object-fit: cover;
 }
 
-.prev-btn {
+.arrow {
+    width: 60%;
+
+}
+.arrow-container {
     height: 100%;
+    position:fixed;
+    margin-top: 10rem;
 }
 
-.nxt-btn {
-    height: 100%;
+.plus-btn {
+    flex-direction: row;
+    display: block;
+    width: 75px;
+    height: 75px;
+    background: #4E9CAF;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    line-height: 10px;
+    text-align: center;
+    
 }
 
-.prev-arrow {
-    background: url("../left_arrow.jpg") no-repeat center;
-    background-size: 50% auto;
-    /* margin-top: 10rem; */
-    height: 100%;
+.plus-btn:hover {
+    background: white;
+    color: #4E9CAF;
+    justify-content: center;
 }
 
-.nxt-arrow {
-    background: url("../right_arrow.jpg") no-repeat center;
-    background-size: 50% auto;
-    /* background-attachment: fixed; */
-    /* margin-top: 10rem; */
-    height: 100%;
+.card-center {
+    flex-direction: row;
+}
+
+.hidden {
+    color: transparent;
+    
+}
+
+#id_profile_picture {
+    display: none;
 }
