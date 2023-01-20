@@ -261,21 +261,22 @@ class Sock(models.Model):
         return {
             "Name": self.info_name,
             "My story": self.info_about,
+            "My specialty": self.info_special,
             "My dominant color": COLOR_CHOICES[int(self.info_color) - 1][1],
             "My fabric": FABRIC_CHOICES[int(self.info_fabric) - 1][1],
             "My fabric's thickness": FABRIC_THICKNESS_CHOICES[
                 int(self.info_fabric_thickness) - 1
             ][1],
+            "Lonely since": self.info_separation_date,
             "My brand": BRAND_CHOICES[int(self.info_brand) - 1][1],
-            "I am of type": TYPE_CHOICES[int(self.info_type) - 1][1],
+            "I am a": TYPE_CHOICES[int(self.info_type) - 1][1],
             "My size": SIZE_CHOICES[int(self.info_size) - 1][1],
             "My age": self.info_age,
-            "Lonely since": self.info_separation_date,
-            "My condition": CONDITION_CHOICES[int(self.info_condition) - 1][1],
+            "My holes": self.info_holes,
             "Kilometers I walked": self.info_kilometers,
+            "My condition": CONDITION_CHOICES[int(self.info_condition) - 1][1],
             "My usage": ENVIRONMENT_CHOICES[int(self.info_inoutdoor) - 1][1],
             "How often was i washed": self.info_washed,
-            "My specialty": self.info_special,
         }
 
     def get_all_pictures(self):
