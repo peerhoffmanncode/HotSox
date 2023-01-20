@@ -11,8 +11,10 @@
             <h3>{{sock.info_name.title}}'s Pictures</h3>
         </div>
     </div>
+
     <div class="row">
         {% for picture in profile_picture_query_set %}
+        {% if picture %}
         <div class="col-3">
             <div class="card text-center">
                 <img src="{{picture.profile_picture.url}}" alt="" class="card-img-top">
@@ -28,6 +30,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
         {% endfor %}
 
 <!-- add profile picture -->
@@ -63,9 +66,4 @@
         </div>
     </div>
 </div>
-
-
-
-
-
 {% endblock %}
