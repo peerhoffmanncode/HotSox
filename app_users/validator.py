@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import User
+from .models import User, Sock
 
 
 def user_validate_hotsox_information(request):
@@ -37,3 +37,17 @@ class HotSoxLogInAndValidationCheckMixin(LoginRequiredMixin):
             return super().dispatch(request, *args, **kwargs)
         else:
             return redirect(reverse("app_users:user-profile-update"))
+
+
+class ProtectedSockMixin(LoginRequiredMixin):
+    """Extension to the regular LoginRequiredMixin
+    to include the HotSox validation!"""
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            sock = Sock.objects.get(pk=kwargs["pk"])
+            if sock.user == request.user:
+                return super().dispatch(request, *args, **kwargs)
+            return redirect(reverse("app_home:index"))
+        except Sock.DoesNotExist:
+            return redirect(reverse("app_home:index"))
