@@ -66,13 +66,13 @@
         deleteButton.forEach(function (deleteButton) {
             deleteButton.addEventListener("click", function (event) {
                 event.preventDefault();
+                var form = event.target.closest("form");
                 $('#myModal').modal();
+                document.getElementById("confirm-delete").onclick = function () {
+                    form.submit();
+                }
             });
         });
-
-        document.getElementById("confirm-delete").onclick = function () {
-            document.querySelector("form").submit();
-        }
     </script>
 
 </div>
