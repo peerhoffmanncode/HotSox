@@ -17,6 +17,20 @@ from .forms import (
 )
 
 
+def validate_sock_ownership(request, valid_sock=None, picture_pk=None):
+    # if picture is set
+    if picture_pk:
+        if picture_pk in [picture.pk for picture in valid_sock.get_all_pictures()]:
+            return True
+        return False
+
+    # if only sock object is set
+    if valid_sock and valid_sock.user == request.user:
+        return True
+
+    return False
+
+
 class UserSignUp(TemplateView):
     """View to sign up a new user.
     We will gather information from from.UserSignUpForm
@@ -133,8 +147,10 @@ class UserProfilePictureUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView)
             # delete the selected picture!
             picture_pk = request.POST.get("picture_pk", None)
             if picture_pk:
-                UserProfilePicture_obj = UserProfilePicture.objects.get(pk=picture_pk)
-                UserProfilePicture_obj.delete()
+                # validate that the picture_pk is part of the users profile pictures
+                if picture_pk in [picture.pk for picture in user.get_all_pictures()]:
+                    UserProfilePicture_obj = UserProfilePicture.objects.get(pk=picture_pk)
+                    UserProfilePicture_obj.delete()
                 return redirect(reverse("app_users:user-profile-picture"))
 
         elif request.POST.get("method") == "add":
@@ -201,7 +217,9 @@ class SockProfileOverview(HotSoxLogInAndValidationCheckMixin, TemplateView):
 
             if sock_pk:
                 sock_obj = get_object_or_404(Sock, pk=sock_pk)
-                sock_obj.delete()
+                # validate that the user have the right to alter the sock
+                if validate_sock_ownership(request, valid_sock=sock_obj):
+                    sock_obj.delete()
                 # return back to sock overview
                 return redirect(reverse("app_users:sock-overview"))
 
@@ -337,12 +355,15 @@ class SockProfilePictureUpdate(
         if request.POST.get("method") == "delete":
             # delete the selected picture!
             picture_pk = request.POST.get("picture_pk", None)
-            if picture_pk:
+            # validate that the picture_pk is part of the socks profile pictures
+            if picture_pk and validate_sock_ownership(
+                request, valid_sock=sock_to_update, picture_pk=picture_pk
+            ):
                 SockProfilePicture_obj = SockProfilePicture.objects.get(pk=picture_pk)
                 SockProfilePicture_obj.delete()
-                return redirect(
-                    reverse("app_users:sock-picture", kwargs={"pk": sock_to_update.pk})
-                )
+            return redirect(
+                reverse("app_users:sock-picture", kwargs={"pk": sock_to_update.pk})
+            )
 
         elif request.POST.get("method") == "add":
             # add the selected picture!
