@@ -145,28 +145,31 @@ if os.getenv("GITHUB_WORKFLOW"):
     }
 else:
     # check if we have ENV Vars set e.g. env.py/Dockerfile/...?
+    import sys
+    if sys.argv[1].lower() != "test":
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.postgresql",
+                "NAME": os.getenv("DB_NAME"),
+                "USER": os.getenv("DB_USER"),
+                "PASSWORD": os.getenv("DB_PASSWORD"),
+                "HOST": os.getenv("DB_HOST"),
+                "PORT": os.getenv("DB_PORT"),
+            },
+        }
+    else:
+        TEST = True
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.postgresql",
+                "NAME": "postgres",
+                "USER": "postgres",
+                "PASSWORD": "postgres",
+                "HOST": "localhost",
+                "PORT": "5432",
+            },
+        }
 
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.getenv("DB_NAME"),
-            "USER": os.getenv("DB_USER"),
-            "PASSWORD": os.getenv("DB_PASSWORD"),
-            "HOST": os.getenv("DB_HOST"),
-            "PORT": os.getenv("DB_PORT"),
-        },
-    }
-    # DATABASES = {
-    #     "default": {
-    #         "ENGINE": "django.db.backends.postgresql",
-    #         "NAME": "postgres",
-    #         "USER": "postgres",
-    #         "PASSWORD": "postgres",
-    #         "HOST": "localhost",
-    #         "PORT": "5432",
-    #     },
-    # }
-    # TEST = True
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
