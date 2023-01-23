@@ -24,7 +24,8 @@ from .models_choices import (
 
 class User(AbstractUser):
     # fields we inherit from AbstractUser:
-    # username, password, password_conf, email, first_name, last_name, joining_date, last_login, is_staff, is_active, is_superuser
+    # username, password, password_conf, email, first_name, last_name,
+    # joining_date, last_login, is_staff, is_active, is_superuser
 
     info_about = models.TextField(help_text="Insert your story in here.", blank=True)
     info_birthday = models.DateField(default=timezone.now, blank=False)
@@ -260,19 +261,22 @@ class Sock(models.Model):
         return {
             "Name": self.info_name,
             "My story": self.info_about,
-            "My dominant color": self.info_color,
-            "My fabric": self.info_fabric,
-            "My fabric's thickness": self.info_fabric_thickness,
-            "My brand": self.info_brand,
-            "I am of type": self.info_type,
-            "My size": self.info_size,
-            "My age": self.info_age,
-            "Lonely since": self.info_separation_date,
-            "My condition": self.info_condition,
-            "Kilometers I walked": self.info_kilometers,
-            "My usage": self.info_inoutdoor,
-            "How often was i washed": self.info_washed,
             "My specialty": self.info_special,
+            "My dominant color": COLOR_CHOICES[int(self.info_color) - 1][1],
+            "My fabric": FABRIC_CHOICES[int(self.info_fabric) - 1][1],
+            "My fabric's thickness": FABRIC_THICKNESS_CHOICES[
+                int(self.info_fabric_thickness) - 1
+            ][1],
+            "Lonely since": self.info_separation_date,
+            "My brand": BRAND_CHOICES[int(self.info_brand) - 1][1],
+            "I am a": TYPE_CHOICES[int(self.info_type) - 1][1],
+            "My size": SIZE_CHOICES[int(self.info_size) - 1][1],
+            "My age": self.info_age,
+            "My holes": self.info_holes,
+            "Kilometers I walked": self.info_kilometers,
+            "My condition": CONDITION_CHOICES[int(self.info_condition) - 1][1],
+            "My usage": ENVIRONMENT_CHOICES[int(self.info_inoutdoor) - 1][1],
+            "How often was i washed": self.info_washed,
         }
 
     def get_all_pictures(self):
@@ -297,14 +301,16 @@ class Sock(models.Model):
         Retrieves all Sock instances that the current Sock instance has liked.
 
         Returns:
-            QuerySet: A queryset of Sock instances liked by the current Sock instance
+            QuerySet: A queryset of Sock instances liked by the current Sock
+            instance
         """
         likes = Sock.objects.filter(like__sock=self)
         return likes
 
     def get_dislikes(self):
         """
-        Retrieves all Sock instances that the current Sock instance has disliked.
+        Retrieves all Sock instances that the current Sock instance has
+        disliked.
 
         Returns:
             QuerySet: A queryset of Sock instances disliked by the current Sock instance

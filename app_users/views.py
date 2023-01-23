@@ -4,7 +4,9 @@ from django.contrib.auth import login
 
 from django.views.generic import TemplateView, DetailView
 
-from .validator import HotSoxLogInAndValidationCheckMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .validator import HotSoxLogInAndValidationCheckMixin, ProtectedSockMixin
+
 from .models import User, UserProfilePicture, Sock, SockProfilePicture
 from .forms import (
     UserSignUpForm,
@@ -69,12 +71,12 @@ class UserProfileDetails(HotSoxLogInAndValidationCheckMixin, TemplateView):
         return context
 
 
-class UserProfileUpdate(TemplateView):
+class UserProfileUpdate(LoginRequiredMixin, TemplateView):
     """View to edit details of a user.
     We will gather information from from.UserSignUpForm
     we  store this user to the db via ORM and try to
     login() then user!
-    This View is not protected by the LoginMixIn!
+    This View is not protected by the HotSoxLogInAndValidationCheckMixin!
     It needs to be available for users who are not validated!
     """
 
@@ -173,6 +175,8 @@ class UserProfilePictureUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView)
             {
                 "profile_picture_query_set": profile_picture_query_set,
                 "form_user_profile_picture": form_user_profile_picture,
+                "left_arrow_go_to_url": "",
+                "right_arrow_go_to_url": reverse("app_users:user-profile-details"),
             },
         )
 
@@ -189,15 +193,74 @@ class SockProfileOverview(HotSoxLogInAndValidationCheckMixin, TemplateView):
         context["right_arrow_go_to_url"] = ""
         return context
 
+    def post(self, request, *args, **kwargs):
+        # check if delete or add
+        if request.POST.get("method") == "delete":
+            # delete the selected sock!
+            sock_pk = request.POST.get("sock_pk", None)
 
-class SockProfileDetails(HotSoxLogInAndValidationCheckMixin, DetailView):
+            if sock_pk:
+                sock_obj = get_object_or_404(Sock, pk=sock_pk)
+                sock_obj.delete()
+                # return back to sock overview
+                return redirect(reverse("app_users:sock-overview"))
+
+        elif request.POST.get("method") == "add":
+            # redirect to sock creation
+            return redirect(reverse("app_users:sock-create"))
+
+
+class SockProfileCreate(HotSoxLogInAndValidationCheckMixin, TemplateView):
+    """Add a new sock.
+    We will gather information from from.SockForm
+    Next store this sock to the db via ORM"""
+
+    model = Sock
+    template_name = "users/sock_update.html"
+    # 1. redirect to sock_update form. User fills in and submits
+
+    def get(self, request):
+        form_sock_profile = SockProfileForm(initial={"user": request.user})
+
+        # show sock profile update page
+        return render(
+            request,
+            "users/sock_update.html",
+            {
+                "form_sock_profile": form_sock_profile,
+                "sock": "",
+                "left_arrow_go_to_url": reverse("app_users:sock-overview"),
+                "right_arrow_go_to_url": "",
+            },
+        )
+
+    def post(self, request):
+        form_sock_profile = SockProfileForm(
+            request.POST, initial={"user": request.user}
+        )
+
+        if form_sock_profile.is_valid():
+            # store the sock to the database
+            sock_to_add = form_sock_profile.save(commit=False)
+            sock_to_add.user = request.user
+            sock_to_add.save()
+            # redirect to sock profile details page
+            return redirect(
+                reverse("app_users:sock-picture", kwargs={"pk": sock_to_add.pk})
+            )
+        # in case of invalid go here
+        return redirect(reverse("app_users:sock-create"))
+
+
+class SockProfileDetails(
+    ProtectedSockMixin, HotSoxLogInAndValidationCheckMixin, DetailView
+):
     """View to show a socks's details."""
 
     model = Sock
     template_name = "users/sock_details.html"
 
     def get_context_data(self, **kwargs):
-        print(kwargs["object"])
         context = super().get_context_data(**kwargs)
         context["left_arrow_go_to_url"] = reverse("app_users:sock-overview")
         context["right_arrow_go_to_url"] = reverse(
@@ -206,7 +269,9 @@ class SockProfileDetails(HotSoxLogInAndValidationCheckMixin, DetailView):
         return context
 
 
-class SockProfileUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView):
+class SockProfileUpdate(
+    ProtectedSockMixin, HotSoxLogInAndValidationCheckMixin, TemplateView
+):
     """View to edit a sock.
     We will gather information from from.SockForm
     Next store this sock to the db via ORM
@@ -251,7 +316,9 @@ class SockProfileUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView):
         )
 
 
-class SockProfilePictureUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView):
+class SockProfilePictureUpdate(
+    ProtectedSockMixin, HotSoxLogInAndValidationCheckMixin, TemplateView
+):
     """View to edit/add a new profile picture to a user."""
 
     model = Sock
@@ -320,5 +387,9 @@ class SockProfilePictureUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView)
                 "profile_picture_query_set": profile_picture_query_set,
                 "form_sock_profile_picture": form_sock_profile_picture,
                 "sock": sock_to_update,
+                "left_arrow_go_to_url": "",
+                "right_arrow_go_to_url": reverse(
+                    "app_users:sock-details", kwargs={"pk": sock_to_update.pk}
+                ),
             },
         )

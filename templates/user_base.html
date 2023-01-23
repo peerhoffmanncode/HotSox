@@ -2,11 +2,13 @@
 {% block content %}
 <div class="container-fluid">
     <div class="row">
-
-        <div class="col-md-2 ">
+        <div class="col-md-1 offset-2">
             {% if left_arrow_go_to_url %}
             <a href="{{ left_arrow_go_to_url }}">
-                <div class="prev-btn prev-arrow"></div>
+                <div class="arrow-container">
+                    <img src="/static/left_arrow.jpg" class="arrow" alt="">
+                    
+                </div>
             </a>
             {% endif %}
         </div>
@@ -16,10 +18,13 @@
             {% endblock %}
         </div>
 
-        <div class="col-md-2">
+        <div class="col-md-1">
             {% if right_arrow_go_to_url %}
             <a href="{{ right_arrow_go_to_url }}">
-                <div class="nxt-btn nxt-arrow"></div>
+                <div class="arrow-container">
+                    <img src="/static/right_arrow.jpg" class="arrow" alt="">
+                    <span>{% block right_arrow_content %} {% endblock %}</span>
+                </div>
             </a>
             {% endif %}
         </div>

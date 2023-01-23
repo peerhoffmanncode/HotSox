@@ -5,7 +5,11 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 mt-3 offset-md-2">
+            {% if sock %}
             <h3>Edit {{sock.info_name.title}}'s profile</h3>
+            {% else %}
+            <h3>Add a new sock!</h3>
+            {% endif %}
         </div>
     </div>
     <div class="row">
@@ -15,11 +19,7 @@
                 {{ form_sock_profile|crispy }}
                 <button class="btn" type="submit">Store profile</button>
             </form>
-            <!--
-            <form method="get" action="{% url 'app_users:sock-details' sock.pk %}">
-                <button class="btn" type="submit">Cancel</button>
-            </form>
-            -->
+            
         </div>
     </div>
 </div>

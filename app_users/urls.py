@@ -25,6 +25,11 @@ urlpatterns = [
         name="sock-details",
     ),
     path(
+        "sock/create/",
+        views.SockProfileCreate.as_view(),
+        name="sock-create",
+    ),
+    path(
         "sock/<int:pk>/update/",
         views.SockProfileUpdate.as_view(),
         name="sock-update",
