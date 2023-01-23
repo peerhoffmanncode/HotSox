@@ -146,6 +146,7 @@ if os.getenv("GITHUB_WORKFLOW"):
 else:
     # check if we have ENV Vars set e.g. env.py/Dockerfile/...?
     import sys
+
     if sys.argv[1].lower() != "test":
         DATABASES = {
             "default": {
