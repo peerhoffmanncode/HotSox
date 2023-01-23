@@ -45,9 +45,17 @@ class ProtectedSockMixin(LoginRequiredMixin):
 
     def dispatch(self, request, *args, **kwargs):
         try:
-            sock = Sock.objects.get(pk=kwargs["pk"])
+            sock = Sock.objects.get(pk=request.session["sock_pk"])
             if sock.user == request.user:
                 return super().dispatch(request, *args, **kwargs)
+            # user has no ownership of the sock, redirect to home!
+            request.session["sock_pk"] = None
             return redirect(reverse("app_home:index"))
         except Sock.DoesNotExist:
-            return redirect(reverse("app_home:index"))
+            # cant't find the sock in db, redirect to overview
+            request.session["sock_pk"] = None
+            return redirect(reverse("app_users:sock-overview"))
+        except KeyError:
+            # cant't find the sock in current session. redirect to overview
+            request.session["sock_pk"] = None
+            return redirect(reverse("app_users:sock-overview"))

@@ -3,15 +3,12 @@
 {% load crispy_forms_tags %}
 {% block user_content %}
 
-
-
 <div class="container">
     <div class="row">
         <div class="col-md-8 mt-3 offset-md-4">
             <h3>{{sock.info_name.title}}'s Pictures</h3>
         </div>
     </div>
-
     <div class="row">
         {% for picture in profile_picture_query_set %}
         {% if picture %}
@@ -34,7 +31,6 @@
         {% endfor %}
 
 <!-- add profile picture -->
-
         <div class="col-3">
             <div class="card text-center">
                 <div class="card-body card-center align-self-center">
@@ -50,7 +46,7 @@
                             formData.append("profile_picture", file);
                             formData.append("csrfmiddlewaretoken", '{{ csrf_token }}');
                             formData.append("method", 'add');
-                            await fetch("{% url 'app_users:sock-picture' sock.pk %}", {
+                            await fetch("{% url 'app_users:sock-picture' %}", {
                                 method: "POST",
                                 body: formData,
                                 headers: {

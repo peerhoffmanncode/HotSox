@@ -8,13 +8,13 @@
     <div class="col-3">
         <div class="card text-center">
             {% if sock.get_picture_urls.0 %}
-            <a href="{% url 'app_users:sock-details' sock.pk %}">
+            <a href="{% url 'app_users:sock-selection' sock.pk %}">
                 <img src="{{sock.get_picture_urls.0}}" alt="" class="card-img-top">
                 <p>{{sock.info_name}}</p>
             </a>
             {% else %}
             <div class="card-body card-center align-self-center">
-                <a href="{% url 'app_users:sock-picture' sock.pk %}">
+                <a href="{% url 'app_users:sock-picture' %}">
                     <button class="plus-btn"><i class="fa-solid fa-plus"></i></button>
                     <p>{{sock.info_name}}</p>
                 </a>
@@ -42,7 +42,6 @@
             </form>
         </div>
     </div>
-
     <!-- The Modal -->
     <div class="modal fade" id="myModal">
         <div class="modal-dialog">
@@ -60,7 +59,6 @@
             </div>
         </div>
     </div>
-
     <script>
         var deleteButton = document.querySelectorAll(".delete-button");
         deleteButton.forEach(function (deleteButton) {
@@ -74,6 +72,5 @@
             });
         });
     </script>
-
 </div>
 {% endblock %}
