@@ -1,6 +1,9 @@
 from django.test import TestCase, Client
 from unittest import mock
 
+from importlib import import_module
+from django.conf import settings as django_settings
+
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 from datetime import date, timedelta
@@ -9,6 +12,27 @@ from ..models import User, Sock
 
 
 class UserSignUpTest(TestCase):
+    def get_session(self):
+        if self.client.session:
+            session = self.client.session
+        else:
+            engine = import_module(django_settings.SESSION_ENGINE)
+            session = engine.SessionStore()
+        return session
+
+    def set_session_cookies(self, session):
+        # Set the cookie to represent the session
+        session_cookie = django_settings.SESSION_COOKIE_NAME
+        self.client.cookies[session_cookie] = session.session_key
+        cookie_data = {
+            "max-age": None,
+            "path": "/",
+            "domain": django_settings.SESSION_COOKIE_DOMAIN,
+            "secure": django_settings.SESSION_COOKIE_SECURE or None,
+            "expires": None,
+        }
+        self.client.cookies[session_cookie].update(cookie_data)
+
     def setUp(self):
         self.user = User.objects.create(
             username="quirk-unicorn",
@@ -50,10 +74,20 @@ class UserSignUpTest(TestCase):
         )
 
         self.client = Client()
+
         self.url = None
+
+        session = self.get_session()
+        session["sock_pk"] = self.sock.pk
+        session.save()
+        self.set_session_cookies(session)
 
     def SockOverviewTest(self):
         self.client.force_login(self.user)
+        session = self.get_session()
+        session["sock_pk"] = self.sock.pk
+        session.save()
+        self.set_session_cookies(session)
         response = self.client.get(reverse("app_users:sock-overview"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
@@ -79,6 +113,10 @@ class UserSignUpTest(TestCase):
 
     def test_sock_profile_create_view(self):
         self.client.force_login(self.user)
+        session = self.get_session()
+        session["sock_pk"] = self.sock.pk
+        session.save()
+        self.set_session_cookies(session)
         response = self.client.get(reverse("app_users:sock-create"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "users/sock_update.html")
@@ -106,9 +144,13 @@ class UserSignUpTest(TestCase):
         }
 
         response = self.client.post(reverse("app_users:sock-create"), data)
+        session = self.get_session()
+        session["sock_pk"] = self.sock.pk + 1
+        session.save()
+        self.set_session_cookies(session)
         self.assertRedirects(
             response,
-            reverse("app_users:sock-picture", kwargs={"pk": self.sock.pk + 1}),
+            reverse("app_users:sock-picture"),
             status_code=302,
             target_status_code=200,
         )
@@ -116,43 +158,43 @@ class UserSignUpTest(TestCase):
 
     def test_sock_detail_view(self):
         # check if detail view is forbidden if not logged in!
-        response = self.client.get(
-            reverse("app_users:sock-details", kwargs={"pk": self.sock.pk})
-        )
+        response = self.client.get(reverse("app_users:sock-details"))
         self.assertEqual(response.status_code, 302)
 
         self.client.force_login(self.user)
-        response = self.client.get(
-            reverse("app_users:sock-details", kwargs={"pk": self.sock.pk})
-        )
+        session = self.get_session()
+        session["sock_pk"] = self.sock.pk
+        session.save()
+        self.set_session_cookies(session)
+        response = self.client.get(reverse("app_users:sock-details"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.context["left_arrow_go_to_url"], reverse("app_users:sock-overview")
         )
         self.assertEqual(
             response.context["right_arrow_go_to_url"],
-            reverse("app_users:sock-update", kwargs={"pk": self.sock.pk}),
+            reverse("app_users:sock-update"),
         )
         self.assertTemplateUsed(response, "users/sock_details.html")
-        self.assertEqual(response.context["object"], self.sock)
 
     def test_sock_profile_update_view_get(self):
         # check if update view is forbidden if not logged in!
-        response = self.client.get(
-            reverse("app_users:sock-update", kwargs={"pk": self.sock.pk})
-        )
+        response = self.client.get(reverse("app_users:sock-update"))
         self.assertEqual(response.status_code, 302)
 
         self.client.force_login(self.user)
-        response = self.client.get(
-            reverse("app_users:sock-update", kwargs={"pk": self.sock.pk})
-        )
+        session = self.get_session()
+        session["sock_pk"] = self.sock.pk
+        session.save()
+        self.set_session_cookies(session)
+
+        response = self.client.get(reverse("app_users:sock-update"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "users/sock_update.html")
         self.assertContains(response, "sock")
 
         response = self.client.post(
-            reverse("app_users:sock-update", kwargs={"pk": self.sock.pk}),
+            reverse("app_users:sock-update"),
             data={
                 "user": self.user,
                 "info_joining_date": date.today() - timedelta(days=365 * 5),
@@ -176,7 +218,7 @@ class UserSignUpTest(TestCase):
         )
         self.assertRedirects(
             response,
-            reverse("app_users:sock-details", kwargs={"pk": self.sock.pk}),
+            reverse("app_users:sock-details"),
             status_code=302,
             target_status_code=200,
         )
@@ -188,13 +230,13 @@ class UserSignUpTest(TestCase):
         # Set up mock return value for cloudinary.uploader.upload
         mock_uploader_upload = "picture.jpg"
 
-        self.url = reverse("app_users:sock-picture", kwargs={"pk": self.sock.pk})
+        self.url = reverse("app_users:sock-picture")
         self.picture = SimpleUploadedFile(
             "picture.jpg", b"file_content", content_type="image/jpeg"
         )
 
         self.client.force_login(self.user)  # logging in user
-
+        # add this sock to current session
         # Create a new SockProfilePictureForm with a picture file
         response = self.client.post(
             self.url,
