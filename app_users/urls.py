@@ -20,7 +20,7 @@ urlpatterns = [
     # path("matched/", views.user_matched, name="user-matched"),
     path("sock/overview/", views.SockProfileOverview.as_view(), name="sock-overview"),
     path(
-        "sock/<int:pk>/select/",
+        "sock/select/",
         views.SockSelection.as_view(),
         name="sock-selection",
     ),
