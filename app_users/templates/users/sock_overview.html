@@ -8,10 +8,17 @@
     <div class="col-3">
         <div class="card text-center">
             {% if sock.get_picture_urls.0 %}
-            <a href="{% url 'app_users:sock-selection' sock.pk %}">
-                <img src="{{sock.get_picture_urls.0}}" alt="" class="card-img-top">
+            <form action="{% url 'app_users:sock-selection' %}" method="POST">
+                {% csrf_token %}
+                <button class="btn-img-hide">
+                    <input type="hidden" name="sock_pk" value="{{sock.pk}}">
+                    <input type="hidden" name="redirect_url" value="{% url 'app_users:sock-details' %}">
+                    <img src="{{sock.get_picture_urls.0}}" alt="" class="card-img-top">
+                </button>
+                <br>
+                <br>
                 <p>{{sock.info_name}}</p>
-            </a>
+            </form>
             {% else %}
             <div class="card-body card-center align-self-center">
                 <a href="{% url 'app_users:sock-picture' %}">

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import login
+from django.http import HttpResponseRedirect
 
 from django.views.generic import TemplateView, DetailView
 
@@ -239,11 +240,22 @@ class SockSelection(HotSoxLogInAndValidationCheckMixin, TemplateView):
     model = User
     template_name = None
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         # register selected sock in the current session
-        request.session["sock_pk"] = kwargs.get("pk", None)
-        # redirect to details
-        return redirect(reverse("app_users:sock-details"))
+        if request.POST.get("sock_pk", None):
+            request.session["sock_pk"] = request.POST.get("sock_pk")
+
+        redirect_url = request.POST.get("redirect_url")
+
+        # add specific routes to redirect to here
+        if redirect_url == reverse("app_users:sock-details"):
+            return redirect(reverse("app_users:sock-details"))
+
+        # Get the URL of the previous page
+        prev_url = request.META.get("HTTP_REFERER")
+        # Redirect the user back to the previous page
+        return HttpResponseRedirect(prev_url)
+        # return redirect(reverse("app_users:sock-overview"))
 
 
 class SockProfileCreate(HotSoxLogInAndValidationCheckMixin, TemplateView):

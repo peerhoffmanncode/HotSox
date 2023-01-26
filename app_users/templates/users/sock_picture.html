@@ -20,7 +20,7 @@
                         {% csrf_token %}
                         <input type="hidden" name="method" value="delete">
                         <input type="hidden" name="picture_pk" value="{{picture.pk}}">
-                        <button class="btn card-btn">
+                        <button class="btn card-btn delete-button">
                             Delete
                         </button>
                     </form>
@@ -29,8 +29,36 @@
         </div>
         {% endif %}
         {% endfor %}
-
-<!-- add profile picture -->
+        <!-- The Modal -->
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">For sock sake ?!</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">Do you really want to delete this picture?</div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            var deleteButton = document.querySelectorAll(".delete-button");
+            deleteButton.forEach(function (deleteButton) {
+                deleteButton.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    var form = event.target.closest("form");
+                    $('#myModal').modal();
+                    document.getElementById("confirm-delete").onclick = function () {
+                        form.submit();
+                    }
+                });
+            });
+        </script>
+        <!-- add profile picture -->
         <div class="col-3">
             <div class="card text-center">
                 <div class="card-body card-center align-self-center">
