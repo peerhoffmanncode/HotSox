@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import login
+from django.http import HttpResponseRedirect
 
 from django.views.generic import TemplateView, DetailView
 
@@ -15,6 +16,20 @@ from .forms import (
     SockProfileForm,
     SockProfilePictureForm,
 )
+
+
+def validate_sock_ownership(request, valid_sock=None, picture_pk=None):
+    # if picture is set
+    if picture_pk:
+        if int(picture_pk) in [picture.pk for picture in valid_sock.get_all_pictures()]:
+            return True
+        return False
+
+    # if only sock object is set
+    if valid_sock and valid_sock.user == request.user:
+        return True
+
+    return False
 
 
 class UserSignUp(TemplateView):
@@ -133,8 +148,14 @@ class UserProfilePictureUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView)
             # delete the selected picture!
             picture_pk = request.POST.get("picture_pk", None)
             if picture_pk:
-                UserProfilePicture_obj = UserProfilePicture.objects.get(pk=picture_pk)
-                UserProfilePicture_obj.delete()
+                # validate that the picture_pk is part of the users profile pictures
+                if int(picture_pk) in [
+                    picture.pk for picture in request.user.get_all_pictures()
+                ]:
+                    UserProfilePicture_obj = UserProfilePicture.objects.get(
+                        pk=picture_pk
+                    )
+                    UserProfilePicture_obj.delete()
                 return redirect(reverse("app_users:user-profile-picture"))
 
         elif request.POST.get("method") == "add":
@@ -195,19 +216,46 @@ class SockProfileOverview(HotSoxLogInAndValidationCheckMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         # check if delete or add
+
         if request.POST.get("method") == "delete":
             # delete the selected sock!
             sock_pk = request.POST.get("sock_pk", None)
 
             if sock_pk:
                 sock_obj = get_object_or_404(Sock, pk=sock_pk)
-                sock_obj.delete()
+                # validate that the user have the right to alter the sock
+                if validate_sock_ownership(request, valid_sock=sock_obj):
+                    sock_obj.delete()
+                    if sock_pk == request.session.get("sock_pk", None):
+                        request.session["sock_pk"] = None
                 # return back to sock overview
                 return redirect(reverse("app_users:sock-overview"))
 
         elif request.POST.get("method") == "add":
             # redirect to sock creation
             return redirect(reverse("app_users:sock-create"))
+
+
+class SockSelection(HotSoxLogInAndValidationCheckMixin, TemplateView):
+    model = User
+    template_name = None
+
+    def post(self, request, *args, **kwargs):
+        # register selected sock in the current session
+        if request.POST.get("sock_pk", None):
+            request.session["sock_pk"] = request.POST.get("sock_pk")
+
+        redirect_url = request.POST.get("redirect_url")
+
+        # add specific routes to redirect to here
+        if redirect_url == reverse("app_users:sock-details"):
+            return redirect(reverse("app_users:sock-details"))
+
+        # Get the URL of the previous page
+        prev_url = request.META.get("HTTP_REFERER")
+        # Redirect the user back to the previous page
+        return HttpResponseRedirect(prev_url)
+        # return redirect(reverse("app_users:sock-overview"))
 
 
 class SockProfileCreate(HotSoxLogInAndValidationCheckMixin, TemplateView):
@@ -217,7 +265,6 @@ class SockProfileCreate(HotSoxLogInAndValidationCheckMixin, TemplateView):
 
     model = Sock
     template_name = "users/sock_update.html"
-    # 1. redirect to sock_update form. User fills in and submits
 
     def get(self, request):
         form_sock_profile = SockProfileForm(initial={"user": request.user})
@@ -244,29 +291,28 @@ class SockProfileCreate(HotSoxLogInAndValidationCheckMixin, TemplateView):
             sock_to_add = form_sock_profile.save(commit=False)
             sock_to_add.user = request.user
             sock_to_add.save()
+            # register current sock to the session
+            request.session["sock_pk"] = sock_to_add.pk
             # redirect to sock profile details page
-            return redirect(
-                reverse("app_users:sock-picture", kwargs={"pk": sock_to_add.pk})
-            )
+            return redirect(reverse("app_users:sock-picture"))
         # in case of invalid go here
         return redirect(reverse("app_users:sock-create"))
 
 
 class SockProfileDetails(
-    ProtectedSockMixin, HotSoxLogInAndValidationCheckMixin, DetailView
+    ProtectedSockMixin, HotSoxLogInAndValidationCheckMixin, TemplateView
 ):
     """View to show a socks's details."""
 
     model = Sock
     template_name = "users/sock_details.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get(self, request, *args, **kwargs):
+        context = {}
         context["left_arrow_go_to_url"] = reverse("app_users:sock-overview")
-        context["right_arrow_go_to_url"] = reverse(
-            "app_users:sock-update", kwargs={"pk": kwargs["object"].pk}
-        )
-        return context
+        context["right_arrow_go_to_url"] = reverse("app_users:sock-update")
+        context["sock"] = get_object_or_404(Sock, pk=request.session.get("sock_pk"))
+        return render(request, "users/sock_details.html", context)
 
 
 class SockProfileUpdate(
@@ -280,25 +326,21 @@ class SockProfileUpdate(
     model = Sock
     template_name = "users/sock_update.html"
 
-    def post(self, request, pk):
-        sock_to_update = get_object_or_404(Sock, pk=pk)
+    def post(self, request):
+        sock_to_update = get_object_or_404(Sock, pk=request.session.get("sock_pk"))
         form_sock_profile = SockProfileForm(request.POST, instance=sock_to_update)
 
         if form_sock_profile.is_valid():
             # store the sock to the database
             sock_to_update = form_sock_profile.save()
             # redirect to sock profile details page
-            return redirect(
-                reverse("app_users:sock-details", kwargs={"pk": sock_to_update.pk})
-            )
+            return redirect(reverse("app_users:sock-details"))
         # in case of invalid go here
-        return redirect(
-            reverse("app_users:sock-update", kwargs={"pk": sock_to_update.pk})
-        )
+        return redirect(reverse("app_users:sock-update"))
 
-    def get(self, request, pk):
+    def get(self, request):
 
-        sock_to_update = get_object_or_404(Sock, pk=pk)
+        sock_to_update = get_object_or_404(Sock, pk=request.session.get("sock_pk"))
         form_sock_profile = SockProfileForm(instance=sock_to_update)
 
         # show sock profile update page
@@ -308,9 +350,7 @@ class SockProfileUpdate(
             {
                 "form_sock_profile": form_sock_profile,
                 "sock": sock_to_update,
-                "left_arrow_go_to_url": reverse(
-                    "app_users:sock-details", kwargs={"pk": sock_to_update.pk}
-                ),
+                "left_arrow_go_to_url": reverse("app_users:sock-details"),
                 "right_arrow_go_to_url": "",
             },
         )
@@ -324,9 +364,9 @@ class SockProfilePictureUpdate(
     model = Sock
     template_name = "users/sock_picture.html"
 
-    def post(self, request, pk):
+    def post(self, request):
         # get current user
-        sock_to_update = get_object_or_404(Sock, pk=pk)
+        sock_to_update = get_object_or_404(Sock, pk=request.session.get("sock_pk"))
         # get all profile pictures from current user
         profile_picture_query_set = sock_to_update.get_all_pictures()
 
@@ -337,12 +377,13 @@ class SockProfilePictureUpdate(
         if request.POST.get("method") == "delete":
             # delete the selected picture!
             picture_pk = request.POST.get("picture_pk", None)
-            if picture_pk:
+            # validate that the picture_pk is part of the socks profile pictures
+            if picture_pk and validate_sock_ownership(
+                request, valid_sock=sock_to_update, picture_pk=picture_pk
+            ):
                 SockProfilePicture_obj = SockProfilePicture.objects.get(pk=picture_pk)
                 SockProfilePicture_obj.delete()
-                return redirect(
-                    reverse("app_users:sock-picture", kwargs={"pk": sock_to_update.pk})
-                )
+            return redirect(reverse("app_users:sock-picture"))
 
         elif request.POST.get("method") == "add":
             # add the selected picture!
@@ -359,17 +400,13 @@ class SockProfilePictureUpdate(
                 # store the picture to the database
                 new_profile_picture.save()
                 # redirect to user profile details page
-                return redirect(
-                    reverse("app_users:sock-picture", kwargs={"pk": sock_to_update.pk})
-                )
+                return redirect(reverse("app_users:sock-picture"))
             # in case of invalid go here
-            return redirect(
-                reverse("app_users:sock-picture", kwargs={"pk": sock_to_update.pk})
-            )
+            return redirect(reverse("app_users:sock-picture"))
 
-    def get(self, request, pk):
+    def get(self, request):
         # get current user
-        sock_to_update = get_object_or_404(Sock, pk=pk)
+        sock_to_update = get_object_or_404(Sock, pk=request.session.get("sock_pk"))
         # get all profile pictures from current user
         profile_picture_query_set = sock_to_update.get_all_pictures()
         # create form
@@ -388,8 +425,6 @@ class SockProfilePictureUpdate(
                 "form_sock_profile_picture": form_sock_profile_picture,
                 "sock": sock_to_update,
                 "left_arrow_go_to_url": "",
-                "right_arrow_go_to_url": reverse(
-                    "app_users:sock-details", kwargs={"pk": sock_to_update.pk}
-                ),
+                "right_arrow_go_to_url": reverse("app_users:sock-details"),
             },
         )
