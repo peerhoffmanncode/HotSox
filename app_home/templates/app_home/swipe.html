@@ -1,7 +1,40 @@
 {% extends "base.html" %}
 {% block title %} Swipe some socks {% endblock %}
 {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-4">
+            <h1>Let the swiping begin!</h1>
+        </div>
+    </div>
 
-<h1>Let the swiping begin!</h1>
+    <div class="row swipe-panel">
+        <div class="col-md-4 swipe-button">
+            <form action="" method="POST" class="flex-center">
+                {% csrf_token %}
+                <input type="hidden" name="sock_pk" value="{{sock.pk}}">
+                <input type="hidden" name="decision" value="dislike">
+                <button class="btn-img-hide"><img src="/static/no.png" alt="" class="swipe-button"></button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <img src="{{ sock.get_picture_urls.0 }}" alt="" class="sock-img">
+        </div>
+        
+        <div class="col-md-4 swipe-button">
+            <form action="" method="POST" name="swipe-yes" class="flex-center">
+                {% csrf_token %}
+                <input type="hidden" name="sock_pk" value="{{sock.pk}}">
+                <input type="hidden" name="decision" value="like">
+                <button class="btn-img-hide"><img src="/static/yes.png" alt="" class="swipe-button"></button>
+            </form>
+        </div>
+    </div>
+    <div class="row swipe-panel">
+        <div class="col-md-4 offset-4">
+    <h2 class="center">{{ sock.info_name }}</h2>
+    <p class="center">{{ sock.info_about }}</p>
+    </div>
+</div>
 
 {% endblock %}

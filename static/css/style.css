@@ -122,8 +122,36 @@
     margin: 0;
     border-radius: 0;
     border-color: transparent;
+    background-color: transparent;
 }
 
 .btn-img-hide:hover {
     transform: scale(1.05);
+}
+
+.swipe-panel {
+    margin-top: 5rem;
+    display:flex;
+    align-items: center;
+
+}
+
+.swipe-button {
+    height: 50%;
+    width: 50%;
+}
+
+.sock-img {
+    height: 100%;
+    width: 100%;
+}
+
+.center {
+    text-align: center;
+}
+
+.flex-center {
+    display:flex;
+    justify-content: center;
+    align-items: center;
 }
