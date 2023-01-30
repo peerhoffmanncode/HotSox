@@ -8,7 +8,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .validator import HotSoxLogInAndValidationCheckMixin, ProtectedSockMixin
 
-from .models import User, UserProfilePicture, Sock, SockProfilePicture
+from .models import User, UserProfilePicture, Sock, SockProfilePicture, UserMatch
 from .forms import (
     UserSignUpForm,
     UserProfileForm,
@@ -475,3 +475,18 @@ class SockProfilePictureUpdate(
                 "right_arrow_go_to_url": reverse("app_users:sock-details"),
             },
         )
+
+
+class UserMatches(HotSoxLogInAndValidationCheckMixin, TemplateView):
+    model = User
+    template_name = "users/profile_matches.html"
+
+    def get(self, request):
+        user = get_object_or_404(User, pk=request.user.pk)
+        user_matches = user.get_matches()
+        # user_matches = get_object_or_404(User, pk=User.him.user.pk)
+        context = {
+            "user": user,
+            "user_matches": user_matches,
+        }
+        return render(request, "users/profile_matches.html", context)
