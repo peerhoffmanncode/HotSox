@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.contrib.auth import login
 from django.http import HttpResponseRedirect
 
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .validator import HotSoxLogInAndValidationCheckMixin, ProtectedSockMixin
@@ -16,6 +16,8 @@ from .forms import (
     SockProfileForm,
     SockProfilePictureForm,
 )
+
+from app_geo.utilities import GeoLocation
 
 
 def validate_sock_ownership(request, valid_sock=None, picture_pk=None):
@@ -51,6 +53,11 @@ class UserSignUp(TemplateView):
             # fix the data
             user.first_name = form_user_profile.cleaned_data["first_name"].title()
             user.last_name = form_user_profile.cleaned_data["last_name"].title()
+            # set geo location
+            (
+                user.location_latitude,
+                user.location_longitude,
+            ) = GeoLocation.get_geolocation_from_city(user.location_city)
             # store the user to the database
             user.save()
             # log user in via django login
@@ -61,7 +68,11 @@ class UserSignUp(TemplateView):
         return redirect(reverse("app_users:user-signup"))
 
     def get(self, request, *args, **kwargs):
-        form_user_profile = UserSignUpForm()
+        # get geo location via IP
+        city, _, _ = GeoLocation.get_geolocation_from_ip(
+            GeoLocation.get_ip_address(request)
+        )
+        form_user_profile = UserSignUpForm(initial={"location_city": city["city"]})
 
         # show user signup page
         return render(
@@ -103,8 +114,23 @@ class UserProfileUpdate(LoginRequiredMixin, TemplateView):
         form_user_profile = UserProfileForm(request.POST, instance=user_to_update)
 
         if form_user_profile.is_valid():
+            # update the user to the database
+            user_to_update = form_user_profile.save(commit=False)
+            # fix the data
+            user_to_update.first_name = form_user_profile.cleaned_data[
+                "first_name"
+            ].title()
+            user_to_update.last_name = form_user_profile.cleaned_data[
+                "last_name"
+            ].title()
+            # set geo location
+            (
+                user_to_update.location_latitude,
+                user_to_update.location_longitude,
+            ) = GeoLocation.get_geolocation_from_city(user_to_update.location_city)
             # store the user to the database
-            user_to_update = form_user_profile.save()
+            user_to_update.save()
+
             # log user in via django login
             login(request, user_to_update)
             # redirect to user profile details page
@@ -114,6 +140,14 @@ class UserProfileUpdate(LoginRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         user_to_update = get_object_or_404(User, pk=request.user.pk)
+
+        # get geo location from IP if not set
+        if not user_to_update.location_city:
+            city, _, _ = GeoLocation.get_geolocation_from_ip(
+                GeoLocation.get_ip_address(request)
+            )
+            user_to_update.location_city = city["city"]
+
         form_user_profile = UserProfileForm(instance=user_to_update)
 
         # show user profile update page
@@ -255,7 +289,6 @@ class SockSelection(HotSoxLogInAndValidationCheckMixin, TemplateView):
         prev_url = request.META.get("HTTP_REFERER")
         # Redirect the user back to the previous page
         return HttpResponseRedirect(prev_url)
-        # return redirect(reverse("app_users:sock-overview"))
 
 
 class SockProfileCreate(HotSoxLogInAndValidationCheckMixin, TemplateView):

@@ -1,5 +1,6 @@
 # Exclude python files
 env.py
+*.mmdb
 
 # Database files
 db.sqlite3
