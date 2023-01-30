@@ -36,6 +36,7 @@ class User(AbstractUser):
     )
     location_latitude = models.FloatField(blank=True, null=True)
     location_longitude = models.FloatField(blank=True, null=True)
+    notification = models.BooleanField(default=True)
     social_instagram = models.URLField(
         help_text="Url to your Instagram profile.",
         max_length=255,
