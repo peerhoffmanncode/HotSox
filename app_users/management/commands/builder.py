@@ -1,5 +1,6 @@
 from app_users.models import User, Sock, UserProfilePicture, SockProfilePicture
 
+from app_geo.utilities import GeoLocation
 from datetime import date, timedelta
 import os
 import random
@@ -32,14 +33,6 @@ def get_city():
     return s[random.randint(0, 15)]
 
 
-def get_lat(city):
-    return 0
-
-
-def get_long(city):
-    return 0
-
-
 def gen_user(gender=None):
     city = get_city()
     first_name = names.get_first_name(gender=gender)
@@ -50,6 +43,7 @@ def gen_user(gender=None):
     else:
         gender = "1"
 
+    lat, longi = GeoLocation.get_geolocation_from_city(city)
     user = User(
         username=username,
         first_name=first_name,
@@ -59,8 +53,8 @@ def gen_user(gender=None):
         info_birthday=date.today() - timedelta(356 * (18 + random.randint(0, 20))),
         info_gender=gender,
         location_city=city,
-        location_latitude=get_lat(city),
-        location_longitude=get_long(city),
+        location_latitude=lat,
+        location_longitude=longi,
         notification=True,
         social_instagram="",
         social_facebook="",
