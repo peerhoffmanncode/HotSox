@@ -54,10 +54,14 @@ class UserSignUp(TemplateView):
             user.first_name = form_user_profile.cleaned_data["first_name"].title()
             user.last_name = form_user_profile.cleaned_data["last_name"].title()
             # set geo location
-            (
-                user.location_latitude,
-                user.location_longitude,
-            ) = GeoLocation.get_geolocation_from_city(user.location_city)
+            try:
+                (
+                    user.location_latitude,
+                    user.location_longitude,
+                ) = GeoLocation.get_geolocation_from_city(user.location_city)
+            except:
+                user.location_latitude = 0
+                user.location_longitude = 0
             # store the user to the database
             user.save()
             # log user in via django login
@@ -69,9 +73,12 @@ class UserSignUp(TemplateView):
 
     def get(self, request, *args, **kwargs):
         # get geo location via IP
-        city, _, _ = GeoLocation.get_geolocation_from_ip(
-            GeoLocation.get_ip_address(request)
-        )
+        try:
+            city, _, _ = GeoLocation.get_geolocation_from_ip(
+                GeoLocation.get_ip_address(request)
+            )
+        except:
+            city = {"city": ""}
         form_user_profile = UserSignUpForm(initial={"location_city": city["city"]})
 
         # show user signup page
@@ -124,10 +131,14 @@ class UserProfileUpdate(LoginRequiredMixin, TemplateView):
                 "last_name"
             ].title()
             # set geo location
-            (
-                user_to_update.location_latitude,
-                user_to_update.location_longitude,
-            ) = GeoLocation.get_geolocation_from_city(user_to_update.location_city)
+            try:
+                (
+                    user_to_update.location_latitude,
+                    user_to_update.location_longitude,
+                ) = GeoLocation.get_geolocation_from_city(user_to_update.location_city)
+            except:
+                user_to_update.location_latitude = 0
+                user_to_update.location_longitude = 0
             # store the user to the database
             user_to_update.save()
 
@@ -143,9 +154,12 @@ class UserProfileUpdate(LoginRequiredMixin, TemplateView):
 
         # get geo location from IP if not set
         if not user_to_update.location_city:
-            city, _, _ = GeoLocation.get_geolocation_from_ip(
-                GeoLocation.get_ip_address(request)
-            )
+            try:
+                city, _, _ = GeoLocation.get_geolocation_from_ip(
+                    GeoLocation.get_ip_address(request)
+                )
+            except:
+                city = {"city": ""}
             user_to_update.location_city = city["city"]
 
         form_user_profile = UserProfileForm(instance=user_to_update)
