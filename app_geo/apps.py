@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class AppGeoConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'app_geo'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "app_geo"
