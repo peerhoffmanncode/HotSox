@@ -17,7 +17,11 @@ urlpatterns = [
         views.UserProfilePictureUpdate.as_view(),
         name="user-profile-picture",
     ),
-    # path("matched/", views.user_matched, name="user-matched"),
+    path(
+        "profile/matches/",
+        views.UserMatches.as_view(),
+        name="user-matches",
+    ),
     path("sock/overview/", views.SockProfileOverview.as_view(), name="sock-overview"),
     path(
         "sock/select/",
@@ -44,5 +48,4 @@ urlpatterns = [
         views.SockProfilePictureUpdate.as_view(),
         name="sock-picture",
     ),
-    # path("sock/matched/", views., name="sock-matched"),
 ]
