@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import TemplateView
-import random
 
 from app_users.validator import HotSoxLogInAndValidationCheckMixin
 from app_users.models import User, Sock, SockLike
@@ -49,7 +48,7 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         if request.session.get("sock_pk", None):
             sock = PrePredictionAlgorithm.get_next_sock(
-                current_user=User.objects.get(username=request.user.username),
+                current_user=request.user,
                 current_user_sock=get_object_or_404(
                     Sock, pk=request.session["sock_pk"]
                 ),

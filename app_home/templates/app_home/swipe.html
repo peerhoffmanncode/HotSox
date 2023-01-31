@@ -10,12 +10,14 @@
 
     <div class="row swipe-panel">
         <div class="col-md-4 swipe-button">
+            {% if sock %}
             <form action="" method="POST" class="flex-center">
                 {% csrf_token %}
                 <input type="hidden" name="sock_pk" value="{{sock.pk}}">
                 <input type="hidden" name="decision" value="dislike">
                 <button class="btn-img-hide"><img src="/static/no.png" alt="" class="swipe-button"></button>
             </form>
+            {% endif %}
         </div>
         <div class="col-md-4">
         {% if sock %}
@@ -27,12 +29,14 @@
         </div>
         
         <div class="col-md-4 swipe-button">
+            {% if sock %}
             <form action="" method="POST" name="swipe-yes" class="flex-center">
                 {% csrf_token %}
                 <input type="hidden" name="sock_pk" value="{{sock.pk}}">
                 <input type="hidden" name="decision" value="like">
                 <button class="btn-img-hide"><img src="/static/yes.png" alt="" class="swipe-button"></button>
             </form>
+            {% endif %}
         </div>
     </div>
     <div class="row swipe-panel">
