@@ -53,7 +53,8 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
                     Sock, pk=request.session["sock_pk"]
                 ),
             )
-            context = {"sock": sock}
+            user_socks = Sock.objects.filter(user=request.user)
+            context = {"sock": sock, "user_socks": user_socks}
             return render(request, "app_home/swipe.html", context)
         return redirect(reverse("app_users:sock-overview"))
 

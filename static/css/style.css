@@ -2,6 +2,15 @@
     margin-top: 1rem;
 }
 
+.center {
+    text-align: center;
+}
+
+.flex-center {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .btn {
     display: block;
@@ -146,12 +155,29 @@
     width: 100%;
 }
 
-.center {
-    text-align: center;
+
+
+
+/*  Swipe page */
+.select-sock {
+    max-width: 33%;
+    height:5rem;
 }
 
-.flex-center {
-    display:flex;
-    justify-content: center;
-    align-items: center;
+.select-sock-pic {
+    width: 100%%;
+    height: 100%;
+}
+
+.grey {
+    background-color: rgb(242, 237, 237);
+    
+}
+
+.blue {
+    background-color: blue;
+}
+
+.yellow {
+    background-color: yellow;
 }

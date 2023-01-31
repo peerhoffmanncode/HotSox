@@ -8,6 +8,24 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-md-4 offset-4">
+            <ul class="list-inline flex-center">
+                {% for sock in user_socks %}
+                <li class="col-6 col-sm3 list-inline-item select-sock flex-center">
+                    <form action="" method="POST" class="flex-center">
+                    {% csrf_token %}
+                        <input type="hidden" name="change_sock" value="{{ sock }}">
+                        <button class="col-6 col-sm3 list-inline-item select-sock flex-center btn-img-hide">
+                            <img class="select-sock-pic" src="{{ sock.get_picture_urls.0 }}" alt="">
+                        </button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
     <div class="row swipe-panel">
         <div class="col-md-4 swipe-button">
             {% if sock %}
