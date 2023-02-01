@@ -64,3 +64,6 @@ class Test(TestCase):
             GeoLocation.get_distance((91.0, -180.1), (90.0, 0.0)),
             None,
         )
+
+
+
