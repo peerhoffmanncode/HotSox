@@ -1,0 +1,21 @@
+{% extends 'user_base.html' %}
+{% block title %} Matches {% endblock %}
+
+{% block user_content %}
+
+<h3>{{user.username.title}}'s Matches</h3>
+
+<div class="row">
+    <div class="col-md">
+        {% if user_matches %}
+        <p>Here are your matches:</p>
+        {% for match in user_matches %}
+            <p>{{ match.other.username }}</p>
+        {% endfor %}
+        
+        {% endif %}
+    </div>
+</div>
+
+
+{% endblock %}

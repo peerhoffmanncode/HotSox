@@ -27,35 +27,30 @@ class User(AbstractUser):
     # username, password, password_conf, email, first_name, last_name,
     # joining_date, last_login, is_staff, is_active, is_superuser
 
-    info_about = models.TextField(help_text="Insert your story in here.", blank=True)
+    info_about = models.TextField(blank=True)
     info_birthday = models.DateField(default=timezone.now, blank=False)
     info_gender = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=False)
     # info_gender_interest = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=False)
-    location_city = models.CharField(
-        help_text="Where do you live?", max_length=255, blank=False
-    )
+    location_city = models.CharField(max_length=255, blank=False)
     location_latitude = models.FloatField(blank=True, null=True)
     location_longitude = models.FloatField(blank=True, null=True)
+    notification = models.BooleanField(default=True)
     social_instagram = models.URLField(
-        help_text="Url to your Instagram profile.",
         max_length=255,
         blank=True,
         null=True,
     )
     social_facebook = models.URLField(
-        help_text="Url to your Facebook profile.",
         max_length=255,
         blank=True,
         null=True,
     )
     social_twitter = models.URLField(
-        help_text="Url to your Twitter profile.",
         max_length=255,
         blank=True,
         null=True,
     )
     social_spotify = models.URLField(
-        help_text="Url to your Spotify profile.",
         max_length=255,
         blank=True,
         null=True,

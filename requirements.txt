@@ -1,8 +1,12 @@
 black==22.10.0
-cloudinary
-ipython==8.7.0
-psycopg2-binary==2.9.5
 Django==3.2
 django-allauth==0.51.0
 django-crispy-forms
 django-extensions==3.2.1
+cloudinary
+ipython==8.7.0
+psycopg2-binary==2.9.5
+names==0.3.0
+folium==0.14.0
+geoip2==4.6.0
+geopy==2.3.0

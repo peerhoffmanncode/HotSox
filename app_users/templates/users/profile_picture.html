@@ -5,7 +5,15 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 mt-3 offset-md-4">
-            <h3>{{user.username.title}}'s Profile Pictures</h3>
+        <h3>{{user.username.title}}'s Profile Pictures</h3>
+        </div>
+        <div class="col-md-12 mt-3">
+        {% if user.get_picture_urls %}
+        <p>Here is an overview of your profile pictures. Click on the + button below to add more!</p>
+        {% else %}
+        <p>You do not currently have any profile pictures. Click on the + button below to add one!</p>
+        {% endif %}
+        <p>Uploading a new photo is automatic once you have selected a file and takes a few seconds to complete</p>
         </div>
     </div>
 
