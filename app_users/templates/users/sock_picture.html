@@ -8,6 +8,14 @@
         <div class="col-md-8 mt-3 offset-md-4">
             <h3>{{sock.info_name.title}}'s Pictures</h3>
         </div>
+        <div class="col-md-12 mt-3">
+            {% if user.get_socks %}
+            <p>Here is an overview of {{sock.info_name.title}}'s pictures. </p>
+            {% else %}
+            <p>You do not currently have any photos of {{sock.info_name.title}}. Click on the + button below to add one!</p>
+            {% endif %}
+            <p>Uploading a new photo is automatic once you have selected a file and takes a few seconds to complete</p>
+        </div>
     </div>
     <div class="row">
         {% for picture in profile_picture_query_set %}
