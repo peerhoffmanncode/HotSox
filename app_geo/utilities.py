@@ -3,6 +3,7 @@ from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 import geoip2
 import folium
+import socket
 
 # Helper functions
 class GeoLocation:
@@ -12,12 +13,15 @@ class GeoLocation:
     def get_ip_address(request) -> str:
         """get ip address of a user"""
 
-        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(",")[0]
-        else:
-            ip = request.META.get("REMOTE_ADDR")
-        return ip
+        try:
+            x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+            if x_forwarded_for:
+                ip = x_forwarded_for.split(",")[0]
+            else:
+                ip = request.META.get("REMOTE_ADDR")
+            return ip
+        except AttributeError:
+            return None
 
     @staticmethod
     def get_geolocation_from_city(city: str) -> tuple:
@@ -40,11 +44,21 @@ class GeoLocation:
             return city, latitude, longitude
         except geoip2.errors.AddressNotFoundError:
             return ({"city": ""}, 0, 0)
+        except socket.gaierror:
+            return ({"city": ""}, 0, 0)
 
     @staticmethod
     def get_distance(get_location_a: tuple, get_location_b: tuple) -> float:
         """Get the distance (km) between to points"""
-        return round(geodesic(get_location_a, get_location_b).km, 2)
+        if 90 >= get_location_a[0] >= -90:
+            if 90 >= get_location_b[0] >= -90:
+                if 180 >= get_location_a[1] >= -180:
+                    if 180 >= get_location_b[1] >= -180:
+                        try:
+                            return round(geodesic(get_location_a, get_location_b).km, 2)
+                        except ValueError:
+                            return None
+        return None
 
 
 class GeoMap:
