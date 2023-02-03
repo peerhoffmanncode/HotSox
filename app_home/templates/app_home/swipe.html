@@ -15,7 +15,7 @@
                 <li class="col-6 col-sm3 list-inline-item select-sock flex-center">
                     <form action="" method="POST" class="flex-center">
                     {% csrf_token %}
-                        <input type="hidden" name="change_sock" value="{{ sock }}">
+                        <input type="hidden" name="change_sock" value="{{ sock.pk }}">
                         <button class="col-6 col-sm3 list-inline-item select-sock flex-center btn-img-hide">
                             <img class="select-sock-pic" src="{{ sock.get_picture_urls.0 }}" alt="">
                         </button>
@@ -40,10 +40,10 @@
         <div class="col-md-4">
         {% if sock %}
             <img src="{{ sock.get_picture_urls.0 }}" alt="" class="sock-img">
-            {% else %}
+        {% else %}
             <img src="/static/sad_face.jpg" alt="" class="sock-img">
             <p>No more socks currently available!</p>
-            {% endif %}
+        {% endif %}
         </div>
         
         <div class="col-md-4 swipe-button">

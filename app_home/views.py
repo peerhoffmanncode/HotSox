@@ -60,13 +60,18 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         current_user_sock = get_object_or_404(Sock, pk=request.session["sock_pk"])
+        if request.POST.get("change_sock", None):
+            request.session["sock_pk"] = request.POST.get("change_sock", None)
+            current_user_sock = get_object_or_404(Sock, pk=request.session["sock_pk"])
+            return redirect(reverse("app_home:swipe"))
+
         sock_to_be_decided = get_object_or_404(
             Sock, pk=request.POST.get("sock_pk", None)
         )
         if request.POST.get("decision", None) == "like":
             new_sock_like = SockLike(sock=current_user_sock, like=sock_to_be_decided)
             new_sock_like.save()
-        else:
+        elif request.POST.get("decision", None) == "dislike":
             new_sock_dislike = SockLike(
                 sock=current_user_sock, dislike=sock_to_be_decided
             )
