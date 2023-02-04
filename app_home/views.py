@@ -90,7 +90,7 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
                 UserMatch.objects.create(
                     user=current_user_sock.user, other=sock_to_be_decided_on.user
                 )
-                #TODO:  create a modal dialog to inform the user about a match!
+                # TODO:  create a modal dialog to inform the user about a match!
                 #       > show short user details
                 #       send a info email
                 #       show some unicorn farts!
