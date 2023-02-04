@@ -1,5 +1,5 @@
 from django.test import TestCase
-from app_users.models import User, Sock, SockLike
+from app_users.models import User, Sock, SockLike, UserMatch
 from datetime import date, timedelta
 
 from django.urls import reverse
@@ -50,6 +50,24 @@ class Test(TestCase):
             social_spotify="https://www.spotify.com/quirk_unicorn/",
         )
 
+        self.user2 = User.objects.create(
+            username="test2",
+            first_name="test first2",
+            last_name="test last2",
+            email="test@mail.com2",
+            password="str0ng_pwd!2",
+            info_birthday=date(2000, 1, 1),
+            info_about="I like to collect rubber ducks",
+            info_gender="male",
+            location_city="Rainbow City",
+            location_latitude=0,
+            location_longitude=0,
+            social_instagram="https://www.instagram.com/quirk_unicorn/",
+            social_facebook="https://www.facebook.com/quirk_unicorn/",
+            social_twitter="https://www.twitter.com/quirk_unicorn/",
+            social_spotify="https://www.spotify.com/quirk_unicorn/",
+        )
+
         self.sock = Sock.objects.create(
             user=self.user,
             info_joining_date=date.today() - timedelta(days=365 * 5),
@@ -72,9 +90,9 @@ class Test(TestCase):
         )
 
         self.sock2 = Sock.objects.create(
-            user=self.user,
+            user=self.user2,
             info_joining_date=date.today() - timedelta(days=365 * 5),
-            info_name="Wuzzy Fuzzy",
+            info_name="Harry Marry",
             info_about="Fuzzy Wuzzy was a bear. Fuzzy Wuzzy had no hair. Fuzzy Wuzzy wasn't very fuzzy, was he?",
             info_color="7",
             info_fabric="2",
@@ -95,23 +113,18 @@ class Test(TestCase):
     def test_swipe_page_without_sock(self):
         # log user in
         self.client.force_login(user=self.user)
-
         # navigate to a certain route
         response = self.client.get(reverse("app_home:swipe"))
-
         # check if the user can see the swipepage without any sock selected
         self.assertEqual(response.status_code, 302)
 
     def test_swipe_page_with_sock_selected(self):
-
         session = self.get_session()
         session["sock_pk"] = self.sock.pk
         session.save()
         self.set_session_cookies(session)
-
         # log user in
         self.client.force_login(user=self.user)
-
         # navigate to a certain route
         response = self.client.get(reverse("app_home:swipe"))
 
@@ -120,45 +133,71 @@ class Test(TestCase):
         self.assertTemplateUsed("app_user/swipe.html")
 
     def test_swipe_page_with_sock_selected_like_sock(self):
-
+        # log user in
+        self.client.force_login(user=self.user)
         session = self.get_session()
         session["sock_pk"] = self.sock.pk
         session.save()
         self.set_session_cookies(session)
 
-        # log user in
-        self.client.force_login(user=self.user)
-
         context = {"sock_pk": self.sock2.pk, "decision": "like"}
-
         # navigate to a certain route
         response = self.client.post(reverse("app_home:swipe"), data=context)
 
         # sock_likes = SockLike.objects.get(sock=self.sock)
         self.assertEqual(len(self.sock.get_likes()), 1)
-
         # check if the user can see the swipepage without any sock selected
         self.assertEqual(response.status_code, 302)
         self.assertTemplateUsed("app_user/swipe.html")
 
     def test_swipe_page_with_sock_selected_dislike_sock(self):
-
+        # log user in
+        self.client.force_login(user=self.user)
         session = self.get_session()
         session["sock_pk"] = self.sock.pk
         session.save()
         self.set_session_cookies(session)
 
-        # log user in
-        self.client.force_login(user=self.user)
-
         context = {"sock_pk": self.sock2.pk, "decision": "dislike"}
-
         # navigate to a certain route
         response = self.client.post(reverse("app_home:swipe"), data=context)
 
         # sock_likes = SockLike.objects.get(sock=self.sock)
         self.assertEqual(len(self.sock.get_dislikes()), 1)
-
         # check if the user can see the swipepage without any sock selected
         self.assertEqual(response.status_code, 302)
         self.assertTemplateUsed("app_user/swipe.html")
+
+    def test_swipe_page_with_sock_selected_user_match(self):
+        # log user in
+        self.client.force_login(user=self.user2)
+        # create session data
+        session = self.get_session()
+        session["sock_pk"] = self.sock2.pk
+        session.save()
+        self.set_session_cookies(session)
+
+        # create context
+        context = {"sock_pk": self.sock.pk, "decision": "like"}
+        # navigate to a certain route
+        response = self.client.post(reverse("app_home:swipe"), data=context)
+        # check if the user can see the swipepage with a sock selected
+        self.assertEqual(response.status_code, 302)
+        self.assertTemplateUsed("app_user/swipe.html")
+
+        # log user in
+        self.client.force_login(user=self.user)
+        # create session data
+        session = self.get_session()
+        session["sock_pk"] = self.sock.pk
+        session.save()
+        self.set_session_cookies(session)
+
+        # create context
+        context = {"sock_pk": self.sock2.pk, "decision": "like"}
+        # navigate to a certain route
+        response = self.client.post(reverse("app_home:swipe"), data=context)
+        # get the matches of the user
+        matches = UserMatch.objects.get(user=self.user)
+        self.assertEqual(matches.user, self.user)
+        self.assertEqual(matches.other, self.user2)

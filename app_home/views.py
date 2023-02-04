@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 
 from app_users.validator import HotSoxLogInAndValidationCheckMixin
-from app_users.models import User, Sock, SockLike
+from app_users.models import User, Sock, SockLike, UserMatch
 from .pre_prediction_algorithm import PrePredictionAlgorithm
 
 
@@ -78,25 +78,22 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
             Sock, pk=request.POST.get("sock_pk", None)
         )
         # frontend liked the sock
+        SockLike.objects.create(sock=sock_to_be_decided_on, like=current_user_sock)
+
         if request.POST.get("decision", None) == "like":
             new_sock_like = SockLike(sock=current_user_sock, like=sock_to_be_decided_on)
             new_sock_like.save()
 
             # check for user to user match via the socks
-            try:
-                liked_socks = sock_to_be_decided_on.like.get(pk=current_user_sock.pk)
-                print("match! Yeah! Huuhuu!! Yeeeeah!")
-                print(
-                    "judgment sock:",
-                    sock_to_be_decided_on,
-                    "current sock?:",
-                    liked_socks,
-                    "real current sock:",
-                    current_user_sock,
+            if current_user_sock in sock_to_be_decided_on.get_likes():
+                # create user to user match in db
+                UserMatch.objects.create(
+                    user=current_user_sock.user, other=sock_to_be_decided_on.user
                 )
-            except SockLike.DoesNotExist:
-                pass
-                print("no match - that is so sad!")
+                #TODO:  create a modal dialog to inform the user about a match!
+                #       > show short user details
+                #       send a info email
+                #       show some unicorn farts!
 
         # frontend disliked the sock
         elif request.POST.get("decision", None) == "dislike":
