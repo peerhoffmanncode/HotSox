@@ -77,9 +77,8 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
         sock_to_be_decided_on = get_object_or_404(
             Sock, pk=request.POST.get("sock_pk", None)
         )
-        # frontend liked the sock
-        SockLike.objects.create(sock=sock_to_be_decided_on, like=current_user_sock)
 
+        # frontend liked the sock
         if request.POST.get("decision", None) == "like":
             new_sock_like = SockLike(sock=current_user_sock, like=sock_to_be_decided_on)
             new_sock_like.save()
