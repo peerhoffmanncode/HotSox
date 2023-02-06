@@ -80,26 +80,30 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
 
         # frontend liked the sock
         if request.POST.get("decision", None) == "like":
-            new_sock_like = SockLike(sock=current_user_sock, like=sock_to_be_decided_on)
-            new_sock_like.save()
+            # we use get_or_create to beware of duplicates!
+            _, sock_like_created = SockLike.objects.get_or_create(
+                sock=current_user_sock, like=sock_to_be_decided_on
+            )
 
             # check for user to user match via the socks
             if current_user_sock in sock_to_be_decided_on.get_likes():
-                # create user to user match in db
-                UserMatch.objects.create(
+                # create match in UserMatchTable if not already exists!
+                _, user_match_created = UserMatch.objects.get_or_create(
                     user=current_user_sock.user, other=sock_to_be_decided_on.user
                 )
-                # TODO:  create a modal dialog to inform the user about a match!
-                #       > show short user details
-                #       send a info email
-                #       show some unicorn farts!
+                if user_match_created:
+                    pass
+                    # TODO:  create a modal dialog to inform the user about a match!
+                    #       > show short user details
+                    #       send a info email
+                    #       show some unicorn farts!
 
         # frontend disliked the sock
         elif request.POST.get("decision", None) == "dislike":
-            new_sock_dislike = SockLike(
+            # we use get_or_create to beware of duplicates!
+            _, sock_dislike_created = SockLike.objects.get_or_create(
                 sock=current_user_sock, dislike=sock_to_be_decided_on
             )
-            new_sock_dislike.save()
 
         # reload the frontend
         return redirect(reverse("app_home:swipe"))

@@ -14,7 +14,7 @@
                 {% for sock in user_socks %}
                 <li class="col-6 col-sm3 list-inline-item select-sock flex-center">
                     <form action="" method="POST" class="flex-center">
-                    {% csrf_token %}
+                        {% csrf_token %}
                         <input type="hidden" name="change_sock" value="{{ sock.pk }}">
                         <button class="col-6 col-sm3 list-inline-item select-sock flex-center btn-img-hide">
                             <img class="select-sock-pic" src="{{ sock.get_picture_urls.0 }}" alt="">
@@ -33,35 +33,37 @@
                 {% csrf_token %}
                 <input type="hidden" name="sock_pk" value="{{sock.pk}}">
                 <input type="hidden" name="decision" value="dislike">
-                <button class="btn-img-hide"><img src="/static/no.png" alt="" class="swipe-button"></button>
+                <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();"><img src="/static/no.png"
+                        alt="" class="swipe-button"></button>
             </form>
             {% endif %}
         </div>
         <div class="col-md-4">
-        {% if sock %}
+            {% if sock %}
             <img src="{{ sock.get_picture_urls.0 }}" alt="" class="sock-img">
-        {% else %}
+            {% else %}
             <img src="/static/sad_face.jpg" alt="" class="sock-img">
             <p>No more socks currently available!</p>
-        {% endif %}
+            {% endif %}
         </div>
-        
+
         <div class="col-md-4 swipe-button">
             {% if sock %}
             <form action="" method="POST" name="swipe-yes" class="flex-center">
                 {% csrf_token %}
                 <input type="hidden" name="sock_pk" value="{{sock.pk}}">
                 <input type="hidden" name="decision" value="like">
-                <button class="btn-img-hide"><img src="/static/yes.png" alt="" class="swipe-button"></button>
+                <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();"><img src="/static/yes.png"
+                        alt="" class="swipe-button"></button>
             </form>
             {% endif %}
         </div>
     </div>
     <div class="row swipe-panel">
         <div class="col-md-4 offset-4">
-    <h2 class="center">{{ sock.info_name }}</h2>
-    <p class="center">{{ sock.info_about }}</p>
+            <h2 class="center">{{ sock.info_name }}</h2>
+            <p class="center">{{ sock.info_about }}</p>
+        </div>
     </div>
-</div>
 
-{% endblock %}
+    {% endblock %}
