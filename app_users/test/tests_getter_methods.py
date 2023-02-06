@@ -120,17 +120,17 @@ class UserModelTestCase(TestCase):
         # assert the correct number of pictures are returned
         self.assertEqual(len(all_pictures), 2)
 
-    #THIS TEST IS PROBLEMATIC
-    
+    # THIS TEST IS PROBLEMATIC
+
     def test_get_picture_urls(self):
         urls = self.user1.get_picture_urls()
         self.assertEqual(len(urls), 2)
-        # there is an issue accessing the .url 
+        # there is an issue accessing the .url
         # of the cloudinary during the test
         # the function itself works
-        #self.assertIn(self.picture1.profile_picture.url, urls)
-        #self.assertIn(self.picture2.profile_picture.url, urls)
-    
+        # self.assertIn(self.picture1.profile_picture.url, urls)
+        # self.assertIn(self.picture2.profile_picture.url, urls)
+
     # test if gets the matches
     def test_get_matches(self):
         matches = self.user1.get_matches()
