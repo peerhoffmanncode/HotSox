@@ -47,11 +47,12 @@ class PrePredictionAlgorithm:
         unseen socks. We use basic randomization for that - nothing fancy!
         """
 
+        # remaining unseen socks as list
         unseen_socks = PrePredictionAlgorithm._prefilter_list_of_all_socks(
             current_user, current_user_sock
         )
 
-        # ADD PROPER SELECTION ALGORITHM HERE
+        # TODO ADD PROPER SELECTION ALGORITHM HERE
         # check if there are remaining socks
         if unseen_socks:
             # this is the currently simplest version of a pre-prediction: randomizing
