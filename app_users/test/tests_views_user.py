@@ -63,7 +63,7 @@ class UserSignUpTest(TestCase):
                 "username": "123quirk-unicorn",
                 "password1": "!passw@rd123",
                 "password2": "!passw@rd123",
-                "email": "john.doe@example.com",
+                "email": "123john.doe@example.com",
                 "first_name": "John",
                 "last_name": "Doe",
                 "info_about": "I like to collect rubber ducks",
@@ -80,7 +80,7 @@ class UserSignUpTest(TestCase):
         )
         self.assertEqual(response.status_code, 302)  # check redirect status code
         self.assertEqual(
-            response.url, reverse("app_users:user-profile-picture")
+            response["location"], reverse("app_users:user-profile-picture")
         )  # check redirect url
         self.assertEqual(
             User.objects.count(), 2
