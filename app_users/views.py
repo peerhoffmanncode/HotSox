@@ -153,7 +153,15 @@ class UserProfileUpdate(LoginRequiredMixin, TemplateView):
             # redirect to user profile details page
             return redirect(reverse("app_users:user-profile-details"))
         # in case of invalid go here
-        return redirect(reverse("app_users:user-profile-update"))
+        return render(
+            request,
+            "users/profile_update.html",
+            {
+                "form_user_profile": form_user_profile,
+                "left_arrow_go_to_url": reverse("app_users:user-profile-details"),
+                "right_arrow_go_to_url": reverse("app_users:sock-overview"),
+            },
+        )
 
     def get(self, request, *args, **kwargs):
         user_to_update = get_object_or_404(User, pk=request.user.pk)
