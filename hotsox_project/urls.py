@@ -23,4 +23,5 @@ urlpatterns = [
     # User Authentication
     path("user/", include("app_users.urls")),
     path("user/", include("allauth.urls")),
+    path("chat/", include("app_chat.urls")),
 ]
