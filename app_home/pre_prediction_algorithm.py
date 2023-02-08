@@ -31,7 +31,7 @@ class PrePredictionAlgorithm:
         all_socks = Sock.objects.all()
 
         # exclude all the seen socks from the list of all the socks
-        # including the socks of the current user
+        # exclude the socks of the current user too!
         unseen_socks = all_socks.exclude(pk__in=processed_socks_pks).exclude(
             user=current_user
         )
