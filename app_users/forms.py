@@ -114,13 +114,6 @@ class UserSignUpForm(UserCreationForm):
 class UserProfileForm(UserChangeForm):
     password = None
 
-    # neat hack to access the instance object
-    # that is provided during the call
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # store the user object to the
-        self.user = kwargs.get("instance", None)
-
     class Meta:
         model = User
         fields = "__all__"
