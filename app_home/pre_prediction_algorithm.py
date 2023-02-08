@@ -16,20 +16,22 @@ class PrePredictionAlgorithm:
         socks of the user him/herself are excluded from the list.
         """
 
-        # get the queryset of all socks
-        all_socks = Sock.objects.all()
-
         # get a queryset of all the unseen socks
         processed_socks = (
             SockLike.objects.filter(Q(like__isnull=False) | Q(dislike__isnull=False))
             .filter(sock=current_user_sock)
             .values_list("like", "dislike")
         )
-        # create list of all the pks of the unseen socks
+        # create a list of all the pks of the unseen socks
         processed_socks_pks = [
             sock_pk for sock_like in processed_socks for sock_pk in sock_like if sock_pk
         ]
+
+        # get the queryset of all available socks
+        all_socks = Sock.objects.all()
+
         # exclude all the seen socks from the list of all the socks
+        # exclude the socks of the current user too!
         unseen_socks = all_socks.exclude(pk__in=processed_socks_pks).exclude(
             user=current_user
         )
@@ -45,11 +47,12 @@ class PrePredictionAlgorithm:
         unseen socks. We use basic randomization for that - nothing fancy!
         """
 
+        # remaining unseen socks as list
         unseen_socks = PrePredictionAlgorithm._prefilter_list_of_all_socks(
             current_user, current_user_sock
         )
 
-        # ADD PROPER SELECTION ALGORITHM HERE
+        # TODO ADD PROPER SELECTION ALGORITHM HERE
         # check if there are remaining socks
         if unseen_socks:
             # this is the currently simplest version of a pre-prediction: randomizing
