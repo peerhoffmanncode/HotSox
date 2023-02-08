@@ -30,6 +30,11 @@ def validate_username(data):
     else:
         # handle case where form = form object
         username = data.cleaned_data["username"]
+        # check if a user object is present
+        if data.instance:
+            # check if username is unchanged
+            if data.instance.username == username:
+                return
 
     try:
         problematic_username = User.objects.get(username=username)
@@ -46,6 +51,11 @@ def validate_email(data):
     else:
         # handle case where form = form object
         email = data.cleaned_data["email"]
+        # check if a user object is present
+        if data.instance:
+            # check if email is unchanged
+            if data.instance.email == email:
+                return
 
     try:
         problematic_email = User.objects.get(email=email)
