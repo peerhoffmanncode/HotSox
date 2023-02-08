@@ -7,7 +7,7 @@ from .models import User, UserProfilePicture, Sock, SockProfilePicture
 
 
 def validate_age(form):
-    """function the check if a user is older than 18 years"""
+    """function to check if a user is older than 18 years"""
 
     if isinstance(form, date):
         # handle case where form = birthday
@@ -20,6 +20,38 @@ def validate_age(form):
     if round(difference.days / 365.2425, 2) < 18:
         # self.add_error('date_of_birth', 'Enter a valid date of birth')
         raise ValidationError("You must be at least 18 years old", code="invalid")
+
+
+def validate_username(data):
+    """function to check if a username is already taken"""
+
+    if isinstance(data, str):
+        username = data
+    else:
+        # handle case where form = form object
+        username = data.cleaned_data["username"]
+
+    try:
+        problematic_username = User.objects.get(username=username)
+        raise ValidationError("This username has already been taken!", code="invalid")
+    except User.DoesNotExist:
+        return
+
+
+def validate_email(data):
+    """function to check if a username is already taken"""
+
+    if isinstance(data, str):
+        email = data
+    else:
+        # handle case where form = form object
+        email = data.cleaned_data["email"]
+
+    try:
+        problematic_email = User.objects.get(email=email)
+        raise ValidationError("This email is already in use!", code="invalid")
+    except User.DoesNotExist:
+        return
 
 
 class UserSignUpForm(UserCreationForm):
@@ -65,6 +97,8 @@ class UserSignUpForm(UserCreationForm):
     def clean(self):
         # Call the custom validator function
         validate_age(self)
+        validate_username(self)
+        validate_email(self)
 
 
 class UserProfileForm(UserChangeForm):
@@ -113,6 +147,8 @@ class UserProfileForm(UserChangeForm):
     def clean(self):
         # Call the custom validator function
         validate_age(self)
+        validate_username(self)
+        validate_email(self)
 
 
 class UserProfilePictureForm(ModelForm):

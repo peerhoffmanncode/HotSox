@@ -69,7 +69,13 @@ class UserSignUp(TemplateView):
             # redirect to user profile picture page
             return redirect(reverse("app_users:user-profile-picture"))
         # in case of invalid go here
-        return redirect(reverse("app_users:user-signup"))
+        return render(
+            request,
+            "users/signup.html",
+            {
+                "form_user_profile": form_user_profile,
+            },
+        )
 
     def get(self, request, *args, **kwargs):
         # get geo location via IP
