@@ -61,7 +61,8 @@ jobs:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-        run: python manage.py test
+        # run: python manage.py test
+        run: pytest
       - name: Check pep8 with black
         run: python -m black --check .
 
