@@ -6,6 +6,8 @@ django-extensions==3.2.1
 cloudinary
 ipython==8.7.0
 psycopg2-binary==2.9.5
+pytest-cov
+pytest-django
 names==0.3.0
 folium==0.14.0
 geoip2==4.6.0
