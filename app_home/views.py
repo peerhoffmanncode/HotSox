@@ -87,9 +87,15 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
 
             # check for user to user match via the socks
             if current_user_sock in sock_to_be_decided_on.get_likes():
+                # TODO: create chatroom UUID
+                # TODO: add UUID to UserMatch chatroom field in the DB
+
                 # create match in UserMatchTable if not already exists!
                 _, user_match_created = UserMatch.objects.get_or_create(
                     user=current_user_sock.user, other=sock_to_be_decided_on.user
+                )
+                _, user_match_created = UserMatch.objects.get_or_create(
+                    other=current_user_sock.user, user=sock_to_be_decided_on.user
                 )
                 if user_match_created:
                     pass

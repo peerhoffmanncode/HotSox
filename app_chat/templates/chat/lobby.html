@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
@@ -7,43 +8,54 @@
     <meta name='viewport' content='width=device-width, initial-scale=1'>
 
 </head>
+
 <body>
     <h1>Lets chat!</h1>
+    <h5>{{ request.user }}</h5>
 
     <form id="form">
-        <input type="text" name="message"/>
+        <input type="text" name="message" />
     </form>
 
-    <div id="messages"></div>
+    <div id="chat_messages_div"></div>
 
     <script type="text/javascript">
         let url = `ws://${window.location.host}/ws/socket-server/`
 
         const chatSocket = new WebSocket(url)
 
-        chatSocket.onmessage = function(e){
-            let data = JSON.parse(e.data)
+        chatSocket.onmessage = function (event) {
+            let data = JSON.parse(event.data)
             console.log('Data:', data)
 
-            if(data.type === 'chat'){
-                let messages = document.getElementById('messages')
+            if (data.type === 'chat') {
+                let chat_messages_div = document.getElementById('chat_messages_div')
 
-                messages.insertAdjacentHTML('beforeend', `<div>
-                                        <p>${data.message}</p>
+                chat_messages_div.insertAdjacentHTML('beforeend', `<div>
+                                        <p>${data.sending_user}:${data.message}:</p>
                                     </div>`)
             }
         }
 
         let form = document.getElementById('form')
-        form.addEventListener('submit', (e)=> {
-            e.preventDefault()
-            let message = e.target.message.value 
+        form.addEventListener('submit', (event) => {
+            event.preventDefault()
+            let message = event.target.message.value
+            let sending_user_pk = '{{ request.user.pk }}'
+            let sending_user = '{{ request.user.username }}'
+            if (sending_user == "") {
+                sending_user = 'Anonymous'
+                sending_user_pk = -1
+            }
             chatSocket.send(JSON.stringify({
-                'message':message
+                'message': message,
+                'sending_user_pk': sending_user_pk,
+                'sending_user': sending_user
             }))
             form.reset()
         })
 
     </script>
 </body>
+
 </html>

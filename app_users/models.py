@@ -393,7 +393,8 @@ class MessageChat(models.Model):
     other = models.ForeignKey(
         User, related_name="chat_receiving", on_delete=models.CASCADE
     )
-    subject = models.CharField(max_length=255, blank=False)
+    chatroom_uuid = models.UUIDField(unique=True, blank=False)
+    message = models.CharField(max_length=255, blank=False)
     sent_date = models.DateField(auto_now_add=True, blank=False)
     seen_date = models.DateField(blank=True, null=True)
 
