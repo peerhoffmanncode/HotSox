@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Chat with {{receiving_user.username}}</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+
+<body>
+    <h1>Lets chat!</h1>
+    <h3>You are {{ sending_user.username }} and you chat with {{ receiving_user.username }}</h3>
+    <h5>The chat room uuid is [{{ chatroom_UUID }}]</h5>
+    <br>
+
+    <!-- Main div that will be changed by JS
+         we populate the div with the data preloaded from the view
+         we check for alignment by username -->
+    <div id="chat_messages_div"
+        style="width: 40vw; max-height: 30vh; overflow-y: scroll; background-color: lightgray; border: 2px solid black;">
+        {% for chat in all_chats %}
+        {% if chat.user.username == request.user.username %}
+        <div style="text-align: right; width: 100%;">
+            <div>({{ chat.sent_date.time }}) {{ chat.user.username }}</div>
+            <div>{{ chat.message }}</div>
+        </div>
+        {% else %}
+        <div style="text-align: left; width: 100%;">
+            <div>{{ chat.user.username }} ({{ chat.sent_date.time }})</div>
+            <div>{{ chat.message }}</div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- JS to scroll the div to the latest entry -->
+    <script>
+        var chat_messages_div = document.getElementById("chat_messages_div");
+        chat_messages_div.scrollTop = chat_messages_div.scrollHeight;
+    </script>
+
+    <!-- Input field for the chat message -->
+    <form id="form">
+        <p>Say something:</p>
+        <input type="text" name="message" />
+    </form>
+
+    <!-- Main JS to change the div id="chat_messages_div" -->
+    <script type="text/javascript">
+        // define the websocket url
+        let url = `ws://${window.location.host}/ws/chat/`
+        // open the websocket
+        const chatSocket = new WebSocket(url)
+
+        // here we receive the msg from the backend and
+        // send the message to the div id="chat_messages_div"
+        chatSocket.onmessage = function (event) {
+            let data = JSON.parse(event.data)
+            if (data.type === 'chat') {
+                const chatMessagesDiv = document.getElementById("chat_messages_div");
+                function addMessage(message, align) {
+                    const messageDiv = document.createElement("div");
+                    messageDiv.style.textAlign = align;
+                    messageDiv.style.width = "100%";
+                    messageDiv.innerText = message;
+                    chatMessagesDiv.appendChild(messageDiv);
+                    chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+                    // TODO:
+                    // inform backend message was seen
+                    // only when i am logged in as "receiver user"
+                    // call chatSocket.send(JSON.stringify({...
+                }
+                if (data.sending_user === '{{ request.user.username }}') {
+                    addMessage("(" + data.message_sent_time + ") " + data.sending_user + " \n" + data.message, 'right');
+                } else {
+                    addMessage(data.sending_user + " (" + data.message_sent_time + ")" + " \n" + data.message, 'left');
+                }
+            }
+        }
+
+        // here we send the message and meta data to the backend
+        let form = document.getElementById('form')
+        form.addEventListener('submit', (event) => {
+            event.preventDefault()
+            let message = event.target.message.value
+            let sending_user_pk = '{{ sending_user.pk }}'
+            let sending_user = '{{ sending_user.username }}'
+            if (sending_user == "") {
+                sending_user = 'Anonymous'
+                sending_user_pk = 'None'
+            }
+            let receiving_user_pk = '{{ receiving_user.pk }}'
+            let receiving_user = '{{ receiving_user.username }}'
+            if (receiving_user == "") {
+                receiving_user = 'Anonymous'
+                receiving_user_pk = 'None'
+            }
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'sending_user_pk': sending_user_pk,
+                'sending_user': sending_user,
+                'receiving_user_pk': receiving_user_pk,
+                'receiving_user': receiving_user,
+            }))
+            form.reset()
+        })
+    </script>
+</body>
+
+</html>

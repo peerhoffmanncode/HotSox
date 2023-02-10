@@ -7,6 +7,7 @@ from datetime import date, timedelta
 from cloudinary import uploader
 from cloudinary.models import CloudinaryField
 from django.db.models import Q
+import uuid
 
 # CHOICES FOR USER
 from .models_choices import (
@@ -170,6 +171,7 @@ class UserMatch(models.Model):
     # User.matched.other.objects.all() = all Other user !
     user = models.ForeignKey(User, related_name="him", on_delete=models.CASCADE)
     other = models.ForeignKey(User, related_name="matched", on_delete=models.CASCADE)
+    chatroom_uuid = models.UUIDField()
 
 
 class Sock(models.Model):
@@ -393,10 +395,9 @@ class MessageChat(models.Model):
     other = models.ForeignKey(
         User, related_name="chat_receiving", on_delete=models.CASCADE
     )
-    chatroom_uuid = models.UUIDField(unique=True, blank=False)
     message = models.CharField(max_length=255, blank=False)
-    sent_date = models.DateField(auto_now_add=True, blank=False)
-    seen_date = models.DateField(blank=True, null=True)
+    sent_date = models.DateTimeField(auto_now_add=True, blank=False)
+    seen_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self) -> str:
-        return f"<Cat from {self.user} to {self.other} Subject: {self.subject} @{self.sent_date}>"
+        return f"<Chat from {self.user} to {self.other} Subject: {self.message} @{self.sent_date}>"

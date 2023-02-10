@@ -1,59 +1,105 @@
+import json
+from datetime import datetime
 from django.shortcuts import get_object_or_404
 
-import json
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 
-from app_users.models import User
+from app_users.models import User, MessageChat
 
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
-        request_user = "A"
-        match_user = "B"
-        self.room_group_name = f"{request_user}_to_{match_user}"
+        """function to extablish a chat room and connection to the frontend"""
 
+        # obtain the chatroom uuid from the session of the current user!
+        chatroom_uuid = self.scope["session"].get("chatroom_uuid", None)
+        # set the room_group_name of channels to the correct uuid
+        if chatroom_uuid:
+            self.room_group_name = chatroom_uuid
+        else:
+            self.room_group_name = "UNDEFINED"
+            raise Exception("No chatroom_uuid defined! This is really bad!")
+
+        # initial the connection
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name, self.channel_name
         )
 
+        # Accepts incoming socket request from the frontend
         self.accept()
 
     def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json["message"]
-        sending_user = text_data_json["sending_user"]
-        sending_user_pk = int(text_data_json["sending_user_pk"])
-        if int(sending_user_pk) > 0:
-            current_user = get_object_or_404(User, pk=int(sending_user_pk))
-            print(current_user)
+        """function to receive chat messages from the room_group_name"""
+        # init user vars
+        current_user = matched_user = None
 
+        # load the json that was send by the frontend JS
+        serialized_data_from_chat_frontend = json.loads(text_data)
+
+        # TODO check if frontend sends seen message ...
+        # after db update break out of fuc to avoid double posting
+
+        message = serialized_data_from_chat_frontend["message"]
+        sending_user_pk = serialized_data_from_chat_frontend["sending_user_pk"]
+        sending_user_name = serialized_data_from_chat_frontend["sending_user"]
+        receiving_user_pk = serialized_data_from_chat_frontend["receiving_user_pk"]
+        receiving_user_name = serialized_data_from_chat_frontend["receiving_user"]
+
+        # get actual user objects from the database
+        if sending_user_pk != "None":
+            current_user = get_object_or_404(User, pk=sending_user_pk)
+        if receiving_user_pk != "None":
+            matched_user = get_object_or_404(User, pk=receiving_user_pk)
+
+        # add the key "type" to the serialized data
+        serialized_data_from_chat_frontend["type"] = "chat_message"
+
+        # send the serialized data to the frontend
         async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                "type": "chat_message",
-                "message": message,
-                "sending_user": sending_user,
-                "sending_user_pk": sending_user_pk,
-            },
+            self.room_group_name, serialized_data_from_chat_frontend
         )
 
     def chat_message(self, event):
-        # breakpoint()
-        message = event["message"]
-        sending_user = event["sending_user"]
-        sending_user_pk = int(event["sending_user_pk"])
-        if int(sending_user_pk) > 0:
-            current_user = get_object_or_404(User, pk=sending_user_pk)
-            print(current_user)
+        """function to send chat message to the room_group_name"""
+        # init user vars
+        current_user = matched_user = None
 
+        # get actual user objects from the database
+        if event["sending_user_pk"] != "None":
+            current_user = get_object_or_404(User, pk=event["sending_user_pk"])
+        if event["receiving_user_pk"] != "None":
+            matched_user = get_object_or_404(User, pk=event["receiving_user_pk"])
+
+        # store message in the database
+        message_sent_date = message_sent_time = None
+        message_seen_date = message_seen_time = None
+        if current_user and matched_user:
+            chat_object = MessageChat.objects.create(
+                user=current_user, other=matched_user, message=event["message"]
+            )
+            message_sent_date = str(chat_object.sent_date.date())
+            message_sent_time = str(chat_object.sent_date.time().strftime("%H:%M:%S"))
+            if message_seen_date:
+                message_seen_date = str(chat_object.seen_date.date())
+                message_seen_time = str(
+                    chat_object.seen_date.time().strftime("%H:%M:%S")
+                )
+
+        # serialize data and send to the room_group_name
         self.send(
             text_data=json.dumps(
                 {
                     "type": "chat",
-                    "message": message,
-                    "sending_user": sending_user,
-                    "sending_user_pk": sending_user_pk,
+                    "message": event["message"],
+                    "message_sent_date": message_sent_date,
+                    "message_sent_time": message_sent_time,
+                    "message_seen_date": message_seen_date,
+                    "message_seen_time": message_seen_time,
+                    "sending_user_pk": event["sending_user_pk"],
+                    "sending_user": event["sending_user"],
+                    "receiving_user_pk": event["receiving_user_pk"],
+                    "receiving_user": event["receiving_user"],
                 }
             )
         )
