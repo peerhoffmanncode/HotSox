@@ -59,22 +59,45 @@
             let data = JSON.parse(event.data)
             if (data.type === 'chat') {
                 const chatMessagesDiv = document.getElementById("chat_messages_div");
-                function addMessage(message, align) {
+                function addMessage(message, message_pk, align) {
+                    if (message_pk != null) {
+                        let sending_user_pk = '{{ sending_user.pk }}'
+                        let sending_user = '{{ sending_user.username }}'
+                        if (sending_user == "") {
+                            sending_user = 'Anonymous'
+                            sending_user_pk = 'None'
+                        }
+                        let receiving_user_pk = '{{ receiving_user.pk }}'
+                        let receiving_user = '{{ receiving_user.username }}'
+                        if (receiving_user == "") {
+                            receiving_user = 'Anonymous'
+                            receiving_user_pk = 'None'
+                        }
+                        chatSocket.send(JSON.stringify({
+                            'was_seen': true,
+                            'message_pk': message_pk,
+                            'message': message,
+                            'sending_user_pk': sending_user_pk,
+                            'sending_user': sending_user,
+                            'receiving_user_pk': receiving_user_pk,
+                            'receiving_user': receiving_user,
+                        }))
+                        let data = JSON.parse(event.data)
+                    }
                     const messageDiv = document.createElement("div");
                     messageDiv.style.textAlign = align;
                     messageDiv.style.width = "100%";
                     messageDiv.innerText = message;
                     chatMessagesDiv.appendChild(messageDiv);
                     chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
-                    // TODO:
-                    // inform backend message was seen
-                    // only when i am logged in as "receiver user"
-                    // call chatSocket.send(JSON.stringify({...
+
                 }
                 if (data.sending_user === '{{ request.user.username }}') {
-                    addMessage("(" + data.message_sent_time + ") " + data.sending_user + " \n" + data.message, 'right');
+                    addMessage("[" + data.message_seen_time + "] " + "(" + data.message_sent_time + ") " + data.sending_user, null, 'right');
+                    addMessage(data.message, data.message_pk, 'right');
                 } else {
-                    addMessage(data.sending_user + " (" + data.message_sent_time + ")" + " \n" + data.message, 'left');
+                    addMessage(data.sending_user + " (" + data.message_sent_time + ") [" + data.message_seen_time + "]", null, 'left');
+                    addMessage(data.message, data.message_pk, 'left');
                 }
             }
         }

@@ -400,4 +400,7 @@ class MessageChat(models.Model):
     seen_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self) -> str:
-        return f"<Chat from {self.user} to {self.other} Subject: {self.message} @{self.sent_date}>"
+        if self.seen_date:
+            return f"<Chat from {self.user} to {self.other} Subject: {self.message} sent@{self.sent_date.time()} / seen@{self.seen_date.time()}>"
+        else:
+            return f"<Chat from {self.user} to {self.other} Subject: {self.message} sent@{self.sent_date.time()} / UNSEEN YET!"

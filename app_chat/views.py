@@ -3,7 +3,7 @@ from django.urls import reverse
 from app_users.models import User, UserMatch, MessageChat
 from django.db.models import Q
 
-# Create your views here.
+from datetime import datetime
 
 
 def chat_with_match(request, matched_user_name):
@@ -11,6 +11,8 @@ def chat_with_match(request, matched_user_name):
     Gather the User, matched user, and all the chats that have been done
     get a chatroom UUID
     """
+
+    # define a url to redirect to if an invalid record is detected
     error_url = reverse("app_users:user-matches")
 
     # get the other user object from the unique name
@@ -36,10 +38,13 @@ def chat_with_match(request, matched_user_name):
         | Q(user=matched_user, other=request.user)
     ).order_by("sent_date")
 
-    # TODO: implement a message_seen logic ...
-    # iterate over the qs all_chats
-    # check if "user other == matched_user"
-    # check if seen_date is NONE and set to datetime.today()
+    # every chat message that was sent by the matched user
+    # will be marked as seen since it is now displayed to the user
+    for chat in all_chats:
+        if chat.other == request.user:
+            if not chat.seen_date:
+                chat.seen_date = datetime.today()
+                chat.save()
 
     context = {
         "sending_user": request.user,
@@ -47,5 +52,4 @@ def chat_with_match(request, matched_user_name):
         "all_chats": all_chats,
         "chatroom_UUID": chatroom_uuid,
     }
-
     return render(request, "chat/chat_lobby.html", context)
