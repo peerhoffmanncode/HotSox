@@ -15,9 +15,8 @@ def chat_with_match(request, matched_user_name):
     # define a url to redirect to if an invalid record is detected
     error_url = reverse("app_users:user-matches")
 
-    # get the other user object from the unique name
+    # get the other user object from the url argument
     try:
-
         matched_user = User.objects.get(username=matched_user_name)
     except User.DoesNotExist:
         # if no valid matched user was found we redirect to error url
@@ -25,7 +24,10 @@ def chat_with_match(request, matched_user_name):
 
     # get the UserMatch object to obtain the chatroom UUID
     try:
-        user_match_object = UserMatch.objects.get(user=request.user, other=matched_user)
+        user_match_object = UserMatch.objects.get(
+            Q(user=request.user, other=matched_user)
+            | Q(user=matched_user, other=request.user)
+        )
         chatroom_uuid = str(user_match_object.chatroom_uuid)
         request.session["chatroom_uuid"] = chatroom_uuid
     except UserMatch.DoesNotExist:
@@ -38,18 +40,25 @@ def chat_with_match(request, matched_user_name):
         | Q(user=matched_user, other=request.user)
     ).order_by("sent_date")
 
-    # every chat message that was sent by the matched user
+    # every chat message that was sent by the matched users
     # will be marked as seen since it is now displayed to the user
+    # every message that was stored above the max count will be deleted
+    max_allowes_stored_chats = 300
+    max_allowes_stored_chats_count = 0
     for chat in all_chats:
-        if chat.other == request.user:
-            if not chat.seen_date:
-                chat.seen_date = datetime.today()
-                chat.save()
+        if max_allowes_stored_chats_count >= max_allowes_stored_chats:
+            chat.delete()
+        else:
+            if chat.other == request.user:
+                if not chat.seen_date:
+                    chat.seen_date = datetime.today()
+                    chat.save()
+        max_allowes_stored_chats_count += 1
 
     context = {
         "sending_user": request.user,
         "receiving_user": matched_user,
-        "all_chats": all_chats,
+        "all_chats": all_chats[:max_allowes_stored_chats],
         "chatroom_UUID": chatroom_uuid,
     }
     return render(request, "chat/chat_lobby.html", context)

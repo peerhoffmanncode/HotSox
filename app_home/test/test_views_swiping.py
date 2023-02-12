@@ -201,3 +201,4 @@ class Test(TestCase):
         matches = UserMatch.objects.get(user=self.user)
         self.assertEqual(matches.user, self.user)
         self.assertEqual(matches.other, self.user2)
+        self.assertNotEqual(matches.chatroom_uuid, "")

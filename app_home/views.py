@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import TemplateView
+from django.db.models import Q
+import uuid
 
 from app_users.validator import HotSoxLogInAndValidationCheckMixin
 from app_users.models import User, Sock, SockLike, UserMatch
@@ -87,16 +89,24 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
 
             # check for user to user match via the socks
             if current_user_sock in sock_to_be_decided_on.get_likes():
-                # TODO: create chatroom UUID
-                # TODO: add UUID to UserMatch chatroom field in the DB
-
                 # create match in UserMatchTable if not already exists!
-                _, user_match_created = UserMatch.objects.get_or_create(
-                    user=current_user_sock.user, other=sock_to_be_decided_on.user
-                )
-                _, user_match_created = UserMatch.objects.get_or_create(
-                    other=current_user_sock.user, user=sock_to_be_decided_on.user
-                )
+                try:
+                    user_match_created = UserMatch.objects.get(
+                        Q(user=current_user_sock.user, other=sock_to_be_decided_on.user)
+                        | Q(
+                            other=current_user_sock.user,
+                            user=sock_to_be_decided_on.user,
+                        )
+                    )
+                    user_match_created = False
+                except UserMatch.DoesNotExist:
+                    user_match_created = UserMatch.objects.create(
+                        user=current_user_sock.user,
+                        other=sock_to_be_decided_on.user,
+                        chatroom_uuid=uuid.uuid4(),
+                    )
+                    user_match_created = True
+
                 if user_match_created:
                     pass
                     # TODO:  create a modal dialog to inform the user about a match!

@@ -8,11 +8,20 @@
 <div class="row">
     <div class="col-md">
         {% if user_matches %}
-        <p>Here are your matches:</p>
+        <p>Your matches:</p>
         {% for match in user_matches %}
+        {% if match.user == request.user %}
+        <a href="/chat/{{ match.other.username }}">
             <p>{{ match.other.username }}</p>
+        </a>
+        {% else %}
+        <a href="/chat/{{ match.user.username }}">
+            <p>{{ match.user.username }}</p>
+        </a>
+        {% endif %}
         {% endfor %}
-        
+        {% else %}
+        <p>Sorry, you do not have any matches</p>
         {% endif %}
     </div>
 </div>
