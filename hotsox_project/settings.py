@@ -67,13 +67,9 @@ INSTALLED_APPS = [
     "app_chat",
 ]
 
-ASGI_APPLICATION = 'hotsox_project.asgi.application'
+ASGI_APPLICATION = "hotsox_project.asgi.application"
 
-CHANNEL_LAYERS = {
-    'default':{
-        'BACKEND':'channels.layers.InMemoryChannelLayer'
-    }
-}
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 # Social accounts login
 SOCIALACCOUNT_LOGIN_ON_GET = False
