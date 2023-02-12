@@ -40,9 +40,9 @@ we check for alignment by username -->
 <!-- Main JS to change the div id="chat_messages_div" -->
 <script type="text/javascript">
     // define the websocket url
-    let url = `ws://${window.location.host}/ws/chat/`
+    let url = `ws://${window.location.host}/chat/`
     if (window.location.protocol == 'https:') {
-        url = `wss://${window.location.host}/ws/chat/`
+        url = `wss://${window.location.host}/chat/`
     }
     // open the websocket
     const chatSocket = new WebSocket(url)
