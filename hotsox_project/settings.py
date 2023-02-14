@@ -47,6 +47,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "channels",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -60,11 +61,15 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "cloudinary",
     "crispy_forms",
-    # "django_summernote",
     "app_home",
     "app_users",
     "app_geo",
+    "app_chat",
 ]
+
+ASGI_APPLICATION = "hotsox_project.asgi.application"
+
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 # Social accounts login
 SOCIALACCOUNT_LOGIN_ON_GET = False

@@ -498,7 +498,6 @@ class UserMatches(HotSoxLogInAndValidationCheckMixin, TemplateView):
     def get(self, request):
         user = get_object_or_404(User, pk=request.user.pk)
         user_matches = user.get_matches()
-        # user_matches = get_object_or_404(User, pk=User.him.user.pk)
         context = {
             "user": user,
             "user_matches": user_matches,
