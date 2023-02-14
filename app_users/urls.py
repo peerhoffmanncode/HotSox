@@ -5,15 +5,17 @@ app_name = "app_users"
 urlpatterns = [
     path("signup/", views.UserSignUp.as_view(), name="user-signup"),
     path(
-        "profile/details",
+        "profile/details/",
         views.UserProfileDetails.as_view(),
         name="user-profile-details",
     ),
     path(
-        "profile/update", views.UserProfileUpdate.as_view(), name="user-profile-update"
+        "profile/update/",
+        views.UserProfileUpdate.as_view(),
+        name="user-profile-update",
     ),
     path(
-        "profile/picture",
+        "profile/picture/",
         views.UserProfilePictureUpdate.as_view(),
         name="user-profile-picture",
     ),
@@ -22,7 +24,11 @@ urlpatterns = [
         views.UserMatches.as_view(),
         name="user-matches",
     ),
-    path("sock/overview/", views.SockProfileOverview.as_view(), name="sock-overview"),
+    path(
+        "sock/overview/",
+        views.SockProfileOverview.as_view(),
+        name="sock-overview",
+    ),
     path(
         "sock/select/",
         views.SockSelection.as_view(),

@@ -66,4 +66,30 @@
         </div>
     </div>
 
+    <!-- Match Modal -->
+    <div class="modal fade" id="matchModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">You have a match!</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">Woohoo! You have a match!</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Continue Swiping</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete">View match page</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+<script type="text/javascript">
+    $(window).on('load', function() {
+        $('#matchModal').modal('show');
+    });
+</script>
+
+
     {% endblock %}
