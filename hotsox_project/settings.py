@@ -67,8 +67,8 @@ INSTALLED_APPS = [
     "app_chat",
 ]
 
+WSGI_APPLICATION = "hotsox_project.wsgi.application"
 ASGI_APPLICATION = "hotsox_project.asgi.application"
-
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 # Social accounts login
@@ -135,7 +135,6 @@ TEMPLATES = [
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
-WSGI_APPLICATION = "hotsox_project.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
