@@ -33,7 +33,7 @@ Possible deployment platforms could be heroku, google cloud or aws.
 
 ## Credits
 
-Python:
+Python3:
 https://www.python.org
 
 Djangoo:
