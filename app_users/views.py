@@ -8,6 +8,8 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .validator import HotSoxLogInAndValidationCheckMixin, ProtectedSockMixin
 
+from app_geo.utilities import GeoMap
+
 from .models import User, UserProfilePicture, Sock, SockProfilePicture, UserMatch
 from .forms import (
     UserSignUpForm,
@@ -107,6 +109,18 @@ class UserProfileDetails(HotSoxLogInAndValidationCheckMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["left_arrow_go_to_url"] = ""  # reverse("app_home:index")
         context["right_arrow_go_to_url"] = reverse("app_users:user-profile-update")
+        user = self.request.user
+        lat = user.location_latitude
+        lng = user.location_longitude
+        city = user.location_city
+
+        if city and lat and lng:
+            context["map"] = GeoMap.get_geo_map(
+                geo_location_a=(lat, lng),
+                geo_location_b=(lat, lng),
+                city_location=city,
+            )
+
         return context
 
 
