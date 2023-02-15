@@ -3,9 +3,9 @@ from django.urls import reverse
 from app_users.models import User, UserMatch, MessageChat
 from django.db.models import Q
 
-from datetime import datetime
+from django.utils import timezone
 
-
+# TODO: rewrite as classbased view
 def chat_with_match(request, matched_user_name):
     """Main view to initiate a new chat conversation
     Gather the User, matched user, and all the chats that have been done
@@ -51,7 +51,7 @@ def chat_with_match(request, matched_user_name):
         else:
             if chat.other == request.user:
                 if not chat.seen_date:
-                    chat.seen_date = datetime.today()
+                    chat.seen_date = timezone.now()
                     chat.save()
         max_allowes_stored_chats_count += 1
 
