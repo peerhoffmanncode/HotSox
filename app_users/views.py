@@ -127,7 +127,6 @@ class UserProfileDetails(HotSoxLogInAndValidationCheckMixin, TemplateView):
 
         context["left_arrow_go_to_url"] = ""  # reverse("app_home:index")
         context["right_arrow_go_to_url"] = reverse("app_users:user-profile-update")
-
         return context
 
 

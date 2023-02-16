@@ -92,6 +92,7 @@ class GeoMap:
         map_height: int = 500,
         city_location: str = "You",
         geo_location_a: tuple = (0, 0),
+        geo_location_a: tuple = (0, 0),
         city_destination: str = "",
         geo_location_b: tuple = (None, None),
         add_line: bool = False,
@@ -101,7 +102,13 @@ class GeoMap:
         geo_map = folium.Map(
             width=map_width,
             height=map_height,
+            width=map_width,
+            height=map_height,
             location=GeoMap.get_location_center_coordinates(
+                geo_location_a[0],
+                geo_location_a[1],
+                geo_location_b[0],
+                geo_location_b[1],
                 geo_location_a[0],
                 geo_location_a[1],
                 geo_location_b[0],
@@ -109,11 +116,13 @@ class GeoMap:
             ),
             zoom_start=GeoMap.get_location_zoomlevel(
                 GeoLocation.get_distance(geo_location_a, geo_location_b)
+                GeoLocation.get_distance(geo_location_a, geo_location_b)
             ),
         )
 
         # create a hotsox user marker on the map
         folium.Marker(
+            [geo_location_a[0], geo_location_a[1]],
             [geo_location_a[0], geo_location_a[1]],
             tooltip="click here for more",
             popup=city_location,
@@ -121,8 +130,10 @@ class GeoMap:
         ).add_to(geo_map)
 
         # create another hotsox user marker on the map
+        # create another hotsox user marker on the map
         if city_destination != "":
             folium.Marker(
+                [geo_location_b[0], geo_location_b[1]],
                 [geo_location_b[0], geo_location_b[1]],
                 tooltip="click here for more",
                 popup=city_destination,
