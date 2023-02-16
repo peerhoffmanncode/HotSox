@@ -23,9 +23,12 @@
     <div class="row">
         <div class="col-md-8 offset-2">
             <ul class="center">
-                <h2>{{matched_user.username.title}}, {{matched_user.get_age}} </h2>
-                <h3>{{matched_user.location_city}}</h3>
-                <h3></h3>
+                <h2>{{matched_user.username.title}}, {{matched_user.get_age}} years old</h2>
+                {% if distance %}
+                <h3>Lives in {{matched_user.location_city.title}}, {{distance}}km away</h3>
+                {% else %}
+                <h3>lives in {{matched_user.location_city.title}}</h3>
+                {% endif %}
             </ul>
         </div>
     </div>

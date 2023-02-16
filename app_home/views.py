@@ -8,6 +8,7 @@ import uuid
 from app_users.validator import HotSoxLogInAndValidationCheckMixin
 from app_users.models import User, Sock, SockLike, UserMatch
 from .pre_prediction_algorithm import PrePredictionAlgorithm
+from app_geo.utilities import GeoLocation
 
 
 class HomeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
@@ -116,6 +117,16 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
                         "user": current_user_sock.user,
                         "user_sock": current_user_sock,
                         "matched_user": sock_to_be_decided_on.user,
+                        "distance": GeoLocation.get_distance(
+                            (
+                                current_user_sock.user.location_latitude,
+                                current_user_sock.user.location_longitude,
+                            ),
+                            (
+                                sock_to_be_decided_on.user.location_latitude,
+                                sock_to_be_decided_on.user.location_longitude,
+                            ),
+                        ),
                         "matched_user_sock": sock_to_be_decided_on,
                     }
                     # add navigation arrows

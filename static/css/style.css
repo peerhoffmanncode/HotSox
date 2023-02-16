@@ -171,7 +171,7 @@
 
 .grey {
     background-color: rgb(242, 237, 237);
-    
+
 }
 
 .blue {
@@ -180,4 +180,15 @@
 
 .yellow {
     background-color: yellow;
+}
+
+.fa-brands {
+    font-size: 165%;
+}
+
+.card {
+    max-width: 100%;
+}
+.card-text {
+    word-wrap: break-word;
 }

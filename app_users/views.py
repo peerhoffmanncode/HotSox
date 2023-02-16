@@ -107,19 +107,26 @@ class UserProfileDetails(HotSoxLogInAndValidationCheckMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["left_arrow_go_to_url"] = ""  # reverse("app_home:index")
-        context["right_arrow_go_to_url"] = reverse("app_users:user-profile-update")
+        # include the current user in the context
         user = self.request.user
+        context["user"] = user
+        context["user_detail"] = user.to_json()
+
+        # include the geo information in the context
         lat = user.location_latitude
         lng = user.location_longitude
         city = user.location_city
-
         if city and lat and lng:
             context["map"] = GeoMap.get_geo_map(
+                map_width="100%",
+                map_height="45",
                 geo_location_a=(lat, lng),
                 geo_location_b=(lat, lng),
                 city_location=city,
             )
+
+        context["left_arrow_go_to_url"] = ""  # reverse("app_home:index")
+        context["right_arrow_go_to_url"] = reverse("app_users:user-profile-update")
 
         return context
 
@@ -517,3 +524,45 @@ class UserMatches(HotSoxLogInAndValidationCheckMixin, TemplateView):
             "user_matches": user_matches,
         }
         return render(request, "users/profile_matches.html", context)
+
+
+class UserMatchProfileDetails(HotSoxLogInAndValidationCheckMixin, TemplateView):
+    """View to show a user's details."""
+
+    model = User
+    template_name = "users/match_profile_details.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # include the current user in the context
+        user = get_object_or_404(User, username=kwargs.get("username", None))
+        context["user"] = user
+        context["user_detail"] = user.to_json()
+
+        # include the geo information in the context
+        match_lat = user.location_latitude
+        match_lng = user.location_longitude
+        match_city = user.location_city
+
+        user_lat = self.request.user.location_latitude
+        user_lng = self.request.user.location_longitude
+        user_city = self.request.user.location_city
+        print(self.request.user)
+
+        context["distance"] = GeoLocation.get_distance(
+            (match_lat, match_lng), (user_lat, user_lng)
+        )
+        context["map"] = GeoMap.get_geo_map(
+            map_width="100%",
+            map_height="50",
+            geo_location_a=(match_lat, match_lng),
+            geo_location_b=(user_lat, user_lng),
+            city_location=match_city,
+            city_destination=user_city,
+            add_line=True,
+        )
+
+        context["left_arrow_go_to_url"] = ""
+        context["right_arrow_go_to_url"] = ""
+        return context

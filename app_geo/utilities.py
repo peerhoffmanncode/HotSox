@@ -88,12 +88,12 @@ class GeoMap:
 
     @staticmethod
     def get_geo_map(
-        width: int = 800,
-        height: int = 500,
+        map_width: int = 800,
+        map_height: int = 500,
         city_location: str = "You",
         geo_location_a: tuple = (0, 0),
         city_destination: str = "",
-        geo_location_b: tuple = (0, 0),
+        geo_location_b: tuple = (None, None),
         add_line: bool = False,
     ):
         """Generate a HTML map for given point"""
@@ -117,7 +117,7 @@ class GeoMap:
             [geo_location_a[0], geo_location_a[1]],
             tooltip="click here for more",
             popup=city_location,
-            icon=folium.Icon(color="purple"),
+            icon=folium.Icon(color="purple", icon="fa-socks", prefix="fa"),
         ).add_to(geo_map)
 
         # create another hotsox user marker on the map
@@ -126,12 +126,12 @@ class GeoMap:
                 [geo_location_b[0], geo_location_b[1]],
                 tooltip="click here for more",
                 popup=city_destination,
-                icon=folium.Icon(color="red", icon="cloud"),
+                icon=folium.Icon(color="red", icon="fa-socks", prefix="fa"),
             ).add_to(geo_map)
 
         if add_line:
             line = folium.PolyLine(
-                locations=[geo_location_a, geo_location_b], weight=5, color="blue"
+                locations=[geo_location_a, geo_location_b], weight=1, color="blue"
             )
             geo_map.add_child(line)
 
