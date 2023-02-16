@@ -1,9 +1,8 @@
 {% extends 'user_base.html' %}
 {% block title %} Profile {% endblock %}
-
 {% block user_content %}
 
-<h3>{{user.username.title}}'s Profile</h3>
+<h3>Your match {{user.username.title}}'s profile</h3>
 
 <div class="circle-container">
     {% if user.get_all_pictures.0 %}
@@ -34,7 +33,7 @@
         <p>{{ user_detail.email }}</p>
     </span>
     <span class="col-md-6" style="float:right; display:inline; word-wrap:break-word;">
-        <p>Lives in {{ user_detail.city }}</p>
+        <p>Lives in {{ user_detail.city }}, {{ distance }}km away</p>
     </span>
     <span class="col-md-6"><strong>About</strong></span>
     <span class="col-md-12" style=" word-wrap:break-word;">

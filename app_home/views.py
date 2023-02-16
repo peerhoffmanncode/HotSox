@@ -7,6 +7,7 @@ import uuid
 from app_users.validator import HotSoxLogInAndValidationCheckMixin
 from app_users.models import User, Sock, SockLike, UserMatch
 from .pre_prediction_algorithm import PrePredictionAlgorithm
+from app_geo.utilities import GeoLocation
 
 
 class HomeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
@@ -83,7 +84,7 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
         # frontend liked the sock
         if request.POST.get("decision", None) == "like":
             # we use get_or_create to beware of duplicates!
-            _, sock_like_created = SockLike.objects.get_or_create(
+            tobedelete, sock_like_created = SockLike.objects.get_or_create(
                 sock=current_user_sock, like=sock_to_be_decided_on
             )
 
@@ -91,7 +92,7 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
             if current_user_sock in sock_to_be_decided_on.get_likes():
                 # create match in UserMatchTable if not already exists!
                 try:
-                    user_match_created = UserMatch.objects.get(
+                    user_match_object = UserMatch.objects.get(
                         Q(user=current_user_sock.user, other=sock_to_be_decided_on.user)
                         | Q(
                             other=current_user_sock.user,
@@ -100,7 +101,7 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
                     )
                     user_match_created = False
                 except UserMatch.DoesNotExist:
-                    user_match_created = UserMatch.objects.create(
+                    user_match_object = UserMatch.objects.create(
                         user=current_user_sock.user,
                         other=sock_to_be_decided_on.user,
                         chatroom_uuid=uuid.uuid4(),
@@ -108,11 +109,32 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
                     user_match_created = True
 
                 if user_match_created:
-                    pass
                     # TODO:  create a modal dialog to inform the user about a match!
-                    #       > show short user details
                     #       send a info email
                     #       show some unicorn farts!
+                    context = {
+                        "user": current_user_sock.user,
+                        "user_sock": current_user_sock,
+                        "matched_user": sock_to_be_decided_on.user,
+                        "distance": GeoLocation.get_distance(
+                            (
+                                current_user_sock.user.location_latitude,
+                                current_user_sock.user.location_longitude,
+                            ),
+                            (
+                                sock_to_be_decided_on.user.location_latitude,
+                                sock_to_be_decided_on.user.location_longitude,
+                            ),
+                        ),
+                        "matched_user_sock": sock_to_be_decided_on,
+                    }
+                    # add navigation arrows
+                    context["left_arrow_go_to_url"] = reverse("app_home:swipe")
+                    context["right_arrow_go_to_url"] = reverse(
+                        "app_users:user-profile-details"
+                    )
+
+                    return render(request, "app_home/match.html", context)
 
         # frontend disliked the sock
         elif request.POST.get("decision", None) == "dislike":
