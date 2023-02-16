@@ -547,7 +547,6 @@ class UserMatchProfileDetails(HotSoxLogInAndValidationCheckMixin, TemplateView):
         user_lat = self.request.user.location_latitude
         user_lng = self.request.user.location_longitude
         user_city = self.request.user.location_city
-        print(self.request.user)
 
         context["distance"] = GeoLocation.get_distance(
             (match_lat, match_lng), (user_lat, user_lng)
