@@ -44,9 +44,13 @@
         </div>
         <div class="col-md-4">
             {% if sock %}
-            <img src="{{ sock.get_picture_urls.0 }}" alt="No sock picture" class="sock-img">
+            {% if sock.get_picture_urls %}
+            <img src="{{ sock.get_picture_urls.0 }}" alt="" class="sock-img">
             {% else %}
-            <img src="/static/sad_face.jpg" alt="No sock picture" class="sock-img">
+            <p>No sock picture found :( !</p>
+            {% endif %}
+            {% else %}
+            <img src="/static/sad_face.jpg" alt="" class="sock-img">
             <p>No more socks currently available!</p>
             {% endif %}
         </div>
