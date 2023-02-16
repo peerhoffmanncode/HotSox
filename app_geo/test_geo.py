@@ -67,3 +67,54 @@ class Test(TestCase):
             GeoLocation.get_distance((91.0, -180.1), (90.0, 0.0)),
             None,
         )
+
+    def test_geomap_get_location_center_coordinates(self):
+        # middle between two valid coordinates
+        self.assertEqual(
+            GeoMap.get_location_center_coordinates(20, 20, 40, 40),
+            (30, 30),
+        )
+        # middle between two valid coordinates
+        self.assertNotEqual(
+            GeoMap.get_location_center_coordinates(40, 40, 20, 20),
+            (31, 31),
+        )
+
+        # middle between one valid coordinate!
+        self.assertEqual(
+            GeoMap.get_location_center_coordinates(20, 20, None, None),
+            (20, 20),
+        )
+
+    def test_geomap_get_location_zoomlevel(self):
+        # middle between two valid coordinates
+        self.assertEqual(
+            GeoMap.get_location_zoomlevel(100),
+            8,
+        )
+        self.assertEqual(
+            GeoMap.get_location_zoomlevel(101),
+            4,
+        )
+        self.assertEqual(
+            GeoMap.get_location_zoomlevel(5001),
+            2,
+        )
+
+    def test_geomap_get_geo_map(self):
+
+        test_map1 = GeoMap.get_geo_map(
+            width=250,
+            height=250,
+            city_location="Mainz",
+            get_location_a=(50.0012314, 8.2762513),
+            city_destination="Hamburg",
+            get_location_b=(53.550341, 10.000654),
+        )
+
+        self.assertIn("width: 250.0px;", test_map1)
+        self.assertIn("height: 250.0px;", test_map1)
+        self.assertIn("[51.7757862, 9.138452650000001]", test_map1)
+        self.assertIn("zoom: 4", test_map1)
+        self.assertIn("Mainz", test_map1)
+        self.assertIn("Hamburg", test_map1)
