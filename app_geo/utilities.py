@@ -87,12 +87,13 @@ class GeoMap:
 
     @staticmethod
     def get_geo_map(
-        width: str = "800",
-        height: str = "500",
+        width: int = 800,
+        height: int = 500,
         city_location: str = "You",
         get_location_a: tuple = (0, 0),
         city_destination: str = "",
         get_location_b: tuple = (0, 0),
+        add_line: bool = False,
     ):
         """Generate a HTML map for given point"""
 
@@ -113,7 +114,7 @@ class GeoMap:
         folium.Marker(
             [get_location_a[0], get_location_a[1]],
             tooltip="click here for more",
-            popup=city["city"],
+            popup=city_location,
             icon=folium.Icon(color="purple"),
         ).add_to(geo_map)
 
@@ -122,13 +123,14 @@ class GeoMap:
             folium.Marker(
                 [get_location_b[0], get_location_b[1]],
                 tooltip="click here for more",
-                popup=destination,
+                popup=city_destination,
                 icon=folium.Icon(color="red", icon="cloud"),
             ).add_to(geo_map)
 
-            # line = folium.PolyLine(
-            #     locations=[get_location_a, get_location_b], weight=5, color="blue"
-            # )
-            # geo_map.add_child(line)
+        if add_line:
+            line = folium.PolyLine(
+                locations=[get_location_a, get_location_b], weight=5, color="blue"
+            )
+            geo_map.add_child(line)
 
         return geo_map._repr_html_()
