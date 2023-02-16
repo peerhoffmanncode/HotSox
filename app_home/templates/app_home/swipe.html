@@ -17,7 +17,11 @@
                         {% csrf_token %}
                         <input type="hidden" name="change_sock" value="{{ sock.pk }}">
                         <button class="col-6 col-sm3 list-inline-item select-sock flex-center btn-img-hide">
+                            {% if sock.get_picture_urls.0 %}
                             <img class="select-sock-pic" src="{{ sock.get_picture_urls.0 }}" alt="">
+                            {% else %}
+                            <p>{{sock.info_name}}</p>
+                            {% endif %}
                         </button>
                     </form>
                 </li>
@@ -34,13 +38,17 @@
                 <input type="hidden" name="sock_pk" value="{{sock.pk}}">
                 <input type="hidden" name="decision" value="dislike">
                 <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();"><img src="/static/no.png"
-                        alt="" class="swipe-button"></button>
+                        alt="dislike" class="swipe-button"></button>
             </form>
             {% endif %}
         </div>
         <div class="col-md-4">
             {% if sock %}
+            {% if sock.get_picture_urls %}
             <img src="{{ sock.get_picture_urls.0 }}" alt="" class="sock-img">
+            {% else %}
+            <p>No sock picture found :( !</p>
+            {% endif %}
             {% else %}
             <img src="/static/sad_face.jpg" alt="" class="sock-img">
             <p>No more socks currently available!</p>
@@ -54,7 +62,7 @@
                 <input type="hidden" name="sock_pk" value="{{sock.pk}}">
                 <input type="hidden" name="decision" value="like">
                 <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();"><img src="/static/yes.png"
-                        alt="" class="swipe-button"></button>
+                        alt="like" class="swipe-button"></button>
             </form>
             {% endif %}
         </div>
@@ -65,5 +73,6 @@
             <p class="center">{{ sock.info_about }}</p>
         </div>
     </div>
+</div>
 
-    {% endblock %}
+{% endblock %}

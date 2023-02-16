@@ -47,6 +47,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "channels",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -60,11 +61,15 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "cloudinary",
     "crispy_forms",
-    # "django_summernote",
     "app_home",
     "app_users",
     "app_geo",
+    "app_chat",
 ]
+
+WSGI_APPLICATION = "hotsox_project.wsgi.application"
+ASGI_APPLICATION = "hotsox_project.asgi.application"
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 # Social accounts login
 SOCIALACCOUNT_LOGIN_ON_GET = False
@@ -130,7 +135,6 @@ TEMPLATES = [
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
-WSGI_APPLICATION = "hotsox_project.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -151,18 +155,7 @@ else:
     # check if we have ENV Vars set e.g. env.py/Dockerfile/...?
     import sys
 
-    if sys.argv[1].lower() != "test":
-        DATABASES = {
-            "default": {
-                "ENGINE": "django.db.backends.postgresql",
-                "NAME": os.getenv("DB_NAME"),
-                "USER": os.getenv("DB_USER"),
-                "PASSWORD": os.getenv("DB_PASSWORD"),
-                "HOST": os.getenv("DB_HOST"),
-                "PORT": os.getenv("DB_PORT"),
-            },
-        }
-    else:
+    if "test" in sys.argv:
         TEST = True
         DATABASES = {
             "default": {
@@ -174,7 +167,17 @@ else:
                 "PORT": "5432",
             },
         }
-
+    else:
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.postgresql",
+                "NAME": os.getenv("DB_NAME"),
+                "USER": os.getenv("DB_USER"),
+                "PASSWORD": os.getenv("DB_PASSWORD"),
+                "HOST": os.getenv("DB_HOST"),
+                "PORT": os.getenv("DB_PORT"),
+            },
+        }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

@@ -4,6 +4,7 @@ from geopy.distance import geodesic
 import geoip2
 import folium
 import socket
+import os
 
 # Helper functions
 class GeoLocation:
@@ -79,56 +80,59 @@ class GeoMap:
     def get_location_zoomlevel(distance: float) -> int:
         """Calculate the zoom level for a give distance"""
         if distance <= 100:
-            return 8
+            return 12
         elif distance > 100 and distance <= 5000:
-            return 4
+            return 6
         else:
             return 2
 
     @staticmethod
     def get_geo_map(
-        width: str = "800",
-        height: str = "500",
+        map_width: int = 800,
+        map_height: int = 500,
         city_location: str = "You",
-        get_location_a: tuple = (0, 0),
+        geo_location_a: tuple = (0, 0),
         city_destination: str = "",
-        get_location_b: tuple = (0, 0),
+        geo_location_b: tuple = (None, None),
+        add_line: bool = False,
     ):
         """Generate a HTML map for given point"""
 
         geo_map = folium.Map(
-            width=width,
-            height=height,
+            width=map_width,
+            height=map_height,
             location=GeoMap.get_location_center_coordinates(
-                get_location_a[0],
-                get_location_a[1],
-                get_location_b[0],
-                get_location_b[1],
+                geo_location_a[0],
+                geo_location_a[1],
+                geo_location_b[0],
+                geo_location_b[1],
             ),
             zoom_start=GeoMap.get_location_zoomlevel(
-                GeoLocation.get_distance(get_location_a, get_location_b)
+                GeoLocation.get_distance(geo_location_a, geo_location_b)
             ),
         )
+
         # create a hotsox user marker on the map
         folium.Marker(
-            [get_location_a[0], get_location_a[1]],
+            [geo_location_a[0], geo_location_a[1]],
             tooltip="click here for more",
-            popup=city["city"],
-            icon=folium.Icon(color="purple"),
+            popup=city_location,
+            icon=folium.Icon(color="purple", icon="fa-socks", prefix="fa"),
         ).add_to(geo_map)
 
+        # create another hotsox user marker on the map
         if city_destination != "":
-            # create another hotsox user marker on the map
             folium.Marker(
-                [get_location_b[0], get_location_b[1]],
+                [geo_location_b[0], geo_location_b[1]],
                 tooltip="click here for more",
-                popup=destination,
-                icon=folium.Icon(color="red", icon="cloud"),
+                popup=city_destination,
+                icon=folium.Icon(color="red", icon="fa-socks", prefix="fa"),
             ).add_to(geo_map)
 
-            # line = folium.PolyLine(
-            #     locations=[get_location_a, get_location_b], weight=5, color="blue"
-            # )
-            # geo_map.add_child(line)
+        if add_line:
+            line = folium.PolyLine(
+                locations=[geo_location_a, geo_location_b], weight=1, color="blue"
+            )
+            geo_map.add_child(line)
 
         return geo_map._repr_html_()
