@@ -51,15 +51,18 @@ class GeoLocation:
     @staticmethod
     def get_distance(get_location_a: tuple, get_location_b: tuple) -> float:
         """Get the distance (km) between to points"""
-        if 90 >= get_location_a[0] >= -90:
-            if 90 >= get_location_b[0] >= -90:
-                if 180 >= get_location_a[1] >= -180:
-                    if 180 >= get_location_b[1] >= -180:
-                        try:
-                            return round(geodesic(get_location_a, get_location_b).km, 2)
-                        except ValueError:
-                            return None
-        return None
+        try:
+            if (
+                90 >= get_location_a[0] >= -90
+                and 90 >= get_location_b[0] >= -90
+                and 180 >= get_location_a[1] >= -180
+                and 180 >= get_location_b[1] >= -180
+            ):
+                return round(geodesic(get_location_a, get_location_b).km, 2)
+            else:
+                return None
+        except ValueError:
+            return None
 
 
 class GeoMap:
