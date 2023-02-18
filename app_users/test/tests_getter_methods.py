@@ -2,6 +2,7 @@ from django.test import TestCase
 from ..models import User, UserProfilePicture, UserMatch, Sock, MessageMail, MessageChat
 from datetime import date
 from unittest import mock
+import uuid
 
 
 class UserModelTestCase(TestCase):
@@ -101,13 +102,17 @@ class UserModelTestCase(TestCase):
             user=self.user1, subject="test message 2", content="test"
         )
         self.chat1 = MessageChat.objects.create(
-            user=self.user1, other=self.user2, subject="test chat message 1"
+            user=self.user1, other=self.user2, message="test chat message 1"
         )
         self.chat2 = MessageChat.objects.create(
-            user=self.user1, other=self.user2, subject="test chat message 2"
+            user=self.user1, other=self.user2, message="test chat message 2"
         )
-        self.user_match1 = UserMatch.objects.create(user=self.user1, other=self.user2)
-        self.user_match2 = UserMatch.objects.create(user=self.user1, other=self.user3)
+        self.user_match1 = UserMatch.objects.create(
+            user=self.user1, other=self.user2, chatroom_uuid=uuid.uuid4()
+        )
+        self.user_match2 = UserMatch.objects.create(
+            user=self.user1, other=self.user3, chatroom_uuid=uuid.uuid4()
+        )
 
     @mock.patch("app_users.models.User.get_all_pictures")
     def test_get_all_pictures(self, mock_get_all_pictures):
