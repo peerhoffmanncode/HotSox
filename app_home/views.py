@@ -131,7 +131,7 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
                     # add navigation arrows
                     context["left_arrow_go_to_url"] = reverse("app_home:swipe")
                     context["right_arrow_go_to_url"] = reverse(
-                        "app_users:user-profile-details"
+                        "app_users:user-match-profile-details"
                     )
 
                     return render(request, "app_home/match.html", context)
