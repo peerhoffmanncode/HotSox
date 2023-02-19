@@ -5,7 +5,9 @@ from django.urls import reverse
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from datetime import date, timedelta
-from ..models import User, Sock
+from ..models import User, Sock, UserMatch
+
+import uuid
 
 
 class UserSignUpTest(TestCase):
@@ -217,3 +219,60 @@ class UserSignUpTest(TestCase):
         self.assertTemplateUsed(
             response, "users/profile_picture.html"
         )  # check template
+
+    def test_user_matches_view(self):
+        self.client.force_login(self.user)  # logging in user
+        self.url = reverse("app_users:user-matches")
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "users/profile_matches.html")
+        self.assertEqual(response.context["user"], self.user)
+        self.assertQuerysetEqual(
+            response.context["user_matches"],
+            self.user.get_matches(),
+            transform=lambda x: x,
+        )
+
+    def test_get_with_valid_match(self):
+        other_user = User.objects.create(
+            username="quirk-unicorn2",
+            password="!passw@rd1232",
+            first_name="John2",
+            last_name="Doe2",
+            email="john.doe@example.com2",
+            info_about="I like to collect rubber ducks2",
+            info_birthday=date(2000, 1, 1),
+            info_gender="male",
+            location_city="Rainbow City2",
+            location_latitude=0,
+            location_longitude=0,
+            social_instagram="https://www.instagram.com/quirk_unicorn/",
+            social_facebook="https://www.facebook.com/quirk_unicorn/",
+            social_twitter="https://www.twitter.com/quirk_unicorn/",
+            social_spotify="https://www.spotify.com/quirk_unicorn/",
+        )
+        match_object = UserMatch.objects.create(
+            user=self.user, other=other_user, chatroom_uuid=uuid.uuid4()
+        )
+        self.client.force_login(self.user)
+
+        # attempt to access profile of a non-matching user
+        url = reverse(
+            "app_users:user-match-profile-details",
+            kwargs={"username": other_user.username},
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "users/match_profile_details.html")
+        self.assertEqual(response.context["user"], other_user)
+
+        # attempt to access profile of a non-matching user
+        url = reverse(
+            "app_users:user-match-profile-details",
+            kwargs={"username": "DOESNOTEXIST"},
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("app_users:user-matches"))

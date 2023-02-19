@@ -1,4 +1,5 @@
 from django.test import TestCase, Client
+from django.test.client import RequestFactory
 from unittest import mock
 
 from importlib import import_module
@@ -8,7 +9,8 @@ from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 from datetime import date, timedelta
 
-from ..models import User, Sock
+from ..models import User, Sock, SockProfilePicture
+from ..views import validate_sock_ownership
 
 
 class UserSignUpTest(TestCase):
@@ -82,6 +84,59 @@ class UserSignUpTest(TestCase):
         session.save()
         self.set_session_cookies(session)
 
+    # validate_sock_ownership(request, valid_sock=None, picture_pk=None)
+    @mock.patch("cloudinary.uploader.upload")
+    def test_valid_picture_helper_method(self, mock_uploader_upload):
+
+        mock_uploader_upload = "picture.jpg"
+        self.picture = SockProfilePicture.objects.create(
+            sock=self.sock, profile_picture="picture.jpg"
+        )
+
+        self.client.force_login(self.user)  # logging in user
+
+        # test with a valid picture pk
+        self.assertTrue(
+            validate_sock_ownership(
+                request=None, valid_sock=self.sock, picture_pk=self.picture.pk
+            )
+        )
+        # test with an invalid picture pk
+        self.assertFalse(
+            validate_sock_ownership(request=None, valid_sock=self.sock, picture_pk=10)
+        )
+        # test with a valid sock belonging to the user
+        request = self.client.request().wsgi_request
+        self.assertTrue(validate_sock_ownership(request=request, valid_sock=self.sock))
+
+        # test with an invalid sock not belonging to the user
+        request = self.client.request().wsgi_request
+
+        other_user = User.objects.create(username="otheruser", password="otherpass")
+        other_sock = Sock.objects.create(
+            user=other_user,
+            info_joining_date=date.today() - timedelta(days=365 * 5),
+            info_name="Fuzzy Wuzzy",
+            info_about="Fuzzy Wuzzy was a bear. Fuzzy Wuzzy had no hair. Fuzzy Wuzzy wasn't very fuzzy, was he?",
+            info_color="5",
+            info_fabric="2",
+            info_fabric_thickness="7",
+            info_brand="13",
+            info_type="4",
+            info_size="7",
+            info_age=10,
+            info_separation_date=date.today() - timedelta(days=365),
+            info_condition="9",
+            info_holes=3,
+            info_kilometers=1000,
+            info_inoutdoor="1",
+            info_washed=2,
+            info_special="Once won first place in a sock puppet competition",
+        )
+        self.assertFalse(
+            validate_sock_ownership(request=request, valid_sock=other_sock)
+        )
+
     def SockOverviewTest(self):
         self.client.force_login(self.user)
         session = self.get_session()
@@ -110,6 +165,28 @@ class UserSignUpTest(TestCase):
         )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("app_users:sock-create"))
+
+    def test_sock_selection(self):
+        self.client.force_login(self.user)
+        url = reverse("app_users:sock-selection")
+        redirect_url = reverse("app_users:sock-details")
+
+        # test a POST request without a sock pk
+        response = self.client.post(
+            url, data={"sock_pk": self.sock.pk, "redirect_url": redirect_url}
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, redirect_url)
+        self.assertEqual(self.client.session["sock_pk"], str(self.sock.pk))
+
+        # test a POST request with a prev_url
+        prev_url = reverse("app_users:user-signup")
+        response = self.client.post(
+            url, data={"sock_pk": self.sock.pk}, HTTP_REFERER=prev_url
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, prev_url)
+        self.assertEqual(self.client.session["sock_pk"], str(self.sock.pk))
 
     def test_sock_profile_create_view(self):
         self.client.force_login(self.user)
