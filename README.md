@@ -1,4 +1,4 @@
-# HotSox
+# HotSox (WORK IN PROGRSS!)
 
 ## Repository
 
