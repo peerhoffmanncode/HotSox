@@ -18,9 +18,9 @@
 
 
 <div class="row">
-    {% if user_detail.fullname %}
+    {% if user.first_name %}
     <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
-        <strong>{{ user_detail.fullname }}</strong>
+        <strong>{{ user.first_name }}</strong>
     </span>
     {% else %}
     <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
@@ -30,13 +30,11 @@
     <span class="col-md-6" style="float:right; display:inline; word-wrap:break-word;">
         <p>{{ user_detail.age }} years old</p>
     </span>
+    <span class="col-md-6"><strong>About</strong></span>
     <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
-        <p>{{ user_detail.email }}</p>
-    </span>
-    <span class="col-md-6" style="float:right; display:inline; word-wrap:break-word;">
         <p>Lives in {{ user_detail.city }}, {{ distance }}km away</p>
     </span>
-    <span class="col-md-6"><strong>About</strong></span>
+
     <span class="col-md-12" style=" word-wrap:break-word;">
         <p>{{ user_detail.about }}</p>
     </span>
