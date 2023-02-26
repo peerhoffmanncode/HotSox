@@ -5,15 +5,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"> -->
     {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap_sandstone.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     <title>{% block title %} Hotsox {% endblock %}</title>
 </head>
 
 <body>
     <!--Nav-->
-    <nav class="navbar navbar-light navbar-expand-sm bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <a href="{% url 'app_home:index' %}" class="navbar-brand">
             HotSox</a>
 
@@ -39,9 +40,9 @@
                 {% endif %}
             </ul>
         </div>
-        <div class="d-none d-md-block">
+        <div class="d-none d-md-flex">
             {% if request.user.is_authenticated %}
-            <p class="navbar-text my-auto mr-2"><i>{{request.user.username.title}} is Sockin'n'Rollin'!</i></p>
+            <p class="navbar-text my-auto mr-2" style="padding: 20px;"><i>{{request.user.username.title}} is Sockin'n'Rollin'!</i></p>
             <a href="#" data-toggle="dropdown" class="dropdown-toggle" style="text-decoration: none;">
                 <img style="width: 60px; border-radius: 50%;" src="{{ request.user.get_picture_urls.0 }}"><b class="caret"></b>
             </a>

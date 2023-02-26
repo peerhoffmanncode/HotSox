@@ -16,7 +16,6 @@ urlpatterns = [
     ),
     path(
         "profile/picture/",
-        "profile/picture/",
         views.UserProfilePictureUpdate.as_view(),
         name="user-profile-picture",
     ),

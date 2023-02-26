@@ -2,62 +2,70 @@
 {% block title %} Profile {% endblock %}
 {% block user_content %}
 
-<h3>Your match {{user.username.title}}'s profile</h3>
-
-{% if user.get_picture_urls %}
-<div class="circle-container">
-    {% for picture_url in user.get_picture_urls %}
-    <div class="circle-img" id="profile-pic-{{ forloop.counter }}">
-        <img src="{{ picture_url }}" alt="">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Your match {{user.username.title}}'s profile</h3>
+            {% if user.get_picture_urls %}
+            <div class="circle-container">
+                {% for picture_url in user.get_picture_urls %}
+                <div class="circle-img" id="profile-pic-{{ forloop.counter }}">
+                    <img src="{{ picture_url }}" alt="">
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>No pictures available</p>
+            {% endif %}
+        </div>
     </div>
-    {% endfor %}
+
+
+    <div class="row">
+        <div class="col-md-12">
+            {% if user.first_name %}
+            <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
+                <strong>{{ user.first_name }}</strong>
+            </span>
+            {% else %}
+            <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
+                <strong>Anonymous Socker</strong>
+            </span>
+            {% endif %}
+            <span class="col-md-6" style="float:right; display:inline; word-wrap:break-word;">
+                <p>{{ user_detail.age }} years old</p>
+            </span>
+            <span class="col-md-6"><strong>About</strong></span>
+            <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
+                <p>Lives in {{ user_detail.city }}, {{ distance }}km away</p>
+            </span>
+
+            <span class="col-md-12" style=" word-wrap:break-word;">
+                <p>{{ user_detail.about }}</p>
+            </span>
+
+            <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
+                {% if user_detail.instagram %}
+                <a href="{{ user_detail.instagram }}" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                {% endif %}
+                {% if user_detail.facebook %}
+                <a href="{{ user_detail.facebook }}" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                {% endif %}
+                {% if user_detail.twitter %}
+                <a href="{{ user_detail.twitter }}" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+                {% endif %}
+                {% if user_detail.spotify %}
+                <a href="{{ user_detail.spotify }}" target="_blank"><i class="fa-brands fa-spotify"></i></a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+    <div class="col-md-3 center">
+        <a href="{% url 'app_users:user-matches' %}" class="btn btn-primary">Back to matches</a>
+    </div>
+    <br>
+    {{ map|safe }}
 </div>
-{% else %}
-<p>No pictures available</p>
-{% endif %}
-
-
-<div class="row">
-    {% if user.first_name %}
-    <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
-        <strong>{{ user.first_name }}</strong>
-    </span>
-    {% else %}
-    <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
-        <strong>Anonymous Socker</strong>
-    </span>
-    {% endif %}
-    <span class="col-md-6" style="float:right; display:inline; word-wrap:break-word;">
-        <p>{{ user_detail.age }} years old</p>
-    </span>
-    <span class="col-md-6"><strong>About</strong></span>
-    <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
-        <p>Lives in {{ user_detail.city }}, {{ distance }}km away</p>
-    </span>
-
-    <span class="col-md-12" style=" word-wrap:break-word;">
-        <p>{{ user_detail.about }}</p>
-    </span>
-
-    <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
-        {% if user_detail.instagram %}
-        <a href="{{ user_detail.instagram }}" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-        {% endif %}
-        {% if user_detail.facebook %}
-        <a href="{{ user_detail.facebook }}" target="_blank"><i class="fa-brands fa-facebook"></i></a>
-        {% endif %}
-        {% if user_detail.twitter %}
-        <a href="{{ user_detail.twitter }}" target="_blank"><i class="fa-brands fa-twitter"></i></a>
-        {% endif %}
-        {% if user_detail.spotify %}
-        <a href="{{ user_detail.spotify }}" target="_blank"><i class="fa-brands fa-spotify"></i></a>
-        {% endif %}
-    </span>
-
-</div>
-<br>
-{{ map|safe }}
-
 
 <script>
     const pictures = document.querySelectorAll('.circle-img');
