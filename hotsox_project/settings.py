@@ -95,13 +95,13 @@ SOCIALACCOUNT_PROVIDERS = {
             "profile",
             "email",
         ],
-        'FIELDS': [
-            'id',
-            'email',
-            'given_name',
-            'family_name',
-            'birth_date',
-            'gender',
+        "FIELDS": [
+            "id",
+            "email",
+            "given_name",
+            "family_name",
+            "birth_date",
+            "gender",
         ],
         "AUTH_PARAMS": {
             "access_type": "online",
