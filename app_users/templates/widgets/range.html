@@ -1,0 +1,3 @@
+<input type="{{ widget.type}}" name="{{ widget.name }}"{% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}{% include "django/forms/widgets/attrs.html" %}oninput="this.nextElementSibling.value = this.value">
+<output>{{ widget.attrs.value }}</output>
+<!-- <output>{% if widget.attrs.value != None %} value="{{ widget.attrs.value|stringformat:'s' }}"{% else %}0{% endif %}</output> -->

@@ -1,9 +1,10 @@
-from django.forms import ModelForm, DateInput
+from django.forms import ModelForm, DateInput, TextInput, IntegerField
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.forms import ValidationError, URLInput, NumberInput
 
 from datetime import date
 from .models import User, UserProfilePicture, Sock, SockProfilePicture
+from .forms_widgets import RangeInput
 
 
 def validate_age(form):
@@ -174,21 +175,21 @@ class SockProfileForm(ModelForm):
         fields = "__all__"
         exclude = ["user", "info_joining_date"]
         labels = {
-            "info_name": "Socks name",
-            "info_about": "Socks story to tell",
-            "info_color": "Socks color",
-            "info_fabric": "Whats tha sock made of",
-            "info_fabric_thickness": "How tick is the material",
+            "info_name": "Sock's name",
+            "info_about": "Sock's story to tell",
+            "info_color": "Sock's color",
+            "info_fabric": "What's the sock made of",
+            "info_fabric_thickness": "How thick is the material",
             "info_brand": "What is the brand",
             "info_type": "Which type is it",
             "info_size": "Which size is it",
-            "info_age": "How old is it",
+            "info_age": "How old in years is it",
             "info_separation_date": "When did it split up",
             "info_condition": "What is its condition",
-            "info_holes": "How many holes",
-            "info_kilometers": "How many kilometers walked",
-            "info_inoutdoor": "Which environment was it used it",
-            "info_washed": "How often was it washed",
+            "info_holes": "How many holes has it got",
+            "info_kilometers": "How many kilometers has it walked so far",
+            "info_inoutdoor": "Which environment was it used in",
+            "info_washed": "How often was it washed per week",
             "info_special": "What is the one special thing",
         }
 
@@ -196,10 +197,36 @@ class SockProfileForm(ModelForm):
             "info_separation_date": DateInput(
                 attrs={"type": "date", "format": "%d-%m-%Y"}
             ),
-            "info_age": NumberInput(),
-            "info_holes": NumberInput(),
-            "info_kilometers": NumberInput(),
-            "info_washed": NumberInput(),
+            "info_age": RangeInput(
+                attrs={
+                    "type": "range",
+                    "min": "0",
+                    "max": "25",
+                    "step": "1",
+                    "value": 0,
+                }
+            ),
+            "info_holes": RangeInput(
+                attrs={
+                    "type": "range",
+                    "min": "0",
+                    "max": "10",
+                    "step": "1",
+                    "value": 0,
+                }
+            ),
+            "info_kilometers": RangeInput(
+                attrs={
+                    "type": "range",
+                    "min": "0",
+                    "max": "1000",
+                    "step": "1",
+                    "value": 0,
+                }
+            ),
+            "info_washed": RangeInput(
+                attrs={"type": "range", "min": "0", "max": "7", "step": "1", "value": 0}
+            ),
         }
 
 
