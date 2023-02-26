@@ -1,0 +1,49 @@
+{% extends 'user_base.html' %}
+{% block title %} Swipe some socks {% endblock %}
+{% block user_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-4">
+            <h1>You have a match!</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 offset-2 mt-4">
+            <ul class="list-inline flex-center">
+                <div class="circle-img">
+                    <img src="{{user.get_picture_urls.0}}" alt="">
+                </div>
+                <div class="circle-img">
+                    <img src="{{matched_user.get_picture_urls.0}}" alt="">
+                </div>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 offset-2">
+            <ul class="center">
+                <h2>{{matched_user.username.title}}, {{matched_user.get_age}} years old</h2>
+                {% if distance %}
+                <h3>Lives in {{matched_user.location_city.title}}, {{distance}}km away</h3>
+                {% else %}
+                <h3>lives in {{matched_user.location_city.title}}</h3>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 offset-4 mt-4">
+            <ul class="list-inline flex-center">
+                <div class="circle-img">
+                    <img src="{{user_sock.get_picture_urls.0}}" alt="">
+                </div>
+                <div class="circle-img">
+                    <img src="{{matched_user_sock.get_picture_urls.0}}" alt="">
+                </div>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

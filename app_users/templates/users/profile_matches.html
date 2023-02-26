@@ -19,6 +19,21 @@
         </div>
     </div>
 
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 mt-3 offset-md-4">
+            <h2>{{user.username.title}}'s Matches</h2>
+        </div>
+        <div class="col-md-12 mt-3">
+            {% if user_matches %}
+            <p>Here is an overview of your matches. Click on view profile to see more details</p>
+            {% else %}
+            <p>You do not currently have any matches :-(</p>
+            <p>Click on swipe to swipe socks and increase your chances of finding a match!</p>
+            {% endif %}
+        </div>
+    </div>
+
 
     <div class="row">
         {% if user_matches %}
@@ -27,26 +42,26 @@
             <div class="card text-center h-100">
                 {% if match.user == request.user %}
                 {% if match.other.get_picture_urls %}
-                <img src="{{match.other.get_picture_urls.0}}" alt="" class="card-img-top">
-                <div class="card-body card-center align-self-center">
-                    <h5 class="card-title">{{ match.other.username }}</p>
-                    {% endif %}
-                    <p class="card-text">{{ match.other.info_about}}</p>
+                <img src="{{match.other.get_picture_urls.0}}" alt="" class="circle-img">
+                {% endif %}
+                <div class="card-body card-center align-self-center" style="word-wrap:break-word">
+                    <h5 class="card-title">{{ match.other.username }}</h5>
                     <div class="btn-group">
-                    <a href="#" class="btn btn-primary">View Profile</a>
-                    <a href="/chat/{{ match.other.username }}" class="btn btn-primary">Chat</a>
+                        <a href="{% url 'app_users:user-match-profile-details' match.other.username %}"
+                            class="btn btn-primary">View Profile</a>
+                        <a href="{% url 'app_chat:chat' match.other.username %}" class="btn btn-primary">Chat</a>
                     </div>
                 </div>
                 {% else %}
                 {% if match.user.get_picture_urls %}
-                <img src="{{match.user.get_picture_urls.0}}" alt="" class="card-img-top">
-                <div class="card-body card-center align-self-center">
-                    <h5 class="card-title">{{ match.user.username }}</p>
-                    {% endif %}
-                    <p class="card-text">{{ match.user.info_about}}</p>
+                <img src="{{match.user.get_picture_urls.0}}" alt="" class="circle-img">
+                {% endif %}
+                <div class="card-body card-center align-self-center" style="word-wrap:break-word">
+                    <h5 class="card-title">{{ match.user.username }}</h5>
                     <div class="btn-group">
-                    <a href="#" class="btn btn-primary">View Profile</a>
-                    <a href="/chat/{{ match.user.username }}" class="btn btn-primary">Chat</a>
+                        <a href="{% url 'app_users:user-match-profile-details' match.user.username %}"
+                            class="btn btn-primary">View Profile</a>
+                        <a href="{% url 'app_chat:chat' match.user.username %}" class="btn btn-primary">Chat</a>
                     </div>
                 </div>
                 {% endif %}

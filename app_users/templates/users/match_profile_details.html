@@ -1,28 +1,26 @@
 {% extends 'user_base.html' %}
 {% block title %} Profile {% endblock %}
-
 {% block user_content %}
 
-<h3>{{user.username.title}}'s Profile</h3>
+<h3>Your match {{user.username.title}}'s profile</h3>
 
 {% if user.get_picture_urls %}
 <div class="circle-container">
     {% for picture_url in user.get_picture_urls %}
     <div class="circle-img" id="profile-pic-{{ forloop.counter }}">
-        <a href="{% url 'app_users:user-profile-picture' %}">
-            <img src="{{ picture_url }}" alt="">
-        </a>
+        <img src="{{ picture_url }}" alt="">
     </div>
     {% endfor %}
 </div>
 {% else %}
-<a href="{% url 'app_users:user-profile-picture' %}" class="btn">Add Picture</a>
+<p>No pictures available</p>
 {% endif %}
 
+
 <div class="row">
-    {% if user_detail.fullname %}
+    {% if user.first_name %}
     <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
-        <strong>{{ user_detail.fullname }}</strong>
+        <strong>{{ user.first_name }}</strong>
     </span>
     {% else %}
     <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
@@ -32,13 +30,11 @@
     <span class="col-md-6" style="float:right; display:inline; word-wrap:break-word;">
         <p>{{ user_detail.age }} years old</p>
     </span>
-    <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
-        <p>{{ user_detail.email }}</p>
-    </span>
-    <span class="col-md-6" style="float:right; display:inline; word-wrap:break-word;">
-        <p>Lives in {{ user_detail.city }}</p>
-    </span>
     <span class="col-md-6"><strong>About</strong></span>
+    <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
+        <p>Lives in {{ user_detail.city }}, {{ distance }}km away</p>
+    </span>
+
     <span class="col-md-12" style=" word-wrap:break-word;">
         <p>{{ user_detail.about }}</p>
     </span>
@@ -61,6 +57,7 @@
 </div>
 <br>
 {{ map|safe }}
+
 
 <script>
     const pictures = document.querySelectorAll('.circle-img');
