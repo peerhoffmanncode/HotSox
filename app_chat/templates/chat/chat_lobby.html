@@ -1,36 +1,49 @@
 {% extends "base.html" %}
 {% block title %} Chat with {{receiving_user.username}} {% endblock %}
 {% block content %}
-<h1>Lets chat!</h1>
-<h3>You are chatting with {{ receiving_user.username.title }}</h3>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-3">
+            <h1>Lets chat!</h1>
+            <h3>You are chatting with {{ receiving_user.username.title }}</h3>
 
-<!-- Main div that will be changed by JS
-we populate the div with the data preloaded from the view
-we check for alignment by username -->
-<div id="chat_messages_div" style="display: flex; justify-content:end; flex-direction:
-    column; width: 40vw; height: 30vh; overflow-y: scroll; word-wrap: break-word;
-    background-color: lightgray; border: 2px solid black; margin-bottom: 10px;">
-    {% for chat in all_chats %}
-    {% if chat.user.username == request.user.username %}
-    <div style="text-align: right; width: 100%;">
-        <div>({{ chat.sent_date.time }}) Me</div>
-        <div>{{ chat.message }}</div>
+            <!-- Main div that will be changed by JS
+            we populate the div with the data preloaded from the view
+            we check for alignment by username -->
+            <div id="chat_messages_div" style="display: flex; justify-content:end; flex-direction:
+                column; width: 40vw; height: 30vh; overflow-y: scroll; word-wrap: break-word;
+                background-color: rgb(248, 245, 240); border: 2px solid black; margin-bottom: 10px;">
+                {% for chat in all_chats %}
+                {% if chat.user.username == request.user.username %}
+                <div style="text-align: right; width: 100%;">
+                    <div>({{ chat.sent_date.time }}) Me</div>
+                    <div>{{ chat.message }}</div>
+                </div>
+                {% else %}
+                <div style="text-align: left; width: 100%;">
+                    <div>{{ chat.user.username }} ({{ chat.sent_date.time }})</div>
+                    <div>{{ chat.message }}</div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
     </div>
-    {% else %}
-    <div style="text-align: left; width: 100%;">
-        <div>{{ chat.user.username }} ({{ chat.sent_date.time }})</div>
-        <div>{{ chat.message }}</div>
+    <div class="row">
+        <div class="col-md-8 offset-3">
+            <!-- Input field for the chat message -->
+            <form id="form" style="display: flex; justify-content: center; align-items: center; width: 38vw;">
+                <p>Message: </p>
+                <input type="text" name="message" style="width: 90%;" maxlength="250" />
+            </form>
+        </div>
     </div>
-    {% endif %}
-    {% endfor %}
+    <div class="row">
+        <div class="col-md-3 offset-3">
+            <a href="{% url 'app_users:user-matches' %}" class="btn btn-primary">Back to matches</a>
+        </div>
+    </div>
 </div>
-
-<!-- Input field for the chat message -->
-<form id="form" style="display: flex; justify-content: center; align-items: center; width: 38vw;">
-    <p>Message: </p>
-    <input type="text" name="message" style="width: 90%;" maxlength="250" />
-</form>
-
 <!-- JS to scroll the div to the latest entry -->
 <script>
     var chat_messages_div = document.getElementById("chat_messages_div");
