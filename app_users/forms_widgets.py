@@ -1,4 +1,4 @@
-from django.forms.widgets import Input, NumberInput, CheckboxInput
+from django.forms.widgets import TextInput, NumberInput, CheckboxInput
 
 
 class RangeInput(NumberInput):
@@ -6,6 +6,6 @@ class RangeInput(NumberInput):
     template_name = "widgets/range.html"
 
 
-class SwitchCheckboxInput(Input):
-    input_type = "range"
+class SwitchCheckboxInput(CheckboxInput):
+    input_type = "checkbox"
     template_name = "widgets/switch.html"

@@ -98,6 +98,7 @@ class UserSignUpForm(UserCreationForm):
             "social_spotify": "Url to your spotify account",
         }
         widgets = {
+            "notification": SwitchCheckboxInput(),
             "info_birthday": DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
             "social_instagram": URLInput(),
             "social_facebook": URLInput(),
@@ -148,16 +149,7 @@ class UserProfileForm(UserChangeForm):
             "social_spotify": "Url to your spotify account",
         }
         widgets = {
-            "notification": TextInput(
-                attrs={
-                    "type": "Checkbox",
-                    "data-toggle": "toggle",
-                    "data-on": "Yes",
-                    "data-off": "No!",
-                    "data-onstyle": "success",
-                    "data-offstyle": "danger",
-                }
-            ),
+            "notification": SwitchCheckboxInput(),
             "info_birthday": DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
             "social_instagram": URLInput(),
             "social_facebook": URLInput(),
@@ -210,32 +202,42 @@ class SockProfileForm(ModelForm):
             "info_age": RangeInput(
                 attrs={
                     "type": "range",
+                    "class": "form-range",
                     "min": "0",
                     "max": "25",
                     "step": "1",
-                    "value": 0,
+                    "value": "0",
                 }
             ),
             "info_holes": RangeInput(
                 attrs={
                     "type": "range",
+                    "class": "form-range",
                     "min": "0",
                     "max": "10",
                     "step": "1",
-                    "value": 0,
+                    "value": "0",
                 }
             ),
             "info_kilometers": RangeInput(
                 attrs={
                     "type": "range",
+                    "class": "form-range",
                     "min": "0",
                     "max": "1000",
                     "step": "1",
-                    "value": 0,
+                    "value": "0",
                 }
             ),
             "info_washed": RangeInput(
-                attrs={"type": "range", "min": "0", "max": "7", "step": "1", "value": 0}
+                attrs={
+                    "type": "range",
+                    "class": "form-range",
+                    "min": "0",
+                    "max": "7",
+                    "step": "1",
+                    "value": "0",
+                }
             ),
         }
 
