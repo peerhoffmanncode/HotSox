@@ -1,5 +1,5 @@
 black==22.10.0
-crispy-bootstrap==5-0.7
+crispy-bootstrap5==0.7
 Django==3.2
 django-allauth==0.51.0
 django-crispy-forms==1.14.0
