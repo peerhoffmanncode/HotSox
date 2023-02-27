@@ -1,10 +1,10 @@
-from django.forms import ModelForm, DateInput, TextInput, IntegerField
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.forms import ValidationError, URLInput, NumberInput
+from django.forms import ModelForm, DateInput, URLInput, CheckboxInput, TextInput
+from django.forms import ValidationError
 
 from datetime import date
 from .models import User, UserProfilePicture, Sock, SockProfilePicture
-from .forms_widgets import RangeInput
+from .forms_widgets import RangeInput, SwitchCheckboxInput
 
 
 def validate_age(form):
@@ -148,6 +148,16 @@ class UserProfileForm(UserChangeForm):
             "social_spotify": "Url to your spotify account",
         }
         widgets = {
+            "notification": TextInput(
+                attrs={
+                    "type": "Checkbox",
+                    "data-toggle": "toggle",
+                    "data-on": "Yes",
+                    "data-off": "No!",
+                    "data-onstyle": "success",
+                    "data-offstyle": "danger",
+                }
+            ),
             "info_birthday": DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
             "social_instagram": URLInput(),
             "social_facebook": URLInput(),
