@@ -62,6 +62,7 @@
     </div>
     <div class="col-md-3 center">
         <a href="{% url 'app_users:user-matches' %}" class="btn btn-primary">Back to matches</a>
+        <a href="{% url 'app_chat:chat' user_detail.username %}" class="btn btn-primary">Chat</a>
     </div>
     <br>
     {{ map|safe }}
