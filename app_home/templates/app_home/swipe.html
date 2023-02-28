@@ -16,7 +16,7 @@
                     <form action="" method="POST" class="flex-center">
                         {% csrf_token %}
                         <input type="hidden" name="change_sock" value="{{ sock.pk }}">
-                        <button class="col-6 col-sm3 list-inline-item select-sock flex-center btn-img-hide">
+                        <button class="col-6 col-sm3 flex-center btn-img-hide">
                             {% if sock.get_picture_urls.0 %}
                             <img class="select-sock-pic" src="{{ sock.get_picture_urls.0 }}" alt="">
                             {% else %}
@@ -31,7 +31,7 @@
     </div>
 
     <div class="row swipe-panel">
-        <div class="col-md-4 swipe-button">
+        <div class="col-md-4">
             {% if sock %}
             <form action="" method="POST" class="flex-center">
                 {% csrf_token %}
@@ -42,7 +42,7 @@
             </form>
             {% endif %}
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 ">
             {% if sock %}
             {% if sock.get_picture_urls %}
             <img src="{{ sock.get_picture_urls.0 }}" alt="" class="sock-img">
@@ -55,7 +55,7 @@
             {% endif %}
         </div>
 
-        <div class="col-md-4 swipe-button">
+        <div class="col-md-4">
             {% if sock %}
             <form action="" method="POST" name="swipe-yes" class="flex-center">
                 {% csrf_token %}

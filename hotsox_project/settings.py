@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "cloudinary",
     "crispy_forms",
+    "crispy_bootstrap5",
     "app_home",
     "app_users",
     "app_geo",
@@ -71,14 +72,37 @@ WSGI_APPLICATION = "hotsox_project.wsgi.application"
 ASGI_APPLICATION = "hotsox_project.asgi.application"
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
+AUTHENTICATION_BACKENDS = ["allauth.account.auth_backends.AuthenticationBackend"]
+
+# need to prevent "false email addresses to lead to a crash!"
+# TODO: remove this and find proper error handling
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# AllAUth configuration
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
+ACCOUNT_CONFIRM_EMAIL_ON_GET = False
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "optional"  # "mandatory"
+ACCOUNT_PRESERVE_USERNAME_CASING = True
+ACCOUNT_USERNAME_BLACKLIST = ["Admin", "Administrator", "admin", "administrator"]
+ACCOUNT_USERNAME_MIN_LENGTH = 3
+
 # Social accounts login
 SOCIALACCOUNT_LOGIN_ON_GET = False
-AUTHENTICATION_BACKENDS = ["allauth.account.auth_backends.AuthenticationBackend"]
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": [
             "profile",
             "email",
+        ],
+        "FIELDS": [
+            "id",
+            "email",
+            "given_name",
+            "family_name",
+            "birth_date",
+            "gender",
         ],
         "AUTH_PARAMS": {
             "access_type": "online",
@@ -88,13 +112,7 @@ SOCIALACCOUNT_PROVIDERS = {
 
 # Requirements for Allauth support
 SITE_ID = 1
-
-# need to prevent "false email addresses to lead to a crash!"
-# TODO: remove this and find proper error handling
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-
 # add these constants to define route for login/ logout destinations
-ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = "/user/login/"
@@ -133,8 +151,8 @@ TEMPLATES = [
     },
 ]
 
-CRISPY_TEMPLATE_PACK = "bootstrap4"
-
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

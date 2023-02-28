@@ -179,76 +179,55 @@ class Sock(models.Model):
     user = models.ForeignKey(User, related_name="sock", on_delete=models.CASCADE)
     info_joining_date = models.DateField(auto_now_add=True, blank=False)
 
-    info_name = models.CharField(
-        max_length=255, help_text="What is the socks name?", blank=False
-    )
-    info_about = models.TextField(help_text="Insert sock's story in here.", blank=True)
+    info_name = models.CharField(max_length=255, blank=False)
+    info_about = models.TextField(blank=True)
     info_color = models.CharField(
         max_length=10,
-        help_text="Select dominant color.",
         choices=COLOR_CHOICES,
         blank=False,
     )
     info_fabric = models.CharField(
         max_length=20,
-        help_text="Select main fabric",
         choices=FABRIC_CHOICES,
         blank=False,
     )
     info_fabric_thickness = models.CharField(
         max_length=20,
-        help_text="Select main fabric",
         choices=FABRIC_THICKNESS_CHOICES,
         blank=False,
     )
     info_brand = models.CharField(
         max_length=30,
-        help_text="Select the brand.",
         choices=BRAND_CHOICES,
         blank=False,
     )
     info_type = models.CharField(
         max_length=20,
-        help_text="Select the type.",
         choices=TYPE_CHOICES,
         blank=False,
     )
     info_size = models.CharField(
         max_length=20,
-        help_text="Select the size.",
         choices=SIZE_CHOICES,
         blank=False,
     )
-    info_age = models.PositiveSmallIntegerField(
-        help_text="How old is the sock?", blank=False
-    )
-    info_separation_date = models.DateField(
-        help_text="Lonely since?", default=timezone.now, blank=False
-    )
+    info_age = models.PositiveSmallIntegerField(blank=False)
+    info_separation_date = models.DateField(default=timezone.now, blank=False)
     info_condition = models.CharField(
         max_length=50,
-        help_text="Select the condition of the sock.",
         choices=CONDITION_CHOICES,
         blank=False,
     )
-    info_holes = models.PositiveSmallIntegerField(
-        help_text="How many holes has the sock?", blank=False
-    )
-    info_kilometers = models.PositiveSmallIntegerField(
-        help_text="How many kilometers has the sock walked?", blank=False
-    )
+    info_holes = models.PositiveSmallIntegerField(blank=False)
+    info_kilometers = models.PositiveSmallIntegerField(blank=False)
     info_inoutdoor = models.CharField(
         max_length=20,
-        help_text="Select the main environment of the sock.",
         choices=ENVIRONMENT_CHOICES,
         blank=False,
     )
-    info_washed = models.PositiveSmallIntegerField(
-        help_text="How often washed per month?", blank=False
-    )
+    info_washed = models.PositiveSmallIntegerField(blank=False)
     info_special = models.CharField(
         max_length=250,
-        help_text="Description of a special interest of the sock.",
         blank=False,
     )
 
