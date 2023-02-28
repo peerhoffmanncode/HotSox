@@ -1,10 +1,10 @@
-from django.forms import ModelForm, DateInput, TextInput, IntegerField
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.forms import ValidationError, URLInput, NumberInput
+from django.forms import ModelForm, DateInput, URLInput, CheckboxInput, TextInput
+from django.forms import ValidationError
 
 from datetime import date
 from .models import User, UserProfilePicture, Sock, SockProfilePicture
-from .forms_widgets import RangeInput
+from .forms_widgets import RangeInput, SwitchCheckboxInput
 
 
 def validate_age(form):
@@ -98,6 +98,7 @@ class UserSignUpForm(UserCreationForm):
             "social_spotify": "Url to your spotify account",
         }
         widgets = {
+            "notification": SwitchCheckboxInput(),
             "info_birthday": DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
             "social_instagram": URLInput(),
             "social_facebook": URLInput(),
@@ -148,6 +149,7 @@ class UserProfileForm(UserChangeForm):
             "social_spotify": "Url to your spotify account",
         }
         widgets = {
+            "notification": SwitchCheckboxInput(),
             "info_birthday": DateInput(attrs={"type": "date", "format": "%d-%m-%Y"}),
             "social_instagram": URLInput(),
             "social_facebook": URLInput(),
@@ -200,32 +202,42 @@ class SockProfileForm(ModelForm):
             "info_age": RangeInput(
                 attrs={
                     "type": "range",
+                    "class": "form-range",
                     "min": "0",
                     "max": "25",
                     "step": "1",
-                    "value": 0,
+                    "value": "0",
                 }
             ),
             "info_holes": RangeInput(
                 attrs={
                     "type": "range",
+                    "class": "form-range",
                     "min": "0",
                     "max": "10",
                     "step": "1",
-                    "value": 0,
+                    "value": "0",
                 }
             ),
             "info_kilometers": RangeInput(
                 attrs={
                     "type": "range",
+                    "class": "form-range",
                     "min": "0",
                     "max": "1000",
                     "step": "1",
-                    "value": 0,
+                    "value": "0",
                 }
             ),
             "info_washed": RangeInput(
-                attrs={"type": "range", "min": "0", "max": "7", "step": "1", "value": 0}
+                attrs={
+                    "type": "range",
+                    "class": "form-range",
+                    "min": "0",
+                    "max": "7",
+                    "step": "1",
+                    "value": "0",
+                }
             ),
         }
 

@@ -12,10 +12,13 @@
     align-items: center;
 }
 
+/* .nav-img-dropdown {
+    display:block;
+    width: 80px;
+    height: 80px;
+} */
+
 .btn {
-    display: block;
-    width: 115px;
-    height: 32px;
     background: #4E9CAF;
     padding: 10px;
     text-align: center;
@@ -53,6 +56,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.sandstone, .tooltip, .dropdown-menu .dropdown-item, .pagination, .breadcrumb, .nav-pills .nav-link, .nav-tabs .nav-link, .navbar .nav-link {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px;
+    text-transform: uppercase;
 }
 
 .circle-container {
@@ -165,21 +175,13 @@
 }
 
 .select-sock-pic {
-    width: 100%%;
+    width: 100%;
     height: 100%;
 }
 
 .grey {
     background-color: rgb(242, 237, 237);
 
-}
-
-.blue {
-    background-color: blue;
-}
-
-.yellow {
-    background-color: yellow;
 }
 
 .fa-brands {
@@ -191,4 +193,27 @@
 }
 .card-text {
     word-wrap: break-word;
+}
+
+
+/*  Media Queries */
+@media screen and (min-width:992px) {
+    .dropdown:hover .dropdown-menu{
+        display:block;
+        margin-top:0;
+    }
+
+    .dropdown .dropdown-menu{
+        display: none;
+    }
+    .dropdown:hover .dropdown-toggle::after{
+        border-top: 0;
+        border-bottom: .3em solid;
+    }
+}
+@media screen and (max-width:992px){
+    .dropdown-toggle.show::after{
+        border-top: 0;
+        border-bottom: .3em solid;
+    }
 }
