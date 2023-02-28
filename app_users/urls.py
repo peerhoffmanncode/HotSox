@@ -5,7 +5,7 @@ app_name = "app_users"
 urlpatterns = [
     path("signup/", views.UserSignUp.as_view(), name="user-signup"),
     path(
-        "profile/details//",
+        "profile/details/",
         views.UserProfileDetails.as_view(),
         name="user-profile-details",
     ),

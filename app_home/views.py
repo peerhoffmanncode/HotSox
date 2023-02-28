@@ -109,15 +109,7 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
                     user_match_created = True
 
                 if user_match_created:
-                    user_socks = Sock.objects.filter(user=request.user)
-                    context = {
-                        "sock": sock_to_be_decided_on,
-                        "user_socks": user_socks,
-                        "match": True,
-                    }
-                    return render(request, "app_home/swipe.html", context)
-
-                    # TODO:  create a modal dialog to inform the user about a match!
+                    # TODO:  create a dignal dialog to inform the user about a match!
                     #       send a info email
                     #       show some unicorn farts!
                     context = {
