@@ -8221,6 +8221,26 @@ textarea.form-control-lg {
   background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important;
 }
 
+.bg-cardlike {
+  border: none;
+  box-shadow: inset 1px 1px rgba(255, 255, 255, 0.2), inset -1px -1px rgba(255, 255, 255, 0.1), 10px 5px 50px -5px rgba(0, 0, 0, 0.5);
+  background-color: transparent;
+  background-image: linear-gradient(125deg, rgba(0, 0, 0, 0.7), rgba(255, 255, 255, 0.10) 55%);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  --bs-secondary-rgb: transparent;
+}
+
+.bg-chat {
+  border: none;
+  box-shadow: inset 1px 1px rgba(255, 255, 255, 0.2), inset -1px -1px rgba(255, 255, 255, 0.1), 10px 5px 50px -5px rgba(0, 0, 0, 0.5);
+  background-color: transparent;
+  background-image: linear-gradient(125deg, rgba(150, 150, 150, 0.4), rgba(255, 255, 255, 0.10) 55%);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  --bs-secondary-rgb: transparent;
+}
+
 .bg-black {
   --bs-bg-opacity: 1;
   background-color: rgba(var(--bs-black-rgb), var(--bs-bg-opacity)) !important;
