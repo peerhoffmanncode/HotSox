@@ -19,7 +19,7 @@
             <a href="{% url 'app_home:index' %}" class="navbar-brand">
                 HotSox
             </a>
-            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-bs-target="#navbarNavDropdown"
+            <button class="navbar-toggler ms-auto" type="button" data-toggle="collapse" data-bs-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -50,7 +50,7 @@
                         <img style="width: 80px; border-radius: 50%;" src="{{ request.user.get_picture_urls.0 }}">
                         <span class="caret"></span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-right" style="font-size:120%;">
+                    <ul class="dropdown-menu dropdown-menu-end" style="font-size:120%;">
                         <li><a href="{% url 'app_users:user-profile-details' %}">My Profile</a></li>
                         <li><a href="{% url 'app_users:sock-overview' %}">My Socks</a></li>
                         <li><a href="{% url 'app_users:user-matches' %}">My Matches</a></li>
@@ -63,7 +63,7 @@
                     <a href="#" data-toggle="dropdown" class="dropdown-toggle">
                         <span class="caret"></span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-right">
+                    <ul class="dropdown-menu dropdown-menu-end">
                         <li><a href="/user/login/">Sign In</a></li>
                         <li><a href="/user/signup/">Sign Up</a></li>
                     </ul>
