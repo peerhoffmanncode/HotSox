@@ -3246,6 +3246,7 @@ textarea.form-control-lg {
 .dropdown-toggle::after {
   display: inline-block;
   margin-left: 0.255em;
+  margin-right: 3.5em;
   vertical-align: 0.255em;
   content: "";
   border-top: 0.3em solid;
