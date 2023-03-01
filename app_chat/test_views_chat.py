@@ -96,7 +96,6 @@ class Test(TestCase):
         self.assertEqual(response["location"], "/user/profile/matches/")
 
     def test_chat_with_match(self):
-
         # create a match
         user_match_object = UserMatch.objects.create(
             user=self.user1,
@@ -117,7 +116,6 @@ class Test(TestCase):
         self.assertTemplateUsed("app_chat/chat_lobby.html")
 
     def test_chat_with_very_many_old_chats(self):
-
         # create a match
         user_match_object = UserMatch.objects.create(
             user=self.user1,

@@ -114,8 +114,8 @@ class UserProfileDetails(HotSoxLogInAndValidationCheckMixin, TemplateView):
         city = user.location_city
         if city and lat and lng:
             context["map"] = GeoMap.get_geo_map(
-                map_width="100",
-                map_height="100",
+                map_width="100%",
+                map_height="100%",
                 geo_location_a=(lat, lng),
                 geo_location_b=(lat, lng),
                 city_location=city,
@@ -416,7 +416,6 @@ class SockProfileUpdate(
         return redirect(reverse("app_users:sock-update"))
 
     def get(self, request):
-
         sock_to_update = get_object_or_404(Sock, pk=request.session.get("sock_pk"))
         form_sock_profile = SockProfileForm(instance=sock_to_update)
 

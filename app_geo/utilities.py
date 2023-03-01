@@ -6,6 +6,7 @@ import folium
 import socket
 import os
 
+
 # Helper functions
 class GeoLocation:
     """generic class for GeoLocation functions"""
@@ -102,8 +103,8 @@ class GeoMap:
         """Generate a HTML map for given point"""
 
         geo_map = folium.Map(
-            width=map_width,
-            height=map_height,
+            width="100%",
+            height="100%",
             location=GeoMap.get_location_center_coordinates(
                 geo_location_a[0],
                 geo_location_a[1],
@@ -114,6 +115,10 @@ class GeoMap:
                 GeoLocation.get_distance(geo_location_a, geo_location_b)
             ),
         )
+        # wired hack to make the folium map work as expected!
+        geo_map._parent.width = "100%"
+        geo_map._parent.height = "100%"
+        geo_map._parent.ratio = "60%"
 
         # create a hotsox user marker on the map
         folium.Marker(
@@ -139,3 +144,5 @@ class GeoMap:
             geo_map.add_child(line)
 
         return geo_map._repr_html_()
+
+    folium.Map()._repr_html_()
