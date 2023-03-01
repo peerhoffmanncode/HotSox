@@ -138,7 +138,6 @@ class UserModelTestCase(TestCase):
         self.assertEqual(json_data["My story"], self.sock.info_about)
 
     def test_sock_deletion(self):
-
         # create a sock profile picture to test deletion
         sock_profile_picture = SockProfilePicture.objects.create(
             sock=self.sock, profile_picture=None

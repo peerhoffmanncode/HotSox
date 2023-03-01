@@ -87,7 +87,6 @@ class UserSignUpTest(TestCase):
     # validate_sock_ownership(request, valid_sock=None, picture_pk=None)
     @mock.patch("cloudinary.uploader.upload")
     def test_valid_picture_helper_method(self, mock_uploader_upload):
-
         mock_uploader_upload = "picture.jpg"
         self.picture = SockProfilePicture.objects.create(
             sock=self.sock, profile_picture="picture.jpg"

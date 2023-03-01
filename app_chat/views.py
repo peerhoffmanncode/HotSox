@@ -5,6 +5,7 @@ from django.db.models import Q
 
 from django.utils import timezone
 
+
 # TODO: rewrite as classbased view
 def chat_with_match(request, matched_user_name):
     """Main view to initiate a new chat conversation

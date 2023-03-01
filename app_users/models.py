@@ -147,7 +147,6 @@ class User(AbstractUser):
 
 
 class UserProfilePicture(models.Model):
-
     # User.profile_picture.user.pk = User.pk  | himself
     user = models.ForeignKey(
         User, related_name="profile_picture", on_delete=models.CASCADE

@@ -416,7 +416,6 @@ class SockProfileUpdate(
         return redirect(reverse("app_users:sock-update"))
 
     def get(self, request):
-
         sock_to_update = get_object_or_404(Sock, pk=request.session.get("sock_pk"))
         form_sock_profile = SockProfileForm(instance=sock_to_update)
 

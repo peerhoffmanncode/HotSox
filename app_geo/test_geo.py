@@ -102,7 +102,6 @@ class Test(TestCase):
         )
 
     def test_geomap_get_geo_map(self):
-
         test_map1 = GeoMap.get_geo_map(
             map_width=250,
             map_height=250,

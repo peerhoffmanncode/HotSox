@@ -6,6 +6,7 @@ import folium
 import socket
 import os
 
+
 # Helper functions
 class GeoLocation:
     """generic class for GeoLocation functions"""
@@ -118,8 +119,6 @@ class GeoMap:
         geo_map._parent.width = "100%"
         geo_map._parent.height = "100%"
         geo_map._parent.ratio = "60%"
-
-
 
         # create a hotsox user marker on the map
         folium.Marker(

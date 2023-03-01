@@ -65,7 +65,6 @@ def gen_user(gender=None):
 
 
 def gen_sock(user):
-
     if random.randint(1, 2) % 2 == 0:
         gender = "male"
     else:
@@ -96,7 +95,6 @@ def gen_sock(user):
 
 
 def run(max_user):
-
     path = os.getcwd() + "/app_users/management/commands/fake_profile_pics/"
 
     for i in range(max_user):
