@@ -427,3 +427,35 @@
     backdrop-filter: blur(5px);
     --bs-secondary-rgb: transparent;
   }
+
+.about-main{
+    height: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.about-bg {
+    /* The image used */
+    background-image: url("/static/about/professionalSox.jpeg");
+    /* Full height */
+    height: 100vh;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.8;
+}
+
+.about-text-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 5%;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    text-align: justify;
+    font-size: 120%;
+    border-radius: 30%;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 1) 0%,rgba(150, 150, 150, 0.2) 80%, rgba(0, 0, 0, 0) 100%);
+}

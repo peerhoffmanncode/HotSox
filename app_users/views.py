@@ -114,8 +114,8 @@ class UserProfileDetails(HotSoxLogInAndValidationCheckMixin, TemplateView):
         city = user.location_city
         if city and lat and lng:
             context["map"] = GeoMap.get_geo_map(
-                map_width="100",
-                map_height="100",
+                map_width="100%",
+                map_height="100%",
                 geo_location_a=(lat, lng),
                 geo_location_b=(lat, lng),
                 city_location=city,

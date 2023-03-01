@@ -65,7 +65,9 @@
         <a href="{% url 'app_chat:chat' user_detail.username %}" class="btn btn-primary">Chat</a>
     </div>
     <br>
-    {{ map|safe }}
+    <div class="col-md-12 card" style="padding: 15px" >
+        {{ map|safe }}
+    </div>
 </div>
 
 <script>
