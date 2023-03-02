@@ -1,6 +1,4 @@
-from django.db.models import Q, OuterRef, BooleanField, Case, When
-from django.db.models.functions import Cast
-
+from django.db.models import Q
 from app_users.models import Sock, SockLike, SockProfilePicture
 import random
 
