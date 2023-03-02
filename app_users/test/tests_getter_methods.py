@@ -170,11 +170,11 @@ class UserModelTestCase(TestCase):
         self.assertIn(self.user_match1, unmatched_users)
         self.assertIn(self.user_match2, unmatched_users)
 
-    def test_get_match_witch(self):
+    def test_has_matches_between(self):
         # check if match object can identify valid match
         self.assertTrue(self.user_match1.has_matches_between(self.user1, self.user2))
         self.assertTrue(self.user_match1.has_matches_between(self.user1, self.user3))
-        self.assertTrue(self.user_match2.has_matches_between(self.user3, self.user1))
+        self.assertTrue(self.user_match2.has_matches_between(self.user2, self.user1))
         self.assertTrue(self.user_match2.has_matches_between(self.user3, self.user1))
 
         # set valid match to unmatched!
@@ -183,7 +183,7 @@ class UserModelTestCase(TestCase):
         # check if match object can identify valid match but response False!
         self.assertFalse(self.user_match1.has_matches_between(self.user1, self.user2))
         self.assertFalse(self.user_match1.has_matches_between(self.user1, self.user3))
-        self.assertFalse(self.user_match2.has_matches_between(self.user3, self.user1))
+        self.assertFalse(self.user_match2.has_matches_between(self.user2, self.user1))
         self.assertFalse(self.user_match2.has_matches_between(self.user3, self.user1))
 
     # test if gets the socks, working
