@@ -33,11 +33,12 @@
             </span>
             {% endif %}
             <span class="col-md-6" style="float:right; display:inline; word-wrap:break-word;">
-                <p>{{ user_detail.age }} years old</p>
+                {{ user_detail.age }} years old
             </span>
-            <span class="col-md-6"><strong>About</strong></span>
-            <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
-                <p>Lives in {{ user_detail.city }}, {{ distance }}km away</p>
+            <span class="col-md-6 style=" float:right; display:inline; word-wrap:break-word;"><strong>About</strong>
+                <span class="col-md-6" style="float:right; display:inline; word-wrap:break-word;">
+                    Lives in {{ user_detail.city }}, {{ distance }}km away
+                </span>
             </span>
 
             <span class="col-md-12" style=" word-wrap:break-word;">
@@ -67,7 +68,8 @@
                 <a href="{% url 'app_users:user-matches' %}" class="btn btn-primary">Back to matches</a>
             </div>
             <div class="col-md-1 offset-7">
-                <button class="btn delete-button" data-bs-toggle="modal" data-bs-target="#deleteMatchModal"><i class="fa-solid fa-trash-can"></i></a>
+                <button class="btn delete-button" data-bs-toggle="modal" data-bs-target="#deleteMatchModal"><i
+                        class="fa-solid fa-trash-can"></i></a>
             </div>
         </div>
     </div>
@@ -82,14 +84,16 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="deleteMatchModalLabel">Your are about to unmatch {{user_detail.username.title}} !</h4>
+                <h4 class="modal-title" id="deleteMatchModalLabel">Your are about to unmatch
+                    {{user_detail.username.title}} !</h4>
             </div>
-            <div class="modal-body">You will not be able to chat with this user anymore. All the socks of this user will
+            <div class="modal-body">You will not be able to chat with {{user_detail.username.title}} anymore. All the socks of this user will
                 be hidden from you. Are you sure about this?
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" data-bs-dismiss="modal">Keep this match</button>
-                <a href="{% url 'app_users:user-match-delete' user_detail.username %}" class="btn btn-danger" id="confirm-delete">Delete this match</a>
+                <a href="{% url 'app_users:user-match-delete' user_detail.username %}" class="btn btn-danger"
+                    id="confirm-delete">Delete this match</a>
             </div>
         </div>
     </div>
