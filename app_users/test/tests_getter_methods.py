@@ -150,6 +150,42 @@ class UserModelTestCase(TestCase):
         self.assertIn(self.user_match1, matches)
         self.assertIn(self.user_match2, matches)
 
+    def test_get_matches_with_unwanted_users(self):
+        self.user_match1.unmatched = True
+        self.user_match1.save()
+        matches = self.user1.get_matches()
+        self.assertEqual(len(matches), 1)
+        self.assertNotIn(self.user_match1, matches)
+        self.assertIn(self.user_match2, matches)
+
+    def test_get_unmatched(self):
+        unmatched_users = self.user1.get_unmatched()
+        self.assertEqual(len(unmatched_users), 0)
+        self.user_match1.unmatched = True
+        self.user_match1.save()
+        self.user_match2.unmatched = True
+        self.user_match2.save()
+        unmatched_users = self.user1.get_unmatched()
+        self.assertEqual(len(unmatched_users), 2)
+        self.assertIn(self.user_match1, unmatched_users)
+        self.assertIn(self.user_match2, unmatched_users)
+
+    def test_has_matches_between(self):
+        # check if match object can identify valid match
+        self.assertTrue(self.user_match1.has_matches_between(self.user1, self.user2))
+        self.assertTrue(self.user_match1.has_matches_between(self.user1, self.user3))
+        self.assertTrue(self.user_match2.has_matches_between(self.user2, self.user1))
+        self.assertTrue(self.user_match2.has_matches_between(self.user3, self.user1))
+
+        # set valid match to unmatched!
+        self.user_match1.unmatched = True
+        self.user_match2.unmatched = True
+        # check if match object can identify valid match but response False!
+        self.assertFalse(self.user_match1.has_matches_between(self.user1, self.user2))
+        self.assertFalse(self.user_match1.has_matches_between(self.user1, self.user3))
+        self.assertFalse(self.user_match2.has_matches_between(self.user2, self.user1))
+        self.assertFalse(self.user_match2.has_matches_between(self.user3, self.user1))
+
     # test if gets the socks, working
     def test_get_socks(self):
         socks = self.user1.get_socks()

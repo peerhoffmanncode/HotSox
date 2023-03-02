@@ -1,5 +1,5 @@
 from django.db.models import Q
-from app_users.models import Sock, SockLike, SockProfilePicture
+from app_users.models import Sock, SockLike, UserMatch
 import random
 
 
@@ -26,17 +26,29 @@ class PrePredictionAlgorithm:
             sock_pk for sock_like in processed_socks for sock_pk in sock_like if sock_pk
         ]
 
-        # get the queryset of all available socks
-        all_socks = Sock.objects.all()
-
-        # exclude all the seen socks from the list of all the socks
+        # get the queryset of all available socks, but:
+        # exclude all the seen socks from the list of all the socks (above)
         # exclude the socks of the current user too!
-        unseen_socks = all_socks.exclude(pk__in=processed_socks_pks).exclude(
-            user=current_user
+        unseen_socks = (
+            Sock.objects.all()
+            .exclude(pk__in=processed_socks_pks)
+            .exclude(user=current_user)
         )
 
-        # exclude all the socks without any pictures
-        unseen_socks = [sock for sock in unseen_socks if sock.get_all_pictures()]
+        # build a list of users that have been unmatched,
+        # so that we can exclude their socks of the unseen socks!
+        # TODO: could be extended to exclude socks of any matched user too!
+        unwanted_user_list = [
+            match.user if match.user != current_user else match.other
+            for match in current_user.get_unmatched()
+        ]
+
+        # exclude all the socks without any pictures & unwanted users
+        unseen_socks = [
+            sock
+            for sock in unseen_socks
+            if sock.get_all_pictures() and sock.user not in unwanted_user_list
+        ]
 
         if unseen_socks:
             return unseen_socks

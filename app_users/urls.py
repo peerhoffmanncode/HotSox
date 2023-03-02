@@ -30,6 +30,11 @@ urlpatterns = [
         name="user-match-profile-details",
     ),
     path(
+        "match/delete/<str:username>/",
+        views.UserMatchDelete.as_view(),
+        name="user-match-delete",
+    ),
+    path(
         "sock/overview/",
         views.SockProfileOverview.as_view(),
         name="sock-overview",

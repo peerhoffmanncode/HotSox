@@ -123,7 +123,20 @@ class User(AbstractUser):
         Retrieves all UserMatch objects associated with the User instance.
         Returns a queryset
         """
-        matches = UserMatch.objects.filter(Q(user=self) | Q(other=self))
+        matches = UserMatch.objects.filter(Q(user=self) | Q(other=self)).exclude(
+            unmatched=True
+        )
+        return matches
+
+    def get_unmatched(self):
+        """
+        Function to get all user matches.
+        Retrieves all UserMatch objects associated with the User instance.
+        Returns a queryset
+        """
+        matches = UserMatch.objects.filter(Q(user=self) | Q(other=self)).exclude(
+            unmatched=False
+        )
         return matches
 
     def get_socks(self):
@@ -170,7 +183,20 @@ class UserMatch(models.Model):
     # User.matched.other.objects.all() = all Other user !
     user = models.ForeignKey(User, related_name="him", on_delete=models.CASCADE)
     other = models.ForeignKey(User, related_name="matched", on_delete=models.CASCADE)
+    unmatched = models.BooleanField(default=False)
     chatroom_uuid = models.UUIDField()
+
+    def __str__(self) -> str:
+        return f"<Match between {self.user} and {self.other} status {self.unmatched} chatroom_uuid {self.chatroom_uuid} >"
+
+    def has_matches_between(self, user_instance: User, other_instance: User) -> bool:
+        return (
+            UserMatch.objects.filter(
+                Q(user=user_instance, other=other_instance)
+                | Q(user=other_instance, other=user_instance)
+            ).exists()
+            and not self.unmatched
+        )
 
 
 class Sock(models.Model):
