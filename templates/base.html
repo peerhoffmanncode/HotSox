@@ -72,6 +72,20 @@
             </div>
         </div>
     </nav>
+
+    {% if messages %}
+    <section>
+        {% for msg in messages %}
+        <!-- all django message tags mirror bootstrap, except error/danger -->
+        <aside class="alert {% if msg.tags == 'error' %}alert-danger{% else %}alert-{{ msg.tags }}{% endif %} text-center alert-dismissible fade show" role="alert">
+            <h3>{{ msg }}</h3>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+            </button>
+        </aside>
+        {% endfor %}
+    </section>
+    {% endif %} 
+
     {% block content %}{% endblock %}
 
     <footer></footer>
