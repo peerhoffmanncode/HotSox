@@ -67,7 +67,7 @@
                 <a href="{% url 'app_users:user-matches' %}" class="btn btn-primary">Back to matches</a>
             </div>
             <div class="col-md-1 offset-7">
-                <p class="btn delete-button"><i class="fa-solid fa-trash-can"></i></a>
+                <button class="btn delete-button" data-bs-toggle="modal" data-bs-target="#deleteMatchModal"><i class="fa-solid fa-trash-can"></i></a>
             </div>
         </div>
     </div>
@@ -78,36 +78,22 @@
 </div>
 
 <!-- The Modal -->
-<div class="modal fade" id="myModal">
+<div class="modal fade" id="deleteMatchModal" aria-labelledby="deleteMatchModalLabel">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Your are about to unmatch {{user_detail.username.title}} !</h4>
-                <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+                <h4 class="modal-title" id="deleteMatchModalLabel">Your are about to unmatch {{user_detail.username.title}} !</h4>
             </div>
             <div class="modal-body">You will not be able to chat with this user anymore. All the socks of this user will
-                be hidden from you. Are you sure about this?</div>
+                be hidden from you. Are you sure about this?
+            </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Keep this match</button>
-                <button type="button" class="btn btn-danger" id="confirm-delete">Delete this match</button>
+                <button class="btn btn-primary" data-bs-dismiss="modal">Keep this match</button>
+                <a href="{% url 'app_users:user-match-delete' user_detail.username %}" class="btn btn-danger" id="confirm-delete">Delete this match</a>
             </div>
         </div>
     </div>
 </div>
-<script>
-    var deleteButton = document.querySelectorAll(".delete-button");
-    deleteButton.forEach(function (deleteButton) {
-        deleteButton.addEventListener("click", function (event) {
-            event.preventDefault();
-            var form = event.target.closest("form");
-            $('#myModal').modal();
-            document.getElementById("confirm-delete").onclick = function () {
-                window.location.href = "{% url 'app_users:user-match-delete' user_detail.username %}";
-            }
-        });
-    });
-</script>
-
 
 <!-- Rotate the user profile picture -->
 <script>
