@@ -10,7 +10,7 @@
         </div>
         <div class="col-md-12 mt-3">
             {% if user_matches %}
-            <p>Here is an overview of your matches. Click on one to see more details</p>
+            <p>Here is a list of your matches.</p>
             {% else %}
             <p>You do not currently have any matches :-(</p>
             <p>Click on swipe to swipe socks and increase your chances of finding a match!</p>
@@ -28,7 +28,7 @@
                 <img src="{{match.other.get_picture_urls.0}}" alt="" class="circle-img">
                 {% endif %}
                 <div class="card-body card-center align-self-center" style="word-wrap:break-word">
-                    <h5 class="card-title">{{ match.other.username }}</h5>
+                    <h5 class="card-title">{{ match.other.username.title }}</h5>
                     <div class="btn-group">
                         <a href="{% url 'app_users:user-match-profile-details' match.other.username %}"
                             class="btn btn-primary">View Profile</a>
@@ -40,7 +40,7 @@
                 <img src="{{match.user.get_picture_urls.0}}" alt="" class="circle-img">
                 {% endif %}
                 <div class="card-body card-center align-self-center" style="word-wrap:break-word">
-                    <h5 class="card-title">{{ match.user.username }}</h5>
+                    <h5 class="card-title">{{ match.user.username.title }}</h5>
                     <div class="btn-group">
                         <a href="{% url 'app_users:user-match-profile-details' match.user.username %}"
                             class="btn btn-primary">View Profile</a>

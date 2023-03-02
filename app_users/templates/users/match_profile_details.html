@@ -60,24 +60,62 @@
             </span>
         </div>
     </div>
-    <div class="col-md-3 center">
-        <a href="{% url 'app_users:user-matches' %}" class="btn btn-primary">Back to matches</a>
-        <a href="{% url 'app_chat:chat' user_detail.username %}" class="btn btn-primary">Chat</a>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <a href="{% url 'app_chat:chat' user_detail.username %}" class="btn btn-primary">Start a chat</a>
+                <a href="{% url 'app_users:user-matches' %}" class="btn btn-primary">Back to matches</a>
+            </div>
+            <div class="col-md-1 offset-7">
+                <p class="btn delete-button"><i class="fa-solid fa-trash-can"></i></a>
+            </div>
+        </div>
     </div>
     <br>
-    <div class="col-md-12 card" style="padding: 15px" >
+    <div class="col-md-12 card" style="padding: 15px">
         {{ map|safe }}
     </div>
 </div>
 
+<!-- The Modal -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Your are about to unmatch {{user_detail.username.title}} !</h4>
+                <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+            </div>
+            <div class="modal-body">You will not be able to chat with this user anymore. All the socks of this user will
+                be hidden from you. Are you sure about this?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Keep this match</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete">Delete this match</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var deleteButton = document.querySelectorAll(".delete-button");
+    deleteButton.forEach(function (deleteButton) {
+        deleteButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            var form = event.target.closest("form");
+            $('#myModal').modal();
+            document.getElementById("confirm-delete").onclick = function () {
+                window.location.href = "{% url 'app_users:user-match-delete' user_detail.username %}";
+            }
+        });
+    });
+</script>
+
+
+<!-- Rotate the user profile picture -->
 <script>
     const pictures = document.querySelectorAll('.circle-img');
-
     // Hide all pictures at the beginning
     for (let i = 1; i < pictures.length; i++) {
         pictures[i].style.display = 'none';
     }
-
     function changePicture() {
         let pictures = document.querySelectorAll('.circle-img');
         let index = 0;
@@ -87,7 +125,6 @@
             pictures[index].style.display = 'block';
         }, 5000);
     }
-
     changePicture();
 </script>
 

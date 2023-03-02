@@ -28,7 +28,7 @@
                         {% csrf_token %}
                         <input type="hidden" name="method" value="delete">
                         <input type="hidden" name="picture_pk" value="{{picture.pk}}">
-                        <button class="btn card-btn delete-button">Delete</button>
+                        <button class="btn card-btn delete-button"><i class="fa-solid fa-trash-can"></i></button>
                     </form>
                 </div>
             </div>
@@ -41,7 +41,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Too bad ?!</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
                     </div>
                     <div class="modal-body">Do you really want to delete this picture?</div>
                     <div class="modal-footer">
