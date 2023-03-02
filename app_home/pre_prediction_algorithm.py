@@ -26,7 +26,7 @@ class PrePredictionAlgorithm:
             sock_pk for sock_like in processed_socks for sock_pk in sock_like if sock_pk
         ]
 
-        # get the queryset of all available socks, excluding socks without pictures
+        # get the queryset of all available socks
         all_socks = Sock.objects.all()
 
         # exclude all the seen socks from the list of all the socks
