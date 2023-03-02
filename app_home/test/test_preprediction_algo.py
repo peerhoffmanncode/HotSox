@@ -1,11 +1,16 @@
 from django.test import TestCase
-from app_users.models import User, UserMatch, Sock, SockLike
+from unittest import mock
+from app_users.models import User, Sock, SockLike, SockProfilePicture
 from datetime import date, timedelta
 from app_home.pre_prediction_algorithm import PrePredictionAlgorithm
 
 
 class Test(TestCase):
-    def setUp(self):
+    @mock.patch("cloudinary.uploader.upload")
+    def setUp(self, mock_uploader_upload):
+
+        mock_uploader_upload = "picture.jpg"
+
         self.user1 = User.objects.create(
             username="quirk-unicorn 1",
             email="quirk-unicorn1@example.com",
@@ -124,6 +129,19 @@ class Test(TestCase):
             info_inoutdoor="1",
             info_washed=2,
             info_special="Once won first place in a sock puppet competition",
+        )
+
+        self.sock_profile_picture1 = SockProfilePicture.objects.create(
+            sock=self.sock, profile_picture=mock_uploader_upload
+        )
+        self.sock_profile_picture2 = SockProfilePicture.objects.create(
+            sock=self.sock2, profile_picture=mock_uploader_upload
+        )
+        self.sock_profile_picture3 = SockProfilePicture.objects.create(
+            sock=self.sock3, profile_picture=mock_uploader_upload
+        )
+        self.sock_profile_picture4 = SockProfilePicture.objects.create(
+            sock=self.sock4, profile_picture=mock_uploader_upload
         )
 
     def test_PrePredictionAlgorithm_prefilter_remainig_socks(self):

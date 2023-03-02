@@ -1,6 +1,5 @@
 from django.db.models import Q
-from app_users.models import Sock, SockLike
-
+from app_users.models import Sock, SockLike, SockProfilePicture
 import random
 
 
@@ -35,6 +34,9 @@ class PrePredictionAlgorithm:
         unseen_socks = all_socks.exclude(pk__in=processed_socks_pks).exclude(
             user=current_user
         )
+
+        # exclude all the socks without any pictures
+        unseen_socks = [sock for sock in unseen_socks if sock.get_all_pictures()]
 
         if unseen_socks:
             return unseen_socks
