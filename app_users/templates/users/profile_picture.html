@@ -5,15 +5,15 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 mt-3 offset-md-4">
-        <h3>{{user.username.title}}'s Profile Pictures</h3>
+            <h3>{{user.username.title}}'s Profile Pictures</h3>
         </div>
         <div class="col-md-12 mt-3">
-        {% if user.get_picture_urls %}
-        <p>Here is an overview of your profile pictures. Click on the + button below to add more!</p>
-        {% else %}
-        <p>You do not currently have any profile pictures. Click on the + button below to add one!</p>
-        {% endif %}
-        <p>Uploading a new photo is automatic once you have selected a file and takes a few seconds to complete</p>
+            {% if user.get_picture_urls %}
+            <p>Here is an overview of your profile pictures. Click on the + button below to add more!</p>
+            {% else %}
+            <p>You do not currently have any profile pictures. Click on the + button below to add one!</p>
+            {% endif %}
+            <p>Uploading a new photo is automatic once you have selected a file and takes a few seconds to complete</p>
         </div>
     </div>
 
@@ -24,7 +24,8 @@
             <div class="card text-center">
                 <img src="{{picture.profile_picture.url}}" alt="" class="card-img-top">
                 <div class="card-body">
-                    <button class="btn card-btn delete-button" data-bs-toggle="modal" data-bs-target="#deletePicModal-{{ picture.pk }}"><i class="fa-solid fa-trash-can"></i></button>
+                    <button class="btn card-btn delete-button" data-bs-toggle="modal"
+                        data-bs-target="#deletePicModal-{{ picture.pk }}"><i class="fa-solid fa-trash-can"></i></button>
                 </div>
             </div>
         </div>
@@ -34,50 +35,46 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="deletePicModalLabel">Too bad ?!</h4>
+                        <h4 class="modal-title" id="deletePicModalLabel">Is the picture really too bad?!</h4>
                     </div>
-                    <div class="modal-body">Do you really want to delete this picture?</div>
+                    <div class="modal-body">Do you really want to delete this picture from your account?</div>
                     <div class="modal-footer">
+                        <button class="btn btn-primary" data-bs-dismiss="modal">Keep the picture</button>
                         <form method="POST">
                             {% csrf_token %}
                             <input type="hidden" name="method" value="delete">
                             <input type="hidden" name="picture_pk" value="{{picture.pk}}">
-                            <button class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
-                            <button class="btn delete-button">Delete</button>
+                            <button class="btn delete-button">Delete the picture</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
         {% endfor %}
-
         <!-- add profile picture -->
         <div class="col-3">
             <div class="card text-center">
-                <div class="card-body card-center align-self-center">
-                    <button class="plus-btn"><i class="fa-solid fa-plus"></i>
-                        <form method="POST" action="" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <span class="hidden">{{ form_user_profile_picture }}</span>
-                        </form>
-                        <script>
-                            document.querySelector("#id_profile_picture").addEventListener("change", async function () {
-                                const file = this.files[0];
-                                const formData = new FormData();
-                                formData.append("profile_picture", file);
-                                formData.append("csrfmiddlewaretoken", '{{ csrf_token }}');
-                                formData.append("method", 'add');
-                                await fetch("{% url 'app_users:user-profile-picture' %}", {
-                                    method: "POST",
-                                    body: formData,
-                                    headers: {
-                                        'X-CSRFToken': '{{ csrf_token }}',
-                                    }
-                                });
-                                window.location.reload();
+                    <form method="POST" action="" enctype="multipart/form-data">
+                        <label for="id_profile_picture" class="plus-btn"><i class="fa-solid fa-plus"></i></label>
+                        {{ form_user_profile_picture }}
+                    </form>
+                    <script>
+                        document.querySelector("#id_profile_picture").addEventListener("change", async function () {
+                            const file = this.files[0];
+                            const formData = new FormData();
+                            formData.append("profile_picture", file);
+                            formData.append("csrfmiddlewaretoken", '{{ csrf_token }}');
+                            formData.append("method", 'add');
+                            await fetch("{% url 'app_users:user-profile-picture' %}", {
+                                method: "POST",
+                                body: formData,
+                                headers: {
+                                    'X-CSRFToken': '{{ csrf_token }}',
+                                }
                             });
-                        </script>
-                </div>
+                            window.location.reload();
+                        });
+                    </script>
             </div>
         </div>
     </div>

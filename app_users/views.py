@@ -335,6 +335,8 @@ class SockSelection(HotSoxLogInAndValidationCheckMixin, TemplateView):
         # add specific routes to redirect to here
         if redirect_url == reverse("app_users:sock-details"):
             return redirect(reverse("app_users:sock-details"))
+        if redirect_url == reverse("app_users:sock-picture"):
+            return redirect(reverse("app_users:sock-picture"))
 
         # Get the URL of the previous page
         prev_url = request.META.get("HTTP_REFERER")
