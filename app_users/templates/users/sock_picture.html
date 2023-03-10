@@ -12,7 +12,8 @@
             {% if user.get_socks %}
             <p>Here is an overview of {{sock.info_name.title}}'s pictures. </p>
             {% else %}
-            <p>You do not currently have any photos of {{sock.info_name.title}}. Click on the + button below to add one!</p>
+            <p>You do not currently have any photos of {{sock.info_name.title}}. Click on the + button below to add one!
+            </p>
             {% endif %}
             <p>Uploading a new photo is automatic once you have selected a file and takes a few seconds to complete</p>
         </div>
@@ -24,76 +25,57 @@
             <div class="card text-center">
                 <img src="{{picture.profile_picture.url}}" alt="" class="card-img-top">
                 <div class="card-body">
-                    <form method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="method" value="delete">
-                        <input type="hidden" name="picture_pk" value="{{picture.pk}}">
-                        <button class="btn card-btn delete-button">
-                            Delete
-                        </button>
-                    </form>
+                    <button class="btn card-btn delete-button" data-bs-toggle="modal"
+                        data-bs-target="#deletePicModal-{{ picture.pk }}"><i class="fa-solid fa-trash-can"></i></button>
                 </div>
             </div>
         </div>
         {% endif %}
-        {% endfor %}
         <!-- The Modal -->
-        <div class="modal fade" id="myModal">
+        <div class="modal fade" id="deletePicModal-{{ picture.pk }}" aria-labelledby="deletePicModalLabel">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">For sock sake ?!</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" id="deletePicModalLabel">For sock sake, so bad ?!</h4>
                     </div>
-                    <div class="modal-body">Do you really want to delete this picture?</div>
+                    <div class="modal-body">Do you really want to delete this picture from the socks account?</div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
+                        <button class="btn btn-primary" data-bs-dismiss="modal">Keep the picture</button>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="method" value="delete">
+                            <input type="hidden" name="picture_pk" value="{{picture.pk}}">
+                            <button class="btn delete-button">Delete the picture</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-        <script>
-            var deleteButton = document.querySelectorAll(".delete-button");
-            deleteButton.forEach(function (deleteButton) {
-                deleteButton.addEventListener("click", function (event) {
-                    event.preventDefault();
-                    var form = event.target.closest("form");
-                    $('#myModal').modal();
-                    document.getElementById("confirm-delete").onclick = function () {
-                        form.submit();
-                    }
-                });
-            });
-        </script>
+        {% endfor %}
         <!-- add profile picture -->
         <div class="col-3">
             <div class="card text-center">
-                <div class="card-body card-center align-self-center">
-                    <button class="plus-btn"><i class="fa-solid fa-plus"></i>
-                        <form method="POST" action="" enctype="multipart/form-data">
-                        {% csrf_token %}
-                            <span class="hidden">{{ form_sock_profile_picture }}</span>
-                        </form>
-                        <script>
-                            document.querySelector("#id_profile_picture").addEventListener("change", async function () {
-                            const file = this.files[0];
-                            const formData = new FormData();
-                            formData.append("profile_picture", file);
-                            formData.append("csrfmiddlewaretoken", '{{ csrf_token }}');
-                            formData.append("method", 'add');
-                            await fetch("{% url 'app_users:sock-picture' %}", {
-                                method: "POST",
-                                body: formData,
-                                headers: {
-                                    'X-CSRFToken': '{{ csrf_token }}',
-                                }
-                            });
-                            window.location.reload();
+                <form method="POST" action="" enctype="multipart/form-data">
+                    <label for="id_profile_picture" class="plus-btn"><i class="fa-solid fa-plus"></i></label>
+                    {{ form_sock_profile_picture }}
+                </form>
+                <script>
+                    document.querySelector("#id_profile_picture").addEventListener("change", async function () {
+                        const file = this.files[0];
+                        const formData = new FormData();
+                        formData.append("profile_picture", file);
+                        formData.append("csrfmiddlewaretoken", '{{ csrf_token }}');
+                        formData.append("method", 'add');
+                        await fetch("{% url 'app_users:sock-picture' %}", {
+                            method: "POST",
+                            body: formData,
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}',
+                            }
                         });
-                        </script>
-                    </button>
-                </div>
+                        window.location.reload();
+                    });
+                </script>
             </div>
         </div>
     </div>

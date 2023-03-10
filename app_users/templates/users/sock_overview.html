@@ -1,97 +1,85 @@
+{% extends "user_base.html" %}
+{% block title %} {{ user.username.title }}'s socks' {% endblock %}
+{% block user_content %}
 
-    {% extends "user_base.html" %}
-    {% block title %} {{ user.username.title }}'s socks' {% endblock %}
-    {% block user_content %}
-    
-    <div class="row">
-        <div class="col-md-8 mt-3 offset-md-4">
-            <h2>Sock Overview</h2>
-        </div>
-        <div class="col-md-12 mt-3">
-            {% if user.get_socks %}
-            <p>Here is an overview of all your socks. Click on one to select it as your active sock and to see more details, or click on the + button to add a new sock.</p>
-            {% else %}
-            <p>You do not currently have any socks. Click on the + button below to add one!</p>
-            {% endif %}
-        </div>
+<div class="row">
+    <div class="col-md-8 mt-3 offset-md-4">
+        <h2>Sock Overview</h2>
     </div>
+    <div class="col-md-12 mt-3">
+        {% if user.get_socks %}
+        <p>Here is an overview of all your socks. Click on one to select it as your active sock and to see more details,
+            or click on the + button to add a new sock.</p>
+        {% else %}
+        <p>You do not currently have any socks. Click on the + button below to add one!</p>
+        {% endif %}
+    </div>
+</div>
 
-    <div class="row">
-        {% for sock in user.get_socks %}
-        {% if sock %}
-        <div class="col-3">
-            <div class="card text-center">
-                {% if sock.get_picture_urls.0 %}
+<div class="row">
+    {% for sock in user.get_socks %}
+    {% if sock %}
+    <div class="col-3">
+        <div class="card text-center">
+            {% if sock.get_picture_urls.0 %}
+            <form action="{% url 'app_users:sock-selection' %}" method="POST">
+                {% csrf_token %}
+                <button class="btn-img-hide">
+                    <input type="hidden" name="sock_pk" value="{{sock.pk}}">
+                    <input type="hidden" name="redirect_url" value="{% url 'app_users:sock-details' %}">
+                    <img src="{{sock.get_picture_urls.0}}" alt="" class="card-img-top">
+                </button>
+                <br>
+                <br>
+                <p>{{sock.info_name}}</p>
+            </form>
+            {% else %}
+            <div class="card-body card-center align-self-center">
                 <form action="{% url 'app_users:sock-selection' %}" method="POST">
                     {% csrf_token %}
-                    <button class="btn-img-hide">
-                        <input type="hidden" name="sock_pk" value="{{sock.pk}}">
-                        <input type="hidden" name="redirect_url" value="{% url 'app_users:sock-details' %}">
-                        <img src="{{sock.get_picture_urls.0}}" alt="" class="card-img-top">
-                    </button>
-                    <br>
-                    <br>
+                    <button class="plus-btn"><i class="fa-solid fa-plus"></i></button>
+                    <input type="hidden" name="sock_pk" value="{{sock.pk}}">
+                    <input type="hidden" name="redirect_url" value="{% url 'app_users:sock-picture' %}">
                     <p>{{sock.info_name}}</p>
                 </form>
-                {% else %}
-                <div class="card-body card-center align-self-center">
-                    <a href="{% url 'app_users:sock-picture' %}">
-                        <button class="plus-btn"><i class="fa-solid fa-plus"></i></button>
-                        <p>{{sock.info_name}}</p>
-                    </a>
+            </div>
+            {% endif %}
+            <div class="card-body">
+                <button class="btn card-btn delete-button" data-bs-toggle="modal"
+                    data-bs-target="#deleteSockModal-{{ sock.pk }}"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="modal fade" id="deleteSockModal-{{ sock.pk }}" aria-labelledby="deleteSockModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="deleteSockModalLabel">Deleting a sock is irreversible!</h4>
                 </div>
-                {% endif %}
-                <div class="card-body">
-                    <form method="POST" id="delete-form">
+                <div class="modal-body">Your are about to delete all information,
+                    all photos and matches for this sock. Are you really sure you want to proceed?</div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-bs-dismiss="modal">Keep this sock</button>
+                    <form method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="method" value="delete">
                         <input type="hidden" name="sock_pk" value="{{sock.pk}}">
-                        <button class="btn card-btn btn-danger delete-button">Delete sock</button>
+                        <button class="btn delete-button">Delete this sock</button>
                     </form>
                 </div>
             </div>
         </div>
-        {% endif %}
-        {% endfor %}
-    
-        <div class="col-3">
-            <div class="card text-center">
-                <form method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="method" value="add">
-                    <button class="plus-btn"><i class="fa-solid fa-plus"></i></button>
-                </form>
-            </div>
-        </div>
-        <!-- The Modal -->
-        <div class="modal fade" id="myModal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">This action is irreversible!</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">Your are about to delete all information,
-                        all photos and matches for this sock. Are you really sure you want to proceed?</div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <script>
-            var deleteButton = document.querySelectorAll(".delete-button");
-            deleteButton.forEach(function (deleteButton) {
-                deleteButton.addEventListener("click", function (event) {
-                    event.preventDefault();
-                    var form = event.target.closest("form");
-                    $('#myModal').modal();
-                    document.getElementById("confirm-delete").onclick = function () {
-                        form.submit();
-                    }
-                });
-            });
-        </script>
     </div>
-    {% endblock %}
+    {% endfor %}
+    <div class="col-3">
+        <div class="card text-center">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="method" value="add">
+                <button class="plus-btn"><i class="fa-solid fa-plus"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

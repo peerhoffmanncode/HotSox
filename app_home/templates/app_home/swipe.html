@@ -4,12 +4,12 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 mt-3 offset-md-4">
-            <h1>Let the swiping begin!</h1>
+            <h2>Swipe for your next match</h2>
         </div>
     </div>
-
     <div class="row">
         <div class="col-md-4 offset-4">
+            <h6 class="flex-center">select a socks you like to swipe for</h6>
             <ul class="list-inline flex-center">
                 {% for sock in user_socks %}
                 <li class="col-6 col-sm3 list-inline-item select-sock flex-center">
@@ -37,8 +37,8 @@
                 {% csrf_token %}
                 <input type="hidden" name="sock_pk" value="{{sock.pk}}">
                 <input type="hidden" name="decision" value="dislike">
-                <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();"><img src="/static/no.png"
-                        alt="dislike" class="swipe-button"></button>
+                <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();"><img src="/static/drake-no.png"
+                        alt="dislike" class="swipe-button"><p>Nope, gimme da next!</p></button>
             </form>
             {% endif %}
         </div>
@@ -61,8 +61,8 @@
                 {% csrf_token %}
                 <input type="hidden" name="sock_pk" value="{{sock.pk}}">
                 <input type="hidden" name="decision" value="like">
-                <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();"><img src="/static/yes.png"
-                        alt="like" class="swipe-button"></button>
+                <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();"><img src="/static/drake-yes.png"
+                        alt="like" class="swipe-button"><p>Yeah, i like !!</p></button>
             </form>
             {% endif %}
         </div>

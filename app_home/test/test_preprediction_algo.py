@@ -1,11 +1,17 @@
 from django.test import TestCase
-from app_users.models import User, UserMatch, Sock, SockLike
+from unittest import mock
+from app_users.models import User, UserMatch, Sock, SockLike, SockProfilePicture
 from datetime import date, timedelta
 from app_home.pre_prediction_algorithm import PrePredictionAlgorithm
+from uuid import uuid4
 
 
 class Test(TestCase):
-    def setUp(self):
+    @mock.patch("cloudinary.uploader.upload")
+    def setUp(self, mock_uploader_upload):
+
+        mock_uploader_upload = "picture.jpg"
+
         self.user1 = User.objects.create(
             username="quirk-unicorn 1",
             email="quirk-unicorn1@example.com",
@@ -126,6 +132,23 @@ class Test(TestCase):
             info_special="Once won first place in a sock puppet competition",
         )
 
+        self.sock_profile_picture1 = SockProfilePicture.objects.create(
+            sock=self.sock, profile_picture=mock_uploader_upload
+        )
+        self.sock_profile_picture2 = SockProfilePicture.objects.create(
+            sock=self.sock2, profile_picture=mock_uploader_upload
+        )
+        self.sock_profile_picture3 = SockProfilePicture.objects.create(
+            sock=self.sock3, profile_picture=mock_uploader_upload
+        )
+        self.sock_profile_picture4 = SockProfilePicture.objects.create(
+            sock=self.sock4, profile_picture=mock_uploader_upload
+        )
+
+        self.match = UserMatch.objects.create(
+            user=self.user1, other=self.user2, chatroom_uuid=uuid4(), unmatched=False
+        )
+
     def test_PrePredictionAlgorithm_prefilter_remainig_socks(self):
         list_of_unseen_socks = PrePredictionAlgorithm._prefilter_list_of_all_socks(
             self.user1, self.sock
@@ -167,6 +190,31 @@ class Test(TestCase):
         )
 
         self.assertEqual([], list(list_of_unseen_socks))
+
+    def test_PrePredictionAlgorithm_prefilter_no_remaining_socks(self):
+        # dislike sock 3 - so only sock4 should be left
+        SockLike.objects.create(sock=self.sock, dislike=self.sock3)
+        # like sock 4 - no sock should remain
+        SockLike.objects.create(sock=self.sock, like=self.sock4)
+        # get remaining socks
+        list_of_unseen_socks = PrePredictionAlgorithm._prefilter_list_of_all_socks(
+            self.user1, self.sock
+        )
+
+        self.assertEqual([], list(list_of_unseen_socks))
+
+    def test_PrePredictionAlgorithm_prefilter_exclude_unwanted_user(self):
+        # set match between user1 and user2 to unmatched!
+        self.match.unmatched = True
+        self.match.save()
+
+        # get remaining socks (should be [] because all socks of user 1/user2 are discarded)
+        list_of_unseen_socks = PrePredictionAlgorithm._prefilter_list_of_all_socks(
+            self.user1, self.sock
+        )
+        # assert no socks are available to swipe from
+        self.assertEqual([], list(list_of_unseen_socks))
+        self.assertNotEqual([self.sock3, self.sock4], list(list_of_unseen_socks))
 
     # Only do this test if we decide on the fact that if one sock of a user was match,
     # all the other socks of the user will not be shown for further matches.

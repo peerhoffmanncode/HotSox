@@ -33,11 +33,12 @@
             </span>
             {% endif %}
             <span class="col-md-6" style="float:right; display:inline; word-wrap:break-word;">
-                <p>{{ user_detail.age }} years old</p>
+                {{ user_detail.age }} years old
             </span>
-            <span class="col-md-6"><strong>About</strong></span>
-            <span class="col-md-6" style="float:left; display:inline; word-wrap:break-word;">
-                <p>Lives in {{ user_detail.city }}, {{ distance }}km away</p>
+            <span class="col-md-6 style=" float:right; display:inline; word-wrap:break-word;"><strong>About</strong>
+                <span class="col-md-6" style="float:right; display:inline; word-wrap:break-word;">
+                    Lives in {{ user_detail.city }}, {{ distance }}km away
+                </span>
             </span>
 
             <span class="col-md-12" style=" word-wrap:break-word;">
@@ -60,22 +61,51 @@
             </span>
         </div>
     </div>
-    <div class="col-md-3 center">
-        <a href="{% url 'app_users:user-matches' %}" class="btn btn-primary">Back to matches</a>
-        <a href="{% url 'app_chat:chat' user_detail.username %}" class="btn btn-primary">Chat</a>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <a href="{% url 'app_chat:chat' user_detail.username %}" class="btn btn-primary">Start a chat</a>
+                <a href="{% url 'app_users:user-matches' %}" class="btn btn-primary">Back to matches</a>
+            </div>
+            <div class="col-md-1 offset-7">
+                <button class="btn delete-button" data-bs-toggle="modal" data-bs-target="#deleteMatchModal"><i
+                        class="fa-solid fa-trash-can"></i></a>
+            </div>
+        </div>
     </div>
     <br>
-    {{ map|safe }}
+    <div class="col-md-12 card" style="padding: 15px">
+        {{ map|safe }}
+    </div>
 </div>
 
+<!-- The Modal -->
+<div class="modal fade" id="deleteMatchModal" aria-labelledby="deleteMatchModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="deleteMatchModalLabel">Your are about to unmatch
+                    {{user_detail.username.title}} !</h4>
+            </div>
+            <div class="modal-body">You will not be able to chat with {{user_detail.username.title}} anymore. All the socks of this user will
+                be hidden from you. Are you sure about this?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-dismiss="modal">Keep this match</button>
+                <a href="{% url 'app_users:user-match-delete' user_detail.username %}" class="btn btn-danger"
+                    id="confirm-delete">Delete this match</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Rotate the user profile picture -->
 <script>
     const pictures = document.querySelectorAll('.circle-img');
-
     // Hide all pictures at the beginning
     for (let i = 1; i < pictures.length; i++) {
         pictures[i].style.display = 'none';
     }
-
     function changePicture() {
         let pictures = document.querySelectorAll('.circle-img');
         let index = 0;
@@ -85,7 +115,6 @@
             pictures[index].style.display = 'block';
         }, 5000);
     }
-
     changePicture();
 </script>
 

@@ -8,7 +8,14 @@ from django.views.generic import TemplateView
 
 from .validator import HotSoxLogInAndValidationCheckMixin, ProtectedSockMixin
 from app_geo.utilities import GeoLocation, GeoMap
-from .models import User, UserProfilePicture, Sock, SockProfilePicture, UserMatch
+from .models import (
+    User,
+    UserProfilePicture,
+    Sock,
+    SockProfilePicture,
+    UserMatch,
+    MessageChat,
+)
 from .forms import (
     UserSignUpForm,
     UserProfileForm,
@@ -114,8 +121,8 @@ class UserProfileDetails(HotSoxLogInAndValidationCheckMixin, TemplateView):
         city = user.location_city
         if city and lat and lng:
             context["map"] = GeoMap.get_geo_map(
-                map_width="100",
-                map_height="100",
+                map_width="100%",
+                map_height="100%",
                 geo_location_a=(lat, lng),
                 geo_location_b=(lat, lng),
                 city_location=city,
@@ -328,6 +335,8 @@ class SockSelection(HotSoxLogInAndValidationCheckMixin, TemplateView):
         # add specific routes to redirect to here
         if redirect_url == reverse("app_users:sock-details"):
             return redirect(reverse("app_users:sock-details"))
+        if redirect_url == reverse("app_users:sock-picture"):
+            return redirect(reverse("app_users:sock-picture"))
 
         # Get the URL of the previous page
         prev_url = request.META.get("HTTP_REFERER")
@@ -416,7 +425,6 @@ class SockProfileUpdate(
         return redirect(reverse("app_users:sock-update"))
 
     def get(self, request):
-
         sock_to_update = get_object_or_404(Sock, pk=request.session.get("sock_pk"))
         form_sock_profile = SockProfileForm(instance=sock_to_update)
 
@@ -514,9 +522,11 @@ class UserMatches(HotSoxLogInAndValidationCheckMixin, TemplateView):
     def get(self, request):
         user = get_object_or_404(User, pk=request.user.pk)
         user_matches = user.get_matches()
+        user_unmatched = user.get_unmatched()
         context = {
             "user": user,
             "user_matches": user_matches,
+            "user_unmatched": user_unmatched,
         }
         return render(request, "users/profile_matches.html", context)
 
@@ -574,3 +584,46 @@ class UserMatchProfileDetails(HotSoxLogInAndValidationCheckMixin, TemplateView):
         context["left_arrow_go_to_url"] = ""
         context["right_arrow_go_to_url"] = ""
         return render(request, "users/match_profile_details.html", context)
+
+
+class UserMatchDelete(HotSoxLogInAndValidationCheckMixin, TemplateView):
+    """View to show a matched user's details."""
+
+    model = User
+    template_name = None
+
+    def get(self, request, **kwargs):
+        # get current user
+        current_user = request.user
+        # get matched user from urls
+        try:
+            match_user = User.objects.get(username=kwargs.get("username", None))
+        except User.DoesNotExist:
+            return redirect(reverse("user-matches"))
+
+        # validate is match exists
+        matches = UserMatch.objects.filter(
+            Q(user=current_user, other=match_user)
+            | Q(user=match_user, other=current_user)
+        )
+        if not matches:
+            return redirect(reverse("user-matches"))
+
+        # get all the chat messages between the users
+        chat_messages = MessageChat.objects.filter(
+            Q(user=current_user, other=match_user)
+            | Q(user=match_user, other=current_user)
+        )
+        # delete the chat messages
+        for message in chat_messages:
+            message.delete()
+
+        # set all the match objects to unmatched = True
+        for match in matches:
+            match.unmatched = True
+            match.save()
+
+        # TODO: set all the match_user socks to seen!
+
+        # return to match overview
+        return redirect(reverse("app_users:user-matches"))

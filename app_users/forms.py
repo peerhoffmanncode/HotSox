@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.forms import ModelForm, DateInput, URLInput, CheckboxInput, TextInput
+from django.forms import ModelForm, DateInput, URLInput, FileInput
 from django.forms import ValidationError
 
 from datetime import date
@@ -169,6 +169,9 @@ class UserProfilePictureForm(ModelForm):
         model = UserProfilePicture
         fields = "__all__"
         exclude = ["user"]
+        labels = {
+            "profile_picture": "",
+        }
 
 
 class SockProfileForm(ModelForm):
@@ -247,3 +250,6 @@ class SockProfilePictureForm(ModelForm):
         model = SockProfilePicture
         fields = "__all__"
         exclude = ["sock"]
+        labels = {
+            "profile_picture": "",
+        }

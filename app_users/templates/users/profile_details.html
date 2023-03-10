@@ -60,20 +60,17 @@
 
 </div>
 <br>
-
-<div class="container">
-    <div style="height: 50px">
-        {{ map|safe }}
-    </div>
+<div class="col-md-12 card" style="padding: 15px">
+    {{ map|safe }}
 </div>
+
+<!-- Rotate the user profile picture -->
 <script>
     const pictures = document.querySelectorAll('.circle-img');
-
     // Hide all pictures at the beginning
     for (let i = 1; i < pictures.length; i++) {
         pictures[i].style.display = 'none';
     }
-
     function changePicture() {
         let pictures = document.querySelectorAll('.circle-img');
         let index = 0;
@@ -83,7 +80,6 @@
             pictures[index].style.display = 'block';
         }, 5000);
     }
-
     changePicture();
 </script>
 

@@ -1,3 +1,4 @@
+/* Global styling */
 .container-fluid {
     margin-top: 1rem;
 }
@@ -12,12 +13,77 @@
     align-items: center;
 }
 
-/* .nav-img-dropdown {
-    display:block;
-    width: 80px;
-    height: 80px;
-} */
+.hidden {
+    color: transparent;
+}
 
+/* about page */
+.about-main{
+    height: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.about-bg {
+    /* The image used */
+    background-image: url("/static/about/professionalSox.jpeg");
+    /* Full height */
+    height: 100vh;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.8;
+}
+
+.text-overlay-container {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    grid-template-rows: 50px 1fr 50px;
+    }
+
+.about-text-overlay {
+    grid-column-start: 2;
+    grid-column-end: -2;
+    grid-row-start: 2;
+    padding: 5%;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    text-align: justify;
+    font-size: 120%;
+    border-radius: 30%;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 1) 0%,rgba(150, 150, 150, 0.2) 80%, rgba(0, 0, 0, 0) 100%);
+}
+.about-inner-text{
+    padding: 50px;
+    }
+
+
+
+/* cards */
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 20rem;
+    max-width: 100%;
+}
+
+.card-img-top {
+    max-height: 250px;
+}
+
+.card-center {
+    flex-direction: row;
+}
+
+.card-text {
+    word-wrap: break-word;
+}
+
+/* Buttons */
 .btn {
     background: #e83283;
     padding: 10px;
@@ -38,23 +104,6 @@
     line-height: 15px;
 }
 
-.card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 20rem;
-    /* display: grid;
-    grid-template-rows: 1fr auto;
-    align-items: center;
-    justify-content: end;
-    height: 20rem;  */
-}
-
-.card-img-top {
-    max-height: 250px;
-}
 .card-btn {
     position: absolute;
     bottom: 10px;
@@ -66,42 +115,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.circle-container {
-    width: 300px;
-    height: 300px;
-    padding: 30px;
-    border-color: #ccc;
-    border-width: 1px;
-    /* border-radius: 50%; */
-    margin: 0 auto;
-}
-
-.circle-img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.circle-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.arrow {
-    width: 60%;
-
-}
-.arrow-container {
-    height: 100%;
-    position:fixed;
-    margin-top: 10rem;
 }
 
 .plus-btn {
@@ -126,19 +139,6 @@
     justify-content: center;
 }
 
-.card-center {
-    flex-direction: row;
-}
-
-.hidden {
-    color: transparent;
-
-}
-
-#id_profile_picture {
-    display: none;
-}
-
 .btn-img-hide {
     padding: 0;
     margin: 0;
@@ -149,15 +149,54 @@
 
 .btn-img-hide:hover {
     transform: scale(1.05);
-
-
 }
 
+/* Images */
+.circle-container {
+    width: 300px;
+    height: 300px;
+    padding: 30px;
+    border-color: #ccc;
+    border-width: 1px;
+    margin: 0 auto;
+}
+
+.circle-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circle-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#id_profile_picture {
+    display: none;
+}
+
+/* arrows */
+.arrow {
+    width: 60%;
+
+}
+.arrow-container {
+    height: 100%;
+    position:fixed;
+    margin-top: 10rem;
+}
+
+/* swipe page */
 .swipe-panel {
     margin-top: 5rem;
     display:flex;
     align-items: center;
-
 }
 
 .swipe-button {
@@ -172,10 +211,6 @@
     box-shadow: inset 1px 1px rgba(255, 255, 255, 1), inset -1px -1px rgba(255, 255, 255, 0.3), 10px 20px 50px 10px rgba(0, 0, 0, 0.3);
 }
 
-
-
-
-/*  Swipe page */
 .select-sock {
     max-width: 33%;
     height:5rem;
@@ -186,21 +221,15 @@
     height: 100%;
 }
 
-.grey {
+/* .grey {
     background-color: rgb(242, 237, 237);
-
-}
+} */
 
 .fa-brands {
     font-size: 165%;
 }
 
-.card {
-    max-width: 100%;
-}
-.card-text {
-    word-wrap: break-word;
-}
+
 
 
 /*  Media Queries */
@@ -427,3 +456,4 @@
     backdrop-filter: blur(5px);
     --bs-secondary-rgb: transparent;
   }
+
