@@ -52,7 +52,6 @@ def validate_email(data):
     if isinstance(data, str):
         email = data
     else:
-        breakpoint()
         # handle case where form = form object
         email = data.cleaned_data.get("email", None)
         if not email:
