@@ -15,7 +15,7 @@ def validate_age(form):
         difference = date.today() - form
     else:
         # handle case where form = form object
-        difference = date.today() - form.cleaned_data["info_birthday"]
+        difference = date.today() - form.cleaned_data.get("info_birthday", date.today())
 
     # Check if the difference is equal to or greater than 18 years(including leap)
     if round(difference.days / 365.2425, 2) < 18:
@@ -30,7 +30,9 @@ def validate_username(data):
         username = data
     else:
         # handle case where form = form object
-        username = data.cleaned_data["username"]
+        username = data.cleaned_data.get("username", None)
+        if not username:
+            raise ValidationError("This username is not valid!", code="invalid")
         # check if a user object is present
         if data.instance:
             # check if username is unchanged
@@ -51,7 +53,9 @@ def validate_email(data):
         email = data
     else:
         # handle case where form = form object
-        email = data.cleaned_data["email"]
+        email = data.cleaned_data.get("email", None)
+        if not email:
+            raise ValidationError("This email is not valid!", code="invalid")
         # check if a user object is present
         if data.instance:
             # check if email is unchanged
