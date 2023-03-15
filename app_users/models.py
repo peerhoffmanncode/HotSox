@@ -181,8 +181,20 @@ class UserProfilePicture(models.Model):
 class UserMatch(models.Model):
     # User.him.user.pk = User.pk  | himself
     # User.matched.other.objects.all() = all Other user !
-    user = models.ForeignKey(User, related_name="him", on_delete=models.CASCADE)
-    other = models.ForeignKey(User, related_name="matched", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User,
+        related_name="him",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    other = models.ForeignKey(
+        User,
+        related_name="matched",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
     unmatched = models.BooleanField(default=False)
     chatroom_uuid = models.UUIDField()
 
