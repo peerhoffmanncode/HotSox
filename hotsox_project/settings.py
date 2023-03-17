@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "django.contrib.staticfiles",
+    "django_extensions",
     "cloudinary",
     "crispy_forms",
     "crispy_bootstrap5",
