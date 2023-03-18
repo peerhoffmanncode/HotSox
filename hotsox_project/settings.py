@@ -36,11 +36,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY")
 CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
 
-SECURE_SSL_REDIRECT = False
-CORS_ALLOW_ALL_ORIGINS = True
-CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1", "http://13.53.140.199"]
+# The following settings need more investigation
+# certain conditions produce unexpeded/ buggy results!
+# AVOIDE to set these to True, even when suggested!
+# SESSION_COOKIE_SECURE = True
+# SECURE_SSL_REDIRECT = False
+# CORS_ALLOW_ALL_ORIGINS = True
+# CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1", "http://13.53.140.199"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
