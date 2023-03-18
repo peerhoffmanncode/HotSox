@@ -57,11 +57,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.sites",
+    "django.contrib.staticfiles",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
-    "django.contrib.staticfiles",
     "django_extensions",
     "cloudinary",
     "crispy_forms",
@@ -72,7 +72,7 @@ INSTALLED_APPS = [
     "app_chat",
 ]
 
-WSGI_APPLICATION = "hotsox_project.wsgi.application"
+# WSGI_APPLICATION = "hotsox_project.wsgi.application"
 ASGI_APPLICATION = "hotsox_project.asgi.application"
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
