@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 <div class="container-fluid">
     <div class="row">
@@ -6,7 +7,7 @@
             {% if left_arrow_go_to_url %}
             <a href="{{ left_arrow_go_to_url }}">
                 <div class="arrow-container">
-                    <img src="/static/left_arrow.png" class="arrow" alt="">
+                    <img src="{% static 'left_arrow.png' %}" class="arrow" alt="">
 
                 </div>
             </a>
@@ -22,7 +23,7 @@
             {% if right_arrow_go_to_url %}
             <a href="{{ right_arrow_go_to_url }}">
                 <div class="arrow-container">
-                    <img src="/static/right_arrow.png" class="arrow" alt="">
+                    <img src="{% static 'right_arrow.png' %}" class="arrow" alt="">
                     <span>{% block right_arrow_content %} {% endblock %}</span>
                 </div>
             </a>
