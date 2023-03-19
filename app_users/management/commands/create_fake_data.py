@@ -3,7 +3,7 @@ import app_users.management.commands.builder
 
 
 class Command(BaseCommand):
-    help = "Closes the specified poll for voting"
+    help = "creates fake data"
 
     def add_arguments(self, parser):
         parser.add_argument(
