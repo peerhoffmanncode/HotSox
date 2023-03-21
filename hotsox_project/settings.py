@@ -11,14 +11,15 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 # imports for cloudinary linking and upload of images
+
+from pathlib import Path
+import os
+from dotenv import load_dotenv
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-from pathlib import Path
-import os
 
-if os.path.isfile("env.py"):
-    import env
+load_dotenv(".env")
 
 cloudinary.config(
     cloud_name=os.environ.get("cloudinary_cloud_name"),
@@ -247,7 +248,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATICFILES_DIRS = os.path.join(BASE_DIR, "static")
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 GEOIP_PATH = os.path.join(BASE_DIR, "app_geo/geo_database")

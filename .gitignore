@@ -1,4 +1,5 @@
 # Exclude python files
+.env
 env.py
 *.mmdb
 

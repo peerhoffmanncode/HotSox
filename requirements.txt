@@ -7,7 +7,7 @@ django-extensions==3.2.1
 channels==3.0.5
 cloudinary==1.32.0
 ipython==8.7.0
-psycopg2-binary==2.9.5
+psycopg2
 pytest-cov==4.0.0
 pytest-django==4.5.2
 names==0.3.0
@@ -16,3 +16,4 @@ geoip2==4.6.0
 geopy==2.3.0
 pyOpenSSL
 uvicorn
+python-dotenv
