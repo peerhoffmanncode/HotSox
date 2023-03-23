@@ -1,6 +1,10 @@
 # Exclude python files
+.env
 env.py
 *.mmdb
+staticfiles/
+data/
+postgres_data/
 
 # Database files
 db.sqlite3

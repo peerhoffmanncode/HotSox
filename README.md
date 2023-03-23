@@ -1,5 +1,12 @@
 # HotSox
 
+## Installation notes (!! for deployment only !!
+
+run:
+[+] pip install -r requirements.txt to install dependencies
+[+] python manage.py collectstatic
+[+] uvicorn hotsox_project.asgi:application --reload --host=0.0.0.0 --port=8000
+
 ## Repository
 
 https://github.com/Python-E03/hot-sox-teamrando
@@ -14,7 +21,7 @@ https://github.com/Python-E03/hot-sox-teamrando
 
 ## Technologies Used
 
-We are based on Django 3.2 (4.1.4), Postgres and Docker.
+We are based on Django (4.1.7), PostgreSQL, and Docker.
 We use Cloudinary as CDN host
 
 ## Testing
@@ -36,7 +43,7 @@ Possible deployment platforms could be heroku, google cloud or aws.
 Python3:
 https://www.python.org
 
-Djangoo:
+Django:
 https://www.djangoproject.com
 
 Cloudinary:
