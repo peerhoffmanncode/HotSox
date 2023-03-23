@@ -19,7 +19,7 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-load_dotenv(".env")
+load_dotenv("../.env")
 
 cloudinary.config(
     cloud_name=os.environ.get("cloudinary_cloud_name"),
