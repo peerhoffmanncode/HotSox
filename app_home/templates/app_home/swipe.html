@@ -9,7 +9,7 @@
     </div>
     <div class="row">
         <div class="col-md-4 offset-4">
-            <h6 class="flex-center">select a socks you like to swipe for</h6>
+            <h6 class="flex-center">select a sock you like to swipe for</h6>
             <ul class="list-inline flex-center">
                 {% for sock in user_socks %}
                 <li class="col-6 col-sm3 list-inline-item select-sock flex-center">
@@ -18,7 +18,7 @@
                         <input type="hidden" name="change_sock" value="{{ sock.pk }}">
                         <button class="col-6 col-sm3 flex-center btn-img-hide">
                             {% if sock.get_picture_urls.0 %}
-                            <img class="select-sock-pic" src="{{ sock.get_picture_urls.0 }}" alt="">
+                            <img class="select-sock-pic swipe-button" src="{{ sock.get_picture_urls.0 }}" alt="">
                             {% else %}
                             <p>{{sock.info_name}}</p>
                             {% endif %}

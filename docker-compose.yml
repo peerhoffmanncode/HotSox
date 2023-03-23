@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+
+  postgresql:
+    container_name: postgresql_db
+    image: postgres
+    restart: always
+    volumes:
+      - ./postgres_data/db:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    command: -p 5432
+
+  django:
+    container_name: hotsox_django_app
+    build: .
+    restart: unless-stopped
+    command: bash -c "python manage.py collectstatic --noinput &&
+                      python manage.py migrate &&
+                      uvicorn hotsox_project.asgi:application --reload --host=0.0.0.0 --port=8000"
+    volumes:
+      - .:/app
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgresql
+
+  nginx:
+    restart: always
+    image: nginx:1.23-alpine
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+        #- static_volume:/staticfiles/
+    depends_on:
+      - postgresql
+      - django
