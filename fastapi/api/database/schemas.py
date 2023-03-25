@@ -31,13 +31,14 @@ class SimplySock(BaseModel):
 ### Actual HotSox models                                      ##
 ################################################################
 
+
 # basic schema for simplified user display
 class UserProfilePic(SimplyUser):
-
     profile_pic: str | None
 
     class Config:
         orm_mode = True
+
 
 # basic schema for chats
 class MessageChat(BaseModel):

@@ -12,6 +12,7 @@ from ..authentication import oauth2
 from ..controller import ctr_user
 
 import os
+
 # build routes
 router = APIRouter(prefix=os.environ.get("API_URL", "/api") + "/user", tags=["Users"])
 

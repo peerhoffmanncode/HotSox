@@ -277,7 +277,7 @@ class SockProfilePicture(Base):
         """Function to delete a UserProfilePicture from cloudinary"""
         # generate public_id
         public_id = self.profile_picture.split("/")[-1]
-        public_id = public_id[:public_id.find(".")]
+        public_id = public_id[: public_id.find(".")]
         if public_id:
             uploader.destroy(public_id)
         db.delete(self)

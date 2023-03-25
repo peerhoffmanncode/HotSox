@@ -9,7 +9,6 @@ from uuid import uuid4
 class Test(TestCase):
     @mock.patch("cloudinary.uploader.upload")
     def setUp(self, mock_uploader_upload):
-
         mock_uploader_upload = "picture.jpg"
 
         self.user1 = User.objects.create(
