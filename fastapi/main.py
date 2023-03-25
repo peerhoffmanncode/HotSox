@@ -2,6 +2,9 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv("../.env")
+if os.environ.get("SECRET_KEY", None) is None:
+    print("can not find env file!")
+    exit(-1)
 
 from fastapi import FastAPI
 

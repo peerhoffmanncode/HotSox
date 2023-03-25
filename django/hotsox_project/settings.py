@@ -20,6 +20,9 @@ import cloudinary.uploader
 import cloudinary.api
 
 load_dotenv("../.env")
+if os.environ.get("SECRET_KEY", None) is None:
+    print("can not find env file!")
+    exit(-1)
 
 cloudinary.config(
     cloud_name=os.environ.get("cloudinary_cloud_name"),
@@ -246,11 +249,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = "static/"
-
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-STATICFILES = os.path.join(BASE_DIR, "static")
+STATIC_URL = "/staticfiles/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+#STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
 
 GEOIP_PATH = os.path.join(BASE_DIR, "app_geo/geo_database")
 
