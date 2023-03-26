@@ -67,12 +67,13 @@ jobs:
       - name: Run fastapi tests (pytest with coverage)
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
         run: cd fastapi && pytest -v --cov -p no:cacheprovider
       - name: Check pep8 with black for fastapi
         run: cd fastapi && python -m black --check .
-
 ### Possible CD
 # package-job: # package job for building and publishing docker images
 #   runs-on: ubuntu-latest

@@ -15,25 +15,24 @@ from api.authentication.hashing import Hash
 from api.database.models import User, Sock
 from api.database.setup import Base, engine, SessionLocal
 
+Base.metadata.create_all(bind=engine)
+
+# import main fast api app for testing
+from main import app, get_db
+
 
 @compiles(DropTable, "postgresql")
 def _compile_drop_table(element: DropTable, compiler: PGDDLCompiler, **kwargs) -> str:
     return compiler.visit_drop_table(element) + " CASCADE"
 
 
-Base.metadata.create_all(bind=engine)
-
-# import main fast api app for testing
-from main import app, get_db
-
-# overrite the database dependecie fot hte sake of the test
-# app.dependency_overrides[get_db] = override_get_db
-
+# build test client
 client = TestClient(app)
 
 # API Prefix for routes
 PREFIX = os.environ.get("API_URL", "/api")
 
+# setup test user
 TEST_USER1 = {
     "username": "admin",
     "first_name": "admin",
