@@ -11,3 +11,6 @@ psycopg2
 email-validator
 python-multipart
 cloudinary
+httpx
+pytest-cov
+pytest

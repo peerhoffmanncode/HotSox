@@ -71,26 +71,26 @@ class User(Base):
         cascade="all, delete-orphan",
     )
 
-    adminlog = relationship(
-        "AdminLog",
-        back_populates="user",
-        foreign_keys="AdminLog.user_id",
-        cascade="all, delete-orphan",
-    )
+    # adminlog = relationship(
+    #     "AdminLog",
+    #     back_populates="user",
+    #     foreign_keys="AdminLog.user_id",
+    #     cascade="all, delete-orphan",
+    # )
 
-    account_emailaddress = relationship(
-        "AccountEmailaddress",
-        back_populates="user",
-        foreign_keys="AccountEmailaddress.user_id",
-        cascade="all, delete-orphan",
-    )
+    # account_emailaddress = relationship(
+    #     "AccountEmailaddress",
+    #     back_populates="user",
+    #     foreign_keys="AccountEmailaddress.user_id",
+    #     cascade="all, delete-orphan",
+    # )
 
-    socialaccount_socialaccount = relationship(
-        "SocialaccountSocialaccount",
-        back_populates="user",
-        foreign_keys="SocialaccountSocialaccount.user_id",
-        cascade="all, delete-orphan",
-    )
+    # socialaccount_socialaccount = relationship(
+    #     "SocialaccountSocialaccount",
+    #     back_populates="user",
+    #     foreign_keys="SocialaccountSocialaccount.user_id",
+    #     cascade="all, delete-orphan",
+    # )
 
     def delete(self, db):
         """
@@ -365,58 +365,58 @@ class MessageChat(Base):
     )
 
 
-class AdminLog(Base):
-    __tablename__ = "django_admin_log"
-    id = Column(Integer, primary_key=True, index=True)
-    action_time = Column(DateTime)
-    object_id = Column(Integer)
-    object_repr = Column(String)
-    action_flag = Column(Integer)
-    change_message = Column(String)
-    content_type_id = Column(Integer)
-    user_id = Column(
-        Integer,
-        ForeignKey("app_users_user.id", ondelete="CASCADE"),
-    )
+# class AdminLog(Base):
+#     __tablename__ = "django_admin_log"
+#     id = Column(Integer, primary_key=True, index=True)
+#     action_time = Column(DateTime)
+#     object_id = Column(Integer)
+#     object_repr = Column(String)
+#     action_flag = Column(Integer)
+#     change_message = Column(String)
+#     content_type_id = Column(Integer)
+#     user_id = Column(
+#         Integer,
+#         ForeignKey("app_users_user.id", ondelete="CASCADE"),
+#     )
 
-    user = relationship(
-        "User",
-        back_populates="adminlog",
-    )
-
-
-class AccountEmailaddress(Base):
-    __tablename__ = "account_emailaddress"
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String)
-    verified = Column(Boolean)
-    primary = Column(Boolean)
-    user_id = Column(
-        Integer,
-        ForeignKey("app_users_user.id", ondelete="CASCADE"),
-    )
-
-    user = relationship(
-        "User",
-        back_populates="account_emailaddress",
-    )
+#     user = relationship(
+#         "User",
+#         back_populates="adminlog",
+#     )
 
 
-class SocialaccountSocialaccount(Base):
-    __tablename__ = "socialaccount_socialaccount"
-    id = Column(Integer, primary_key=True, index=True)
-    provider = Column(String)
-    uid = Column(Integer)
-    last_login = Column(DateTime)
-    date_joined = Column(DateTime)
-    extra_data = Column(String)
+# class AccountEmailaddress(Base):
+#     __tablename__ = "account_emailaddress"
+#     id = Column(Integer, primary_key=True, index=True)
+#     email = Column(String)
+#     verified = Column(Boolean)
+#     primary = Column(Boolean)
+#     user_id = Column(
+#         Integer,
+#         ForeignKey("app_users_user.id", ondelete="CASCADE"),
+#     )
 
-    user_id = Column(
-        Integer,
-        ForeignKey("app_users_user.id", ondelete="CASCADE"),
-    )
+#     user = relationship(
+#         "User",
+#         back_populates="account_emailaddress",
+#     )
 
-    user = relationship(
-        "User",
-        back_populates="socialaccount_socialaccount",
-    )
+
+# class SocialaccountSocialaccount(Base):
+#     __tablename__ = "socialaccount_socialaccount"
+#     id = Column(Integer, primary_key=True, index=True)
+#     provider = Column(String)
+#     uid = Column(Integer)
+#     last_login = Column(DateTime)
+#     date_joined = Column(DateTime)
+#     extra_data = Column(String)
+
+#     user_id = Column(
+#         Integer,
+#         ForeignKey("app_users_user.id", ondelete="CASCADE"),
+#     )
+
+#     user = relationship(
+#         "User",
+#         back_populates="socialaccount_socialaccount",
+#     )

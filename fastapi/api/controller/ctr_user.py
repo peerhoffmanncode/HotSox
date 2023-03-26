@@ -45,11 +45,11 @@ def create_user(request: schemas.CreateUser, db: Session):
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
-    except exc.IntegrityError as e:
+    except exc.IntegrityError as except_text:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Already exists! <{e.orig}>",
-        )
+            detail=f"Already exists! <{except_text.orig}>",
+        ) from except_text
     return new_user
 
 
@@ -70,11 +70,11 @@ def edit_user(username: str, request: schemas.EditUser, db: Session):
         )
         db.commit()
         db.refresh(current_user)
-    except exc.IntegrityError as e:
+    except exc.IntegrityError as excep_text:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Already exists! <{e.orig}>",
-        )
+        ) from excep_text
     return current_user
 
 
@@ -108,6 +108,9 @@ def create_user_pic(username: str, file: UploadFile, db: Session):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with the username <{username}> is not available",
         )
+    print(file.filename)
+    print(file.content_type)
+    print(file.__dict__)
 
     upload_result = uploader.upload(file.file)
     if not upload_result:

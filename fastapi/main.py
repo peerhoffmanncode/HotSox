@@ -12,7 +12,7 @@ from fastapi import FastAPI
 import cloudinary
 
 # import Database setup
-from api.database.setup import engine
+from api.database.setup import engine, get_db
 from api.database import models
 
 # import routers

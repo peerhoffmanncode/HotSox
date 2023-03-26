@@ -100,11 +100,11 @@ class ShowSock(BaseModel):
     info_size: int | None
     info_age: int | None
     info_separation_date: date | None
-    info_condition: str | None
-    info_holes: str | None
-    info_kilometers: str | None
-    info_inoutdoor: str | None
-    info_washed: str | None
+    info_condition: int | None
+    info_holes: int | None
+    info_kilometers: int | None
+    info_inoutdoor: int | None
+    info_washed: int | None
     info_special: str | None
     profile_pictures: Optional[list[SockProfilePicture]]
     sock_likes: Optional[list[SockLikes]]
@@ -152,7 +152,7 @@ class ShowUser(BaseModel):
     date_joined: Optional[datetime]
     info_about: Optional[str]
     info_birthday: Optional[date]
-    info_gender: Optional[int | str | None] = 0
+    info_gender: Optional[int |  None] = 0
     location_city: Optional[str]
     location_latitude: Optional[float]
     location_longitude: Optional[float]
@@ -174,21 +174,21 @@ class ShowUser(BaseModel):
 
 # basic schema for user_edit
 class EditUser(BaseModel):
-    username: str = "YourUserName"
-    first_name: str = "YourFirstName"
-    last_name: str = "YourLastName"
-    email: EmailStr = "YourEmail@example.com"
-    info_about: Optional[str] = "YourStoryToTell"
-    info_birthday: date = date.today()
-    info_gender: int = 1
-    location_city: str = "YourCityYouLiveIn"
-    location_latitude: float = 0
-    location_longitude: float = 0
-    notification: bool = True
-    social_instagram: str | None = ""
-    social_facebook: str | None = ""
-    social_twitter: str | None = ""
-    social_spotify: str | None = ""
+    username: str
+    first_name: str
+    last_name: str
+    email: EmailStr
+    info_about: str
+    info_birthday: date
+    info_gender: int
+    location_city: str
+    location_latitude: float
+    location_longitude: float
+    notification: bool
+    social_instagram: str | None
+    social_facebook: str | None
+    social_twitter: str | None
+    social_spotify: str | None
 
     class Config:
         orm_mode = True
@@ -205,7 +205,22 @@ class EditUser(BaseModel):
 
 
 class CreateUser(EditUser):
-    password: str = "YourPassWord"
+    password: str
+    username: str
+    first_name: str
+    last_name: str
+    email: EmailStr
+    info_about: str
+    info_birthday: date
+    info_gender: int
+    location_city: str
+    location_latitude: float
+    location_longitude: float
+    notification: bool
+    social_instagram: str | None
+    social_facebook: str | None
+    social_twitter: str | None
+    social_spotify: str | None
 
     class Config:
         orm_mode = True
