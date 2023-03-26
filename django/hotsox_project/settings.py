@@ -49,8 +49,8 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://*.127.0.0.1",
-    "https://*.eu.ngrok.to",
-    "http://*.eu.ngrok.to",
+    "https://*.eu.ngrok.io",
+    "http://*.eu.ngrok.io",
 ]
 
 # SECURITY WARNING: don't run with debug turned on in production!
