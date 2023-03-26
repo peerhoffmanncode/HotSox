@@ -119,7 +119,9 @@ async def send_mail(
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return await ctr_user.send_mail_background(background_tasks, username, message_body, db)
+    return await ctr_user.send_mail_background(
+        background_tasks, username, message_body, db
+    )
 
 
 ##
