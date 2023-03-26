@@ -1,19 +1,27 @@
 import os
 import pytest
-from fastapi import Depends, UploadFile
-from sqlalchemy.orm import Session
 from unittest import mock
+from fastapi.testclient import TestClient
+from fastapi import Depends, UploadFile
 
-from api.authentication.hashing import Hash
+from sqlalchemy.orm import Session
+from sqlalchemy.schema import DropTable
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.dialects.postgresql.base import PGDDLCompiler
+
 
 # setup a test database for the test
+from api.authentication.hashing import Hash
 from api.database.models import User, Sock
 from api.database.setup import Base, engine, SessionLocal
 
-from fastapi.testclient import TestClient
+
+@compiles(DropTable, "postgresql")
+def _compile_drop_table(element: DropTable, compiler: PGDDLCompiler, **kwargs) -> str:
+    return compiler.visit_drop_table(element) + " CASCADE"
+
 
 Base.metadata.create_all(bind=engine)
-
 
 # import main fast api app for testing
 from main import app, get_db
