@@ -20,14 +20,13 @@ Base.metadata.create_all(bind=engine)
 # import main fast api app for testing
 from main import app, get_db
 
-## cloudinary
+# Setup Cloudinary
 import cloudinary
 
-# Setup Cloudinary
 cloudinary.config(
-    cloud_name=os.environ.get("cloudinary_cloud_name"),
-    api_key=os.environ.get("cloudinary_api_key"),
-    api_secret=os.environ.get("cloudinary_api_secret"),
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
 )
 
 
@@ -351,8 +350,11 @@ def test_user_upload_profilepic(mock_uploader_upload, test_db_setup):
         )
 
 
+@mock.patch("api.database.models.uploader.destroy")
 @mock.patch("api.controller.ctr_user.uploader.upload")
-def test_user_delete_profilepic(mock_uploader_upload, test_db_setup):
+def test_user_delete_profilepic(
+    mock_uploader_upload, mock_uploader_destroy, test_db_setup
+):
 
     with Session(engine) as db:
 
@@ -363,6 +365,7 @@ def test_user_delete_profilepic(mock_uploader_upload, test_db_setup):
         mock_uploader_upload.return_value = {
             "url": "https://cloudinary.com/mock_image.jpg"
         }
+        mock_uploader_destroy.return_value = True
 
         # make a test user
         db_user = db.query(User).filter(User.username == username).first()
