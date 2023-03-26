@@ -153,7 +153,7 @@ def delete_user_pic(username: str, id: int, db: Session):
         )
 
     picture.delete(db)
-    #db.delete(picture)
+    # db.delete(picture)
     db.commit()
     return {"success": f"picture {id} was deleted", "user": user.profile_pictures}
 

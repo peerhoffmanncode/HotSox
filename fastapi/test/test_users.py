@@ -312,9 +312,7 @@ def test_delete_noneexisting_user(test_db_setup):
 
 @mock.patch("api.controller.ctr_user.uploader.upload")
 def test_user_upload_profilepic(mock_uploader_upload, test_db_setup):
-
     with Session(engine) as db:
-
         username = TEST_USER2["username"]
         password = TEST_USER2["password"]
 
@@ -355,9 +353,7 @@ def test_user_upload_profilepic(mock_uploader_upload, test_db_setup):
 def test_user_delete_profilepic(
     mock_uploader_upload, mock_uploader_destroy, test_db_setup
 ):
-
     with Session(engine) as db:
-
         username = TEST_USER2["username"]
         password = TEST_USER2["password"]
 
