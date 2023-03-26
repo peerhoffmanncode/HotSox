@@ -20,6 +20,16 @@ Base.metadata.create_all(bind=engine)
 # import main fast api app for testing
 from main import app, get_db
 
+## cloudinary
+import cloudinary
+
+# Setup Cloudinary
+cloudinary.config(
+    cloud_name=os.environ.get("cloudinary_cloud_name"),
+    api_key=os.environ.get("cloudinary_api_key"),
+    api_secret=os.environ.get("cloudinary_api_secret"),
+)
+
 
 @compiles(DropTable, "postgresql")
 def _compile_drop_table(element: DropTable, compiler: PGDDLCompiler, **kwargs) -> str:
