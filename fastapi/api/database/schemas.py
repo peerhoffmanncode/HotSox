@@ -64,6 +64,16 @@ class MessageMail(BaseModel):
         orm_mode = True
 
 
+# basic schema for sending mails
+class MessageMailSending(BaseModel):
+    # id: int | None
+    subject: str | None
+    content: str | None
+
+    class Config:
+        orm_mode = True
+
+
 # basic schema for likes/dislike of socks
 class SockLikes(BaseModel):
     # id: int | None
@@ -178,12 +188,12 @@ class EditUser(BaseModel):
     first_name: str
     last_name: str
     email: EmailStr
-    info_about: str
+    info_about: str | None
     info_birthday: date
     info_gender: int
-    location_city: str
-    location_latitude: float
-    location_longitude: float
+    location_city: str | None
+    location_latitude: float | None
+    location_longitude: float | None
     notification: bool
     social_instagram: str | None
     social_facebook: str | None
@@ -206,21 +216,6 @@ class EditUser(BaseModel):
 
 class CreateUser(EditUser):
     password: str
-    username: str
-    first_name: str
-    last_name: str
-    email: EmailStr
-    info_about: str
-    info_birthday: date
-    info_gender: int
-    location_city: str
-    location_latitude: float
-    location_longitude: float
-    notification: bool
-    social_instagram: str | None
-    social_facebook: str | None
-    social_twitter: str | None
-    social_spotify: str | None
 
     class Config:
         orm_mode = True

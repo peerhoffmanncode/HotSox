@@ -1,4 +1,12 @@
-from fastapi import APIRouter, Depends, Response, status, File, UploadFile
+from fastapi import (
+    APIRouter,
+    Depends,
+    Response,
+    status,
+    File,
+    UploadFile,
+    BackgroundTasks,
+)
 from sqlalchemy.orm import Session
 
 # load database
@@ -25,7 +33,7 @@ async def get_all_user(
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return await ctr_user.show_all_user(db)
+    return ctr_user.show_all_user(db)
 
 
 @router.get("/{username}", response_model=schemas.ShowUser)
@@ -39,6 +47,7 @@ async def get_user(
 
 @router.post("/", response_model=schemas.CreateUser, status_code=201)
 async def singup_user(request: schemas.CreateUser, db: Session = Depends(get_db)):
+    print(request)
     return ctr_user.create_user(request, db)
 
 
@@ -100,6 +109,17 @@ async def get_all_mail(
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
     return ctr_user.show_all_mails(username, db)
+
+
+@router.post("/mail/{username}", response_model=schemas.MessageMailSending)
+async def send_mail(
+    background_tasks: BackgroundTasks,
+    username: str,
+    message_body: schemas.MessageMailSending,
+    db: Session = Depends(get_db),
+    current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
+):
+    return await ctr_user.send_mail_background(background_tasks, username, message_body, db)
 
 
 ##

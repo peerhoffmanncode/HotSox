@@ -1,8 +1,10 @@
+import os
 from sqlalchemy.orm import Session
 from sqlalchemy import exc, or_
 from ..database import models, schemas
-from fastapi import HTTPException, status, UploadFile
+from fastapi import HTTPException, status, UploadFile, BackgroundTasks
 from fastapi.responses import JSONResponse
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from ..authentication.hashing import Hash
 
 from datetime import datetime
@@ -13,7 +15,7 @@ from cloudinary import api, uploader
 ##
 ## Users
 ##
-async def show_all_user(db: Session):
+def show_all_user(db: Session):
     users = db.query(models.User).order_by(models.User.id.desc()).all()
     if not users:
         raise HTTPException(
@@ -38,18 +40,33 @@ def create_user(request: schemas.CreateUser, db: Session):
     request.password = Hash.encrypt(request.password)
 
     # check for duplicates
-    try:
-        # create db object
-        new_user = models.User(**request.dict())
-        # write to db / commit!
-        db.add(new_user)
-        db.commit()
-        db.refresh(new_user)
-    except exc.IntegrityError as except_text:
+    user = (
+        db.query(models.User)
+        .filter(models.User.username == request.dict()["username"])
+        .first()
+    )
+    if user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Already exists! <{except_text.orig}>",
-        ) from except_text
+            detail=f"User already exists! <{request.dict()['username']}>",
+        )
+    user = (
+        db.query(models.User)
+        .filter(models.User.email == request.dict()["email"])
+        .first()
+    )
+    if user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"eMail adress already exists! <{request.dict()['email']}>",
+        )
+
+    # create db object
+    new_user = models.User(**request.dict())
+    # write to db / commit!
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
     return new_user
 
 
@@ -176,6 +193,50 @@ def show_all_mails(username: str, db: Session):
         )
 
     return mails
+
+
+async def send_mail_background(
+    background_tasks: BackgroundTasks,
+    username: str,
+    message_body: schemas.MessageMailSending,
+    db: Session,
+):
+    user = db.query(models.User).filter(models.User.username == username).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with the username <{username}> is not available",
+        )
+    try:
+        conf = ConnectionConfig(
+            MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
+            MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
+            MAIL_FROM=os.getenv("MAIL_FROM"),
+            MAIL_PORT=int(os.getenv("MAIL_PORT")),
+            MAIL_SERVER=os.getenv("MAIL_SERVER"),
+            MAIL_FROM_NAME=os.getenv("MAIN_FROM_NAME"),
+            MAIL_STARTTLS=True,
+            MAIL_SSL_TLS=False,
+            USE_CREDENTIALS=True,
+            # TEMPLATE_FOLDER="./templates/email",
+        )
+
+        message = MessageSchema(
+            subject=message_body.dict().get("subject", "A email from hotsox"),
+            recipients=[user.email],
+            body=message_body.dict().get("content", "A email from hotsox"),
+            subtype="html",
+        )
+
+        fm = FastMail(conf)
+        await fm.send_message(message)
+        return message_body  # {"message": f"Success! eMail to <{username}> was sent!"}
+
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error sending email to <{user.username}>, <{user.email}>",
+        )
 
 
 ##

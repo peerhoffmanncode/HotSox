@@ -283,6 +283,44 @@ def test_create_user_new(test_db_setup):
         assert db_user
 
 
+def test_create_user_dupliceate(test_db_setup):
+    create_data = {
+        "username": "bibo",
+        "first_name": "bibo",
+        "last_name": "bibo",
+        "email": "bibo@bibo.com",
+        "info_about": "bibo",
+        "info_birthday": "2001-01-01",
+        "info_gender": 4,
+        "location_city": "biboCity",
+        "location_latitude": 50,
+        "location_longitude": 8,
+        "notification": True,
+        "social_instagram": "bibo social 1",
+        "social_facebook": "bibo social 2",
+        "social_twitter": "bibo social 3",
+        "social_spotify": "bibo social 4",
+        "password": "bibobibo",
+    }
+    # create new user
+    response = client.post(PREFIX + "/user", json=create_data)
+    assert response.status_code == 201
+    with Session(engine) as db:
+        db_user = (
+            db.query(User).filter(User.username == create_data["username"]).first()
+        )
+        assert db_user
+    # check for duplicate username
+    response = client.post(PREFIX + "/user", json=create_data)
+    assert response.status_code == 400
+    assert response.json() == {"detail": "User already exists! <bibo>"}
+    # check for duplicate email adress
+    create_data["username"] = "new_name"
+    response = client.post(PREFIX + "/user", json=create_data)
+    assert response.status_code == 400
+    assert response.json() == {"detail": "eMail adress already exists! <bibo@bibo.com>"}
+
+
 def test_delete_user(test_db_setup):
     username = "testuser2"
     email = "testuser2@testuser2.com"

@@ -29,6 +29,7 @@ cloudinary.config(
 
 # build FastAPI app / Hide schemas from docs
 app = FastAPI(
+    title="HotSox API",
     openapi_url=os.environ.get("API_URL", "/api") + "/openapi.json",
     docs_url=os.environ.get("API_URL", "/api") + "/docs",
     swagger_ui_parameters={"defaultModelsExpandDepth": -1},

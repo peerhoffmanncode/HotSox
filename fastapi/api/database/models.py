@@ -7,6 +7,7 @@ from sqlalchemy import (
     DateTime,
     Date,
     Boolean,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
@@ -17,10 +18,9 @@ from datetime import datetime
 
 class User(Base):
     __tablename__ = "app_users_user"
-
     id = Column(Integer, primary_key=True, index=True)
     password = Column(String)
-    last_login = Column(DateTime)
+    last_login = Column(DateTime, default=datetime.utcnow)
     is_superuser = Column(Boolean, default=False)
     username = Column(String, unique=True)
     first_name = Column(String)
@@ -329,7 +329,7 @@ class MessageMail(Base):
     )
     subject = Column(String)
     content = Column(String)
-    sent_date = Column(Date)
+    sent_date = Column(Date, default=datetime.utcnow)
 
     user = relationship(
         "User",
