@@ -56,15 +56,22 @@ jobs:
           GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
         run: cd django && python manage.py migrate
-      - name: Run Django Unittests (pytest with coverage) # running tests
+      - name: Run django tests (pytest with coverage) # running tests
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-        # run: python manage.py test
-        run: cd django && pytest --cov
-      - name: Check pep8 with black
+        run: cd django && pytest -v --cov -p no:cacheprovider
+      - name: Run fastapi tests (pytest with coverage) # running tests
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+        run: cd fastapi && pytest -v --cov -p no:cacheprovider
+      - name: Check pep8 with black for django
         run: cd django && python -m black --check .
+      - name: Check pep8 with black for fastapi
+        run: cd fastapi && python -m black --check .
 
   # package-job: # package job for building and publishing docker images
   #   runs-on: ubuntu-latest

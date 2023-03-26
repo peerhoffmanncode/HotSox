@@ -1,5 +1,4 @@
 import os
-import io
 import pytest
 from fastapi import Depends, UploadFile
 from sqlalchemy.orm import Session
@@ -307,10 +306,9 @@ def test_user_upload_profilepic(mock_uploader_upload, test_db_setup):
         mock_uploader_upload.return_value = {
             "url": "https://cloudinary.com/mock_image.jpg"
         }
-        mock_file = io.BytesIO(b"mock_file_bytes")
 
         # make a test user
-        db_user: User = db.query(User).filter(User.username == username).first()
+        db_user = db.query(User).filter(User.username == username).first()
 
         # send a request to add a profile picture
         with open("./requirements.txt", "rb") as mock_file:
@@ -336,7 +334,8 @@ def test_user_upload_profilepic(mock_uploader_upload, test_db_setup):
         )
 
 
-def test_user_upload_profilepic(mock_uploader_upload, test_db_setup):
+@mock.patch("api.controller.ctr_user.uploader.upload")
+def test_user_delete_profilepic(mock_uploader_upload, test_db_setup):
 
     with Session(engine) as db:
 
@@ -347,10 +346,9 @@ def test_user_upload_profilepic(mock_uploader_upload, test_db_setup):
         mock_uploader_upload.return_value = {
             "url": "https://cloudinary.com/mock_image.jpg"
         }
-        mock_file = io.BytesIO(b"mock_file_bytes")
 
         # make a test user
-        db_user: User = db.query(User).filter(User.username == username).first()
+        db_user = db.query(User).filter(User.username == username).first()
 
         # send a request to add a profile picture
         with open("./requirements.txt", "rb") as mock_file:
@@ -360,18 +358,25 @@ def test_user_upload_profilepic(mock_uploader_upload, test_db_setup):
                 headers=login(username=username, password=password),
             )
 
-        # check that the response is what we expect
-        assert response.status_code == 201
-        assert (
-            response.json()["profile_picture"]
-            == "https://cloudinary.com/mock_image.jpg"
+        # make a test user and get all pictures
+        db_user = db.query(User).filter(User.username == TEST_USER2["username"]).first()
+        before_delete_profilepics = db_user.profile_pictures
+
+        # send a request to delete a profile picture
+        response = client.request(
+            "DELETE",
+            f"{PREFIX}/user/{TEST_USER2['username']}/profilepic/{before_delete_profilepics[0].id}",
+            json={"username": TEST_USER2["username"], "email": TEST_USER2["email"]},
+            headers=login(TEST_USER2["username"], TEST_USER2["password"]),
         )
 
+        # check that the response is what is expect
+        assert response.status_code == 204
+
+    # new session to persist changes of transactions before!
+    with Session(engine) as db:
         # check that the user in the database has the new profile picture
-        db_user = db.query(User).filter(User.username == username).first()
-        assert len(db_user.profile_pictures) == 1
-        assert (
-            db_user.profile_pictures[0].profile_picture
-            == "https://cloudinary.com/mock_image.jpg"
+        db_user_new = (
+            db.query(User).filter(User.username == TEST_USER2["username"]).first()
         )
-
+        assert len(db_user_new.profile_pictures) == len(before_delete_profilepics) - 1

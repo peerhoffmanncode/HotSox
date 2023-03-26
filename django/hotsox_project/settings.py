@@ -184,7 +184,7 @@ else:
     # check if we have ENV Vars set e.g. env.py/Dockerfile/...?
     import sys
 
-    if "test" in sys.argv:
+    if "test" in sys.argv[0] or "test" in sys.argv[1]:
         TEST = True
         DATABASES = {
             "default": {
