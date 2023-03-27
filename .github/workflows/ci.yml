@@ -1,5 +1,5 @@
 # name of our workflow
-name: Django CI Workflow
+name: CI Workflow Django+FastAPI
 
 # triggers for our workflow
 on: [push]
