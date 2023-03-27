@@ -434,3 +434,67 @@ def test_user_delete_profilepic(
             db.query(User).filter(User.username == TEST_USER2["username"]).first()
         )
         assert len(db_user_new.profile_pictures) == len(before_delete_profilepics) - 1
+
+
+def test_user_mails_no_mails_in_db(test_db_setup):
+    response = client.get(
+        PREFIX + f"/user/mails/{TEST_USER1['username']}",
+        headers=login("admin", "admin"),
+    )
+    assert response.status_code == 404
+    assert response.json() == {"detail": "No mails available of user <admin>"}
+
+
+@mock.patch("api.controller.ctr_user.FastMail.send_message")
+def test_user_mail_send(mock_send_message, test_db_setup):
+    # setup mock
+    mock_send_message.return_value = {
+        "subject": "TestMailSubject",
+        "content": "TestMailContent",
+    }
+
+    response = client.post(
+        PREFIX + f"/user/mail/{TEST_USER1['username']}",
+        headers=login("admin", "admin"),
+        json={
+            "subject": "TestMailSubject",
+            "content": "TestMailContent",
+        },
+    )
+    assert response.status_code == 200
+    assert response.json() == {
+        "status": "email has been sent",
+        "email": {
+            "subject": "TestMailSubject",
+            "content": "TestMailContent",
+        },
+    }
+
+    # double check database feedback
+    response = client.get(
+        PREFIX + f"/user/mails/{TEST_USER1['username']}",
+        headers=login("admin", "admin"),
+    )
+    assert response.status_code == 200
+    assert response.json()[0]["content"] == "TestMailContent"
+    assert response.json()[0]["subject"] == "TestMailSubject"
+
+
+def test_user_chats_no_chats(test_db_setup):
+    response = client.get(
+        PREFIX + f"/user/chats/{TEST_USER1['username']}",
+        headers=login("admin", "admin"),
+    )
+    assert response.status_code == 404
+    assert response.json() == {"detail": "No chats available of user <admin>"}
+
+
+def test_user_chats_no_chats_between_users(test_db_setup):
+    response = client.get(
+        PREFIX + f"/user/chat/{TEST_USER1['username']}/{TEST_USER2['username']}",
+        headers=login("admin", "admin"),
+    )
+    assert response.status_code == 404
+    assert response.json() == {
+        "detail": f"No chats available between user <{TEST_USER1['username']}> and <{TEST_USER2['username']}>"
+    }

@@ -329,7 +329,7 @@ class MessageMail(Base):
     )
     subject = Column(String)
     content = Column(String)
-    sent_date = Column(Date, default=datetime.utcnow)
+    sent_date = Column(DateTime, default=datetime.utcnow)
 
     user = relationship(
         "User",
@@ -350,7 +350,7 @@ class MessageChat(Base):
         ForeignKey("app_users_user.id", ondelete="CASCADE"),
     )
     message = Column(String)
-    sent_date = Column(DateTime)
+    sent_date = Column(DateTime, default=datetime.utcnow)
     seen_date = Column(DateTime)
 
     user = relationship(

@@ -125,9 +125,6 @@ def create_user_pic(username: str, file: UploadFile, db: Session):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with the username <{username}> is not available",
         )
-    print(file.filename)
-    print(file.content_type)
-    print(file.__dict__)
 
     upload_result = uploader.upload(file.file)
     if not upload_result:
@@ -170,7 +167,6 @@ def delete_user_pic(username: str, id: int, db: Session):
         )
 
     picture.delete(db)
-    # db.delete(picture)
     db.commit()
     return {"success": f"picture {id} was deleted", "user": user.profile_pictures}
 
@@ -208,6 +204,8 @@ async def send_mail_background(
             detail=f"User with the username <{username}> is not available",
         )
     try:
+
+        # build eMail Config
         conf = ConnectionConfig(
             MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
             MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
@@ -221,6 +219,7 @@ async def send_mail_background(
             # TEMPLATE_FOLDER="./templates/email",
         )
 
+        # build eMail Schema
         message = MessageSchema(
             subject=message_body.dict().get("subject", "A email from hotsox"),
             recipients=[user.email],
@@ -228,11 +227,21 @@ async def send_mail_background(
             subtype="html",
         )
 
-        fm = FastMail(conf)
-        await fm.send_message(message)
-        return message_body  # {"message": f"Success! eMail to <{username}> was sent!"}
+        # send the mail in the background
+        background_tasks.add_task(FastMail(conf).send_message, message)
 
-    except:
+        # create db object
+        new_mail = models.MessageMail(user_id=user.id, **message_body.dict())
+        # write to db / commit!
+        db.add(new_mail)
+        db.commit()
+        db.refresh(new_mail)
+        return JSONResponse(
+            status_code=200,
+            content={"status": "email has been sent", "email": message_body.dict()},
+        )
+
+    except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error sending email to <{user.username}>, <{user.email}>",

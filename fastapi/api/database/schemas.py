@@ -58,7 +58,7 @@ class MessageMail(BaseModel):
     # id: int | None
     subject: str | None
     content: str | None
-    sent_date: date | None
+    sent_date: datetime | date | None
 
     class Config:
         orm_mode = True
