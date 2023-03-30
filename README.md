@@ -1,6 +1,6 @@
 # HotSox
 
-## Installation notes (!! for deployment only !!
+## Installation notes (!! for deployment only !!)
 
 run:
 [+] pip install -r requirements.txt to install dependencies
