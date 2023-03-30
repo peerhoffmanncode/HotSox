@@ -318,7 +318,7 @@ def test_create_user_dupliceate(test_db_setup):
     create_data["username"] = "new_name"
     response = client.post(PREFIX + "/user", json=create_data)
     assert response.status_code == 400
-    assert response.json() == {"detail": "eMail adress already exists! <bibo@bibo.com>"}
+    assert response.json() == {"detail": "eMail address already exists! <bibo@bibo.com>"}
 
 
 def test_delete_user(test_db_setup):
@@ -442,7 +442,7 @@ def test_user_mails_no_mails_in_db(test_db_setup):
         headers=login("admin", "admin"),
     )
     assert response.status_code == 404
-    assert response.json() == {"detail": "No mails available of user <admin>"}
+    assert response.json() == {"detail": "No mail available for user <admin>"}
 
 
 @mock.patch("api.controller.ctr_user.FastMail.send_message")
@@ -486,7 +486,7 @@ def test_user_chats_no_chats(test_db_setup):
         headers=login("admin", "admin"),
     )
     assert response.status_code == 404
-    assert response.json() == {"detail": "No chats available of user <admin>"}
+    assert response.json() == {"detail": "No chats available for user <admin>"}
 
 
 def test_user_chats_no_chats_between_users(test_db_setup):

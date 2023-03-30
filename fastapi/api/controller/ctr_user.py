@@ -182,7 +182,7 @@ def show_all_mails(username: str, db: Session):
             detail=f"User with the username <{username}> is not available",
         )
     mails = db.query(models.MessageMail).filter(models.MessageMail.user == user).all()
-    if not mails:MAIL_FROM_NAME=os.getenv("MAIN_FROM_NAME")
+    if not mails:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No mail available for user <{username}>",
@@ -262,7 +262,7 @@ def show_all_chats(username: str, db: Session):
     if not chats:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No chats available for user <{username}>",
+            detail=f"No chats available for user <{username}>",
         )
 
     return chats
