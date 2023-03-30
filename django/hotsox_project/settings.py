@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "cloudinary",
     "crispy_forms",
     "crispy_bootstrap5",
+    "rest_framework",
     "app_home",
     "app_users",
     "app_geo",
@@ -231,13 +232,13 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # initial work to use jwt token validation soon!
-REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-    ),
-}
+# REST_FRAMEWORK = {
+#     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+#     "DEFAULT_AUTHENTICATION_CLASSES": (
+#         "rest_framework_simplejwt.authentication.JWTAuthentication",
+#         "rest_framework.authentication.SessionAuthentication",
+#     ),
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

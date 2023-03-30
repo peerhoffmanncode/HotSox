@@ -4,6 +4,7 @@ Django==4.1.7
 django-allauth==0.52.0
 django-crispy-forms==1.14.0
 django-extensions==3.2.1
+djangorestframework
 channels==3.0.5
 cloudinary==1.32.0
 ipython==8.7.0
