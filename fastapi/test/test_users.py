@@ -318,7 +318,9 @@ def test_create_user_dupliceate(test_db_setup):
     create_data["username"] = "new_name"
     response = client.post(PREFIX + "/user", json=create_data)
     assert response.status_code == 400
-    assert response.json() == {"detail": "eMail address already exists! <bibo@bibo.com>"}
+    assert response.json() == {
+        "detail": "eMail address already exists! <bibo@bibo.com>"
+    }
 
 
 def test_delete_user(test_db_setup):

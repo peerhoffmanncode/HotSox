@@ -204,7 +204,6 @@ async def send_mail_background(
             detail=f"User with the username <{username}> is not available",
         )
     try:
-
         # build eMail Config
         conf = ConnectionConfig(
             MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
