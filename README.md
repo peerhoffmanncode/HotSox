@@ -1,4 +1,4 @@
-# HotSox
+# HotSox with no boundaries 
 
 ## Installation notes (!! for deployment only !!)
 
