@@ -58,7 +58,7 @@ def create_user(request: schemas.CreateUser, db: Session):
     if user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"eMail adress already exists! <{request.dict()['email']}>",
+            detail=f"eMail address already exists! <{request.dict()['email']}>",
         )
 
     # create db object
@@ -163,7 +163,7 @@ def delete_user_pic(username: str, id: int, db: Session):
     if not picture in user.profile_pictures:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with the username <{username}> as not access to this picture",
+            detail=f"User with username <{username}> doesn't have access to this picture",
         )
 
     picture.delete(db)
@@ -182,10 +182,10 @@ def show_all_mails(username: str, db: Session):
             detail=f"User with the username <{username}> is not available",
         )
     mails = db.query(models.MessageMail).filter(models.MessageMail.user == user).all()
-    if not mails:
+    if not mails:MAIL_FROM_NAME=os.getenv("MAIN_FROM_NAME")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No mails available of user <{username}>",
+            detail=f"No mail available for user <{username}>",
         )
 
     return mails
@@ -212,7 +212,7 @@ async def send_mail_background(
             MAIL_FROM=os.getenv("MAIL_FROM"),
             MAIL_PORT=int(os.getenv("MAIL_PORT")),
             MAIL_SERVER=os.getenv("MAIL_SERVER"),
-            MAIL_FROM_NAME=os.getenv("MAIN_FROM_NAME"),
+            MAIL_FROM_NAME=os.getenv("MAIL_FROM_NAME"),
             MAIL_STARTTLS=True,
             MAIL_SSL_TLS=False,
             USE_CREDENTIALS=True,
@@ -262,7 +262,7 @@ def show_all_chats(username: str, db: Session):
     if not chats:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No chats available of user <{username}>",
+            detail="No chats available for user <{username}>",
         )
 
     return chats
