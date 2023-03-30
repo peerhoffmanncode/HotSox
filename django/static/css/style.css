@@ -26,7 +26,7 @@
 
 .about-bg {
     /* The image used */
-    background-image: url("/static/about/professionalSox.jpeg");
+    background-image: url("/staticfiles/about/professionalSox.jpeg");
     /* Full height */
     height: 100vh;
     /* Center and scale the image nicely */
@@ -456,4 +456,3 @@
     backdrop-filter: blur(5px);
     --bs-secondary-rgb: transparent;
   }
-

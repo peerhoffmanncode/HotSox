@@ -37,7 +37,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="sock_pk" value="{{sock.pk}}">
                 <input type="hidden" name="decision" value="dislike">
-                <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();"><img src="/static/drake-no.png"
+                <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();"><img src="/staticfiles/drake-no.png"
                         alt="dislike" class="swipe-button"><p>Nope, gimme da next!</p></button>
             </form>
             {% endif %}
@@ -50,7 +50,7 @@
             <p>No sock picture found :( !</p>
             {% endif %}
             {% else %}
-            <img src="/static/sad_face.jpg" alt="" class="sock-img">
+            <img src="/staticfiles/sad_face.jpg" alt="" class="sock-img">
             <p>No more socks currently available!</p>
             {% endif %}
         </div>
@@ -61,7 +61,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="sock_pk" value="{{sock.pk}}">
                 <input type="hidden" name="decision" value="like">
-                <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();"><img src="/static/drake-yes.png"
+                <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();"><img src="/staticfiles/drake-yes.png"
                         alt="like" class="swipe-button"><p>Yeah, i like !!</p></button>
             </form>
             {% endif %}
