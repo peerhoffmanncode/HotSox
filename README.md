@@ -26,7 +26,7 @@ We use Cloudinary as CDN host
 
 ## Testing
 
-We rely on Unittesting in Django. Tests are done for methods of the ORM models, and business logic (views)
+We rely on Unittesting in Django. Tests are done for methods of the ORM models and business logic (views)
 
 ## Bugs
 
