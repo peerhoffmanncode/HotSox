@@ -183,7 +183,7 @@ class UserMatch(models.Model):
     # User.matched.other.objects.all() = all Other user !
     user = models.ForeignKey(
         User,
-        related_name="him",
+        related_name="user_match",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -336,7 +336,7 @@ class Sock(models.Model):
 
     def delete(self, *args, **kwargs):
         """Function to delete a sock from the database
-        make sure all SockPorfilePictures are gone too
+        make sure all SockProfilePictures are gone too
         """
         # delete the user profile pictures
         for profile_picture in self.profile_picture.all():
@@ -370,7 +370,7 @@ class SockLike(models.Model):
     # Sock.like.like.objects.all() = socks i like
     # Sock.dislike.dislike.objects.all() = socks i don't like
     sock = models.ForeignKey(
-        Sock, related_name="me", on_delete=models.CASCADE, blank=False
+        Sock, related_name="sock_likes", on_delete=models.CASCADE, blank=False
     )
     like = models.ForeignKey(
         Sock,
