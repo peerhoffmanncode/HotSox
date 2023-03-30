@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("app_users", "0002_alter_sock_info_about_alter_sock_info_age_and_more"),
     ]

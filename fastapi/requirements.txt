@@ -1,0 +1,17 @@
+fastapi
+sqlmodel
+uvicorn[standard]
+python-dotenv
+sqlalchemy
+passlib
+bcrypt
+python-jose
+python-multipart
+psycopg2
+email-validator
+python-multipart
+cloudinary
+httpx
+pytest-cov
+pytest
+fastapi-mail

@@ -19,12 +19,15 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-load_dotenv(".env")
+load_dotenv("../.env")
+if os.environ.get("SECRET_KEY", None) is None:
+    print("can not find env file!")
+    exit(-1)
 
 cloudinary.config(
-    cloud_name=os.environ.get("cloudinary_cloud_name"),
-    api_key=os.environ.get("cloudinary_api_key"),
-    api_secret=os.environ.get("cloudinary_api_secret"),
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -44,7 +47,11 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SESSION_COOKIE_SECURE = True
 # SECURE_SSL_REDIRECT = False
 # CORS_ALLOW_ALL_ORIGINS = True
-# CSRF_TRUSTED_ORIGINS = ["http://*.127.0.0.1", "http:///*.13.51.45.235"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://*.127.0.0.1",
+    "https://*.eu.ngrok.io",
+    "http://*.eu.ngrok.io",
+]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -181,7 +188,7 @@ else:
     # check if we have ENV Vars set e.g. env.py/Dockerfile/...?
     import sys
 
-    if "test" in sys.argv:
+    if "test" in sys.argv[0] or "test" in sys.argv[1]:
         TEST = True
         DATABASES = {
             "default": {
@@ -246,11 +253,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = "static/"
-
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-STATICFILES = os.path.join(BASE_DIR, "static")
+STATIC_URL = "/staticfiles/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
 
 GEOIP_PATH = os.path.join(BASE_DIR, "app_geo/geo_database")
 
