@@ -12,7 +12,9 @@ from ..controller import ctr_sock
 import os
 
 # build routes
-router = APIRouter(prefix=os.environ.get("API_URL", "/api") + "/user/sock", tags=["Socks"])
+router = APIRouter(
+    prefix=os.environ.get("API_URL", "/api") + "/user/sock", tags=["Socks"]
+)
 
 
 @router.get("s/", response_model=list[schemas.ShowSock])
