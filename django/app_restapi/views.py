@@ -6,12 +6,16 @@ from rest_framework.generics import (
     ListAPIView,
     CreateAPIView,
     RetrieveAPIView,
-    RetrieveUpdateDestroyAPIView,
+    UpdateAPIView,
+    DestroyAPIView,
+    # RetrieveUpdateDestroyAPIView,
 )
 
 from app_users.models import User, MessageMail, MessageChat, Sock
 from .serializers_users import (
     UserSerializer,
+    UserCreateSerializer,
+    UserUpdateSerializer,
     ChatSerializer,
     MailSerializer,
     SockSerializer,
@@ -28,14 +32,33 @@ class ApiGetUsers(ListAPIView):
     serializer_class = UserSerializer
 
 
+class ApiCreateUser(CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserCreateSerializer
+
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        result = super().post(request, *args, **kwargs)
+        print(result)
+        print(dir(result))
+
+
 class ApiGetUser(RetrieveAPIView):
-    """Detail view of the User"""
 
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+class ApiUpdateUser(UpdateAPIView):
+
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    queryset = User.objects.all()
+    serializer_class = UserUpdateSerializer
 
 
 class ApiGetMails(ListAPIView):

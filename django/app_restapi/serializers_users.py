@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from datetime import date
+from django.core.exceptions import ValidationError
 from app_users.models import (
     User,
     UserMatch,
@@ -9,6 +11,13 @@ from app_users.models import (
     MessageMail,
     MessageChat,
 )
+
+
+def validate_age(value):
+    difference = date.today() - value
+    if round(difference.days / 365.2425, 2) < 18:
+        raise ValidationError("You must be at least 18 years old", code="invalid")
+    return value
 
 
 class SockLikeSerializer(serializers.ModelSerializer):
@@ -66,3 +75,40 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         exclude = ["password", "groups", "user_permissions"]
+
+
+class UserCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        exclude = [
+            "groups",
+            "user_permissions",
+            "is_staff",
+            "is_superuser",
+            "is_active",
+            "last_login",
+            "date_joined",
+            "location_longitude",
+            "location_latitude",
+        ]
+
+    def validate_info_birthday(self, value):
+        return validate_age(value)
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        exclude = [
+            "id",
+            "password",
+            "groups",
+            "user_permissions",
+            "is_staff",
+            "is_superuser",
+            "is_active",
+            "last_login",
+            "date_joined",
+            "location_longitude",
+            "location_latitude",
+        ]
