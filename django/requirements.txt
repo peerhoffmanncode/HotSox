@@ -18,3 +18,4 @@ geopy==2.3.0
 pyOpenSSL
 uvicorn[standard]
 python-dotenv
+drf-spectacular[sidecar]

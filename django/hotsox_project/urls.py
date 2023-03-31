@@ -19,6 +19,13 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+# Swagger configuration
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
+
 urlpatterns = [
     path("admin/", admin.site.urls, name="admin"),
     # Main Home route
@@ -28,4 +35,16 @@ urlpatterns = [
     path("user/", include("allauth.urls")),
     path("chat/", include("app_chat.urls")),
     path("api/", include("app_restapi.urls")),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    # Swagger and ReDoc Documentation
+    path(
+        "api/docs/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    path(
+        "api/redoc/",
+        SpectacularRedocView.as_view(url_name="schema"),
+        name="redoc",
+    ),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_URL)

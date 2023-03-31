@@ -1,3 +1,7 @@
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
 from rest_framework.generics import (
     ListAPIView,
     CreateAPIView,
@@ -17,12 +21,18 @@ from .serializers_users import (
 class ApiGetUsers(ListAPIView):
     """List of all Users"""
 
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
 class ApiGetUser(RetrieveAPIView):
     """Detail view of the User"""
+
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -31,12 +41,18 @@ class ApiGetUser(RetrieveAPIView):
 class ApiGetMails(ListAPIView):
     """List of all Mails"""
 
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     queryset = MessageMail.objects.all()
     serializer_class = MailSerializer
 
 
 class ApiGetMail(RetrieveAPIView):
     """Detail mail view"""
+
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
 
     queryset = MessageMail.objects.all()
     serializer_class = MailSerializer
@@ -45,12 +61,18 @@ class ApiGetMail(RetrieveAPIView):
 class ApiGetChats(ListAPIView):
     """List of all Chats"""
 
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     queryset = MessageChat.objects.all()
     serializer_class = ChatSerializer
 
 
 class ApiGetChat(RetrieveAPIView):
     """List of all Chats"""
+
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
 
     queryset = MessageChat.objects.all()
     serializer_class = ChatSerializer
@@ -59,12 +81,18 @@ class ApiGetChat(RetrieveAPIView):
 class ApiGetSocks(ListAPIView):
     """Lists all socks"""
 
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     queryset = Sock.objects.all()
     serializer_class = SockSerializer
 
 
 class ApiGetSock(RetrieveAPIView):
     """Sock detail view"""
+
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
 
     queryset = Sock.objects.all()
     serializer_class = SockSerializer
