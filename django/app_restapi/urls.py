@@ -4,7 +4,9 @@ from . import views
 app_name = "app_restapi"
 urlpatterns = [
     path("users/", views.ApiGetUsers.as_view(), name="api_user_list"),
+    path("user/", views.ApiCreateUser.as_view(), name="api_user_create"),
     path("user/<int:pk>/", views.ApiGetUser.as_view(), name="api_user_detail"),
+    path("user/<int:pk>/", views.ApiUpdateUser.as_view(), name="api_user_update"),
     path("user/mails/", views.ApiGetMails.as_view(), name="api_mail_list"),
     path("user/mail/<int:pk>/", views.ApiGetMail.as_view(), name="api_mail_detail"),
     path("user/chats/", views.ApiGetChats.as_view(), name="api_chats_list"),
