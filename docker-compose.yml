@@ -8,8 +8,8 @@ services:
     restart: always
     volumes:
       - ./data/postgres_db:/var/lib/postgresql/data
-    #ports:
-    #  - 5433:5432
+    ports:
+      - 5433:5432
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -26,8 +26,8 @@ services:
                       uvicorn hotsox_project.asgi:application --reload --host=0.0.0.0 --port=8000"
     volumes:
       - .:/app
-    #ports:
-    #  - 8000:8000
+    # ports:
+    #   - 8000:8000
     depends_on:
       - postgresql
 

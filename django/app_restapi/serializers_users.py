@@ -12,6 +12,9 @@ from app_users.models import (
     MessageChat,
 )
 
+# import default Django password hashing function
+from django.contrib.auth.hashers import make_password
+
 
 def validate_age(value):
     difference = date.today() - value
@@ -95,6 +98,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
     def validate_info_birthday(self, value):
         return validate_age(value)
 
+    # enforce password hashing
+    def create(self, validated_data):
+        validated_data["password"] = make_password(validated_data["password"])
+        return super(UserCreateSerializer, self).create(validated_data)
+
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -112,3 +120,11 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "location_longitude",
             "location_latitude",
         ]
+
+    def validate_info_birthday(self, value):
+        return validate_age(value)
+
+    # enforce password hashing
+    def create(self, validated_data):
+        validated_data["password"] = make_password(validated_data["password"])
+        return super(UserUpdateSerializer, self).create(validated_data)
