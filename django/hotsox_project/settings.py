@@ -92,12 +92,19 @@ CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}
 
 AUTHENTICATION_BACKENDS = ["allauth.account.auth_backends.AuthenticationBackend"]
 
-# need to prevent "false email addresses to lead to a crash!"
-# TODO: remove this and find proper error handling
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# email credentials
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = os.getenv("MAIL_SERVER", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("MAIL_PORT", "587"))
+EMAIL_HOST_USER = os.getenv("MAIL_USERNAME")
+EMAIL_HOST_PASSWORD = os.getenv("MAIL_PASSWORD")
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
 # all auth defaul forms
 ACCOUNT_FORMS = {
+    # custom signup
     "signup": "app_users.forms.UserSignUpForm",
     "login": "allauth.account.forms.LoginForm",
     "add_email": "allauth.account.forms.AddEmailForm",
@@ -115,7 +122,7 @@ ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = False
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "optional"  # "mandatory"
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # "optional" or "mandatory"
 ACCOUNT_PRESERVE_USERNAME_CASING = True
 ACCOUNT_USERNAME_BLACKLIST = ["Admin", "Administrator", "admin", "administrator"]
 ACCOUNT_USERNAME_MIN_LENGTH = 3

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import TemplateView
 from django.db.models import Q
+from django.contrib import messages
 import uuid
 
 from app_users.validator import HotSoxLogInAndValidationCheckMixin
@@ -75,6 +76,10 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
         if request.POST.get("change_sock", None):
             request.session["sock_pk"] = request.POST.get("change_sock", None)
             current_user_sock = get_object_or_404(Sock, pk=request.session["sock_pk"])
+            messages.success(
+                request,
+                f"successfully selected sock {current_user_sock.info_name}.",
+            )
             return redirect(reverse("app_home:swipe"))
 
         sock_to_be_decided_on = get_object_or_404(

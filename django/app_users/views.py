@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
@@ -124,12 +125,13 @@ class UserProfileUpdate(LoginRequiredMixin, TemplateView):
                 user_to_update.location_longitude = 0
             # store the user to the database
             user_to_update.save()
-
+            messages.success(request, "Profile details successfully updated.")
             # log user in via django login
             login(request, user_to_update)
             # redirect to user profile details page
             return redirect(reverse("app_users:user-profile-details"))
         # in case of invalid go here
+        messages.warning(request, "Profile details could not be updated.")
         return render(
             request,
             "users/profile_update.html",
@@ -195,6 +197,7 @@ class UserProfilePictureUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView)
                         pk=picture_pk
                     )
                     UserProfilePicture_obj.delete()
+                messages.success(request, "Profile picture successfully deleted.")
                 return redirect(reverse("app_users:user-profile-picture"))
 
         elif request.POST.get("method") == "add":
@@ -212,8 +215,10 @@ class UserProfilePictureUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView)
                 # store the picture to the database
                 new_profile_picture.save()
                 # redirect to user profile details page
+                messages.success(request, "Profile picture successfully updated.")
                 return redirect(reverse("app_users:user-profile-picture"))
             # in case of invalid go here
+            messages.warning(request, "Profile picture could not be updated.")
             return redirect(reverse("app_users:user-profile-picture"))
 
     def get(self, request, *args, **kwargs):
@@ -268,11 +273,14 @@ class SockProfileOverview(HotSoxLogInAndValidationCheckMixin, TemplateView):
                     if sock_pk == request.session.get("sock_pk", None):
                         request.session["sock_pk"] = None
                 # return back to sock overview
+                messages.success(request, "Sock successfully deleted.")
                 return redirect(reverse("app_users:sock-overview"))
 
         elif request.POST.get("method") == "add":
             # redirect to sock creation
             return redirect(reverse("app_users:sock-create"))
+        messages.warning(request, "Something went wrong.")
+        return redirect(reverse("app_users:sock-overview"))
 
 
 class SockSelection(HotSoxLogInAndValidationCheckMixin, TemplateView):
@@ -334,6 +342,9 @@ class SockProfileCreate(HotSoxLogInAndValidationCheckMixin, TemplateView):
             # register current sock to the session
             request.session["sock_pk"] = sock_to_add.pk
             # redirect to sock profile details page
+            messages.success(
+                request, f"{sock_to_add.info_name} successfully added to your socks."
+            )
             return redirect(reverse("app_users:sock-picture"))
         # in case of invalid go here
         return redirect(reverse("app_users:sock-create"))
@@ -374,6 +385,9 @@ class SockProfileUpdate(
             # store the sock to the database
             sock_to_update = form_sock_profile.save()
             # redirect to sock profile details page
+            messages.success(
+                request, f"{sock_to_update.info_name} successfully updated."
+            )
             return redirect(reverse("app_users:sock-details"))
         # in case of invalid go here
         return redirect(reverse("app_users:sock-update"))
@@ -422,6 +436,7 @@ class SockProfilePictureUpdate(
             ):
                 SockProfilePicture_obj = SockProfilePicture.objects.get(pk=picture_pk)
                 SockProfilePicture_obj.delete()
+                messages.success(request, f"profile picture successfully deleted.")
             return redirect(reverse("app_users:sock-picture"))
 
         elif request.POST.get("method") == "add":
@@ -439,6 +454,7 @@ class SockProfilePictureUpdate(
                 # store the picture to the database
                 new_profile_picture.save()
                 # redirect to user profile details page
+                messages.success(request, f"profile picture successfully updated.")
                 return redirect(reverse("app_users:sock-picture"))
             # in case of invalid go here
             return redirect(reverse("app_users:sock-picture"))
@@ -578,6 +594,8 @@ class UserMatchDelete(HotSoxLogInAndValidationCheckMixin, TemplateView):
             match.save()
 
         # TODO: set all the match_user socks to seen!
-
+        messages.success(
+            request, f"match with {match_user.username} successfully deleted."
+        )
         # return to match overview
         return redirect(reverse("app_users:user-matches"))
