@@ -44,9 +44,9 @@ class GeoLocation:
             latitude, longitude = geo_location.lat_lon(ip)
             return city, latitude, longitude
         except geoip2.errors.AddressNotFoundError:
-            return ({"city": ""}, 0, 0)
+            return ("", 0, 0)
         except socket.gaierror:
-            return ({"city": ""}, 0, 0)
+            return ("", 0, 0)
 
     @staticmethod
     def get_distance(get_location_a: tuple, get_location_b: tuple) -> float:
