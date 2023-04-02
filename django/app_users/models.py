@@ -171,8 +171,8 @@ def create_user(sender, instance, **kwargs):
             instance.location_longitude,
         ) = GeoLocation.get_geolocation_from_city(instance.location_city)
     except:
-        instance.location_latitude = None
-        instance.location_longitude = None
+        instance.location_latitude = 0
+        instance.location_longitude = 0
 
 
 class UserProfilePicture(models.Model):

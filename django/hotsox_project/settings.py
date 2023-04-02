@@ -149,7 +149,7 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = "/user/login/"
 LOGOUT_URL = "/user/logout/"
-
+ACCOUNT_SIGNUP_REDIRECT_URL = "/user/profile/picture/"
 
 # register the hotsox_user as user AllAuth model!
 AUTH_USER_MODEL = "app_users.User"
