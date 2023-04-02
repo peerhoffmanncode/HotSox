@@ -1,13 +1,15 @@
-import os
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
+from django.db.models import signals
+from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from datetime import date, timedelta
 from cloudinary import uploader
 from cloudinary.models import CloudinaryField
-from django.db.models import Q
-import uuid
+
+from app_geo.utilities import GeoLocation
 
 # CHOICES FOR USER
 from .models_choices import (
@@ -157,6 +159,20 @@ class User(AbstractUser):
         """
         messages = MessageChat.objects.filter(Q(user=self) | Q(other=self))
         return messages
+
+
+# signal handler for geo information
+@receiver(signals.pre_save, sender=User)
+def create_user(sender, instance, **kwargs):
+    # check if city exists!
+    try:
+        (
+            instance.location_latitude,
+            instance.location_longitude,
+        ) = GeoLocation.get_geolocation_from_city(instance.location_city)
+    except:
+        instance.location_latitude = None
+        instance.location_longitude = None
 
 
 class UserProfilePicture(models.Model):

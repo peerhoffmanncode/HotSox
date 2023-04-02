@@ -96,6 +96,20 @@ AUTHENTICATION_BACKENDS = ["allauth.account.auth_backends.AuthenticationBackend"
 # TODO: remove this and find proper error handling
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
+# all auth defaul forms
+ACCOUNT_FORMS = {
+    "signup": "app_users.forms.UserSignUpForm",
+    "login": "allauth.account.forms.LoginForm",
+    "add_email": "allauth.account.forms.AddEmailForm",
+    "set_password": "allauth.account.forms.SetPasswordForm",
+    "change_password": "allauth.account.forms.ChangePasswordForm",
+    "reset_password": "allauth.account.forms.ResetPasswordForm",
+    "reset_password_from_key": "allauth.account.forms.ResetPasswordKeyForm",
+    "disconnect": "allauth.socialaccount.forms.DisconnectForm",
+    "user_token": "allauth.account.forms.UserTokenForm",
+}
+
+
 # AllAUth configuration
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = False

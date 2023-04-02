@@ -24,6 +24,8 @@ from .forms import (
     SockProfilePictureForm,
 )
 
+from allauth.account.views import SignupView
+
 
 def validate_sock_ownership(request, valid_sock=None, picture_pk=None):
     # if picture is set
@@ -39,67 +41,19 @@ def validate_sock_ownership(request, valid_sock=None, picture_pk=None):
     return False
 
 
-class UserSignUp(TemplateView):
-    """View to sign up a new user.
-    We will gather information from from.UserSignUpForm
-    Next store this new user to the db via ORM and then
-    login() then newly created user
+class UserSignUp(SignupView):
+    """Custom UserSingUpView
+    - add request object to the form
+    - create user
+    - add geolocation before saving to db (Using signals in models)
     """
 
-    model = User
-    template_name = "users/signup.html"
+    form_class = UserSignUpForm
 
-    def post(self, request, *args, **kwargs):
-        form_user_profile = UserSignUpForm(request.POST)
-
-        if form_user_profile.is_valid():
-            # create a user object from the form
-            user = form_user_profile.save(commit=False)
-            # fix the data
-            user.first_name = form_user_profile.cleaned_data["first_name"].title()
-            user.last_name = form_user_profile.cleaned_data["last_name"].title()
-            # set geo location
-            try:
-                (
-                    user.location_latitude,
-                    user.location_longitude,
-                ) = GeoLocation.get_geolocation_from_city(user.location_city)
-            except:
-                user.location_latitude = 0
-                user.location_longitude = 0
-            # store the user to the database
-            user.save()
-            # log user in via django login
-            login(request, user)
-            # redirect to user profile picture page
-            return redirect(reverse("app_users:user-profile-picture"))
-        # in case of invalid go here
-        return render(
-            request,
-            "users/signup.html",
-            {
-                "form_user_profile": form_user_profile,
-            },
-        )
-
-    def get(self, request, *args, **kwargs):
-        # get geo location via IP
-        try:
-            city, _, _ = GeoLocation.get_geolocation_from_ip(
-                GeoLocation.get_ip_address(request)
-            )
-        except:
-            city = {"city": ""}
-        form_user_profile = UserSignUpForm(initial={"location_city": city["city"]})
-
-        # show user signup page
-        return render(
-            request,
-            "users/signup.html",
-            {
-                "form_user_profile": form_user_profile,
-            },
-        )
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        return kwargs
 
 
 class UserProfileDetails(HotSoxLogInAndValidationCheckMixin, TemplateView):
@@ -111,7 +65,7 @@ class UserProfileDetails(HotSoxLogInAndValidationCheckMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # include the current user in the context
-        user = self.request.user
+        user = get_object_or_404(User, pk=self.request.user.pk)
         context["user"] = user
         context["user_detail"] = user.to_json()
 

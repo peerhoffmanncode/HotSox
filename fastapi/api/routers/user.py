@@ -47,7 +47,6 @@ async def get_user(
 
 @router.post("/", response_model=schemas.CreateUser, status_code=201)
 async def singup_user(request: schemas.CreateUser, db: Session = Depends(get_db)):
-    print(request)
     return ctr_user.create_user(request, db)
 
 

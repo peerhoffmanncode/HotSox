@@ -5,6 +5,7 @@ from django.forms import ValidationError
 from datetime import date
 from .models import User, UserProfilePicture, Sock, SockProfilePicture
 from .forms_widgets import RangeInput, SwitchCheckboxInput
+from app_geo.utilities import GeoLocation
 
 
 def validate_age(form):
@@ -70,6 +71,17 @@ def validate_email(data):
 
 
 class UserSignUpForm(UserCreationForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request", None)
+        super().__init__(*args, **kwargs)
+        try:
+            city, _, _ = GeoLocation.get_geolocation_from_ip(
+                GeoLocation.get_ip_address(self.request)
+            )
+        except:
+            city = ""
+        self.fields["location_city"].initial = city
+
     class Meta:
         model = User
         fields = "__all__"
