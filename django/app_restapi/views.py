@@ -44,7 +44,9 @@ class ApiCreateUser(GenericAPIView):
         serializer = UserCreateSerializer(data=request.data)
         if serializer.is_valid():
             result = serializer.save()
-            return Response(data=UserSerializer(result).data, status=status.HTTP_201_CREATED)
+            return Response(
+                data=UserSerializer(result).data, status=status.HTTP_201_CREATED
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

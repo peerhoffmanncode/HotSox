@@ -79,7 +79,7 @@ class UserSignUpForm(UserCreationForm):
                 GeoLocation.get_ip_address(self.request)
             )
         except:
-            city = {"city":""}
+            city = {"city": ""}
         self.fields["location_city"].initial = city["city"]
 
     class Meta:
