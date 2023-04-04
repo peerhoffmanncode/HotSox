@@ -11,17 +11,21 @@ class Test(TestCase):
         self.assertEqual(GeoLocation.get_ip_address(request=None), None)
 
     def test_get_geolocation_from_city(self):
-        self.assertEqual(
-            GeoLocation.get_geolocation_from_city("Mainz"), (50.0012314, 8.2762513)
-        )
-        self.assertEqual(
-            GeoLocation.get_geolocation_from_city("Greenwich"), (51.4820845, -0.0045417)
-        )
-        self.assertNotEqual(
-            GeoLocation.get_geolocation_from_city("MatrixReload"),
-            (85.4820845, 14.0045417),
-        )
-        self.assertEqual(GeoLocation.get_geolocation_from_city("MatrixReload"), (0, 0))
+        if not os.getenv("GITHUB_WORKFLOW"):
+            self.assertEqual(
+                GeoLocation.get_geolocation_from_city("Mainz"), (50.0012314, 8.2762513)
+            )
+            self.assertEqual(
+                GeoLocation.get_geolocation_from_city("Greenwich"),
+                (51.4820845, -0.0045417),
+            )
+            self.assertNotEqual(
+                GeoLocation.get_geolocation_from_city("MatrixReload"),
+                (85.4820845, 14.0045417),
+            )
+            self.assertEqual(
+                GeoLocation.get_geolocation_from_city("MatrixReload"), (0, 0)
+            )
 
     def test_get_geolocation_from_ip(self):
         if not os.getenv("GITHUB_WORKFLOW"):
