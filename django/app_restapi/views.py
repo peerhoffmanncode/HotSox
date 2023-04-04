@@ -60,7 +60,7 @@ class ApiCreateUser(GenericAPIView):
             # update user
             user.save()
             return Response(
-                data=serializer.validated_data, status=status.HTTP_202_ACCEPTED
+                data=serializer.validated_data, status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
