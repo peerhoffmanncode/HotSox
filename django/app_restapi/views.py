@@ -30,44 +30,26 @@ from app_geo.utilities import GeoLocation
 class ApiGetUsers(ListAPIView):
     """List of all Users"""
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by("-pk")
     serializer_class = UserSerializer
 
 
 class ApiCreateUser(GenericAPIView):
 
-    # authentication_classes = [SessionAuthentication, BasicAuthentication]
-    # permission_classes = [IsAuthenticated]
     serializer_class = UserCreateSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = UserCreateSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            user = get_object_or_404(User, username=serializer.data.get("username"))
-            # geodata injection
-            try:
-                (
-                    user.location_latitude,
-                    user.location_longitude,
-                ) = GeoLocation.get_geolocation_from_city(user.location_city)
-            except:
-                user.location_latitude = 0
-                user.location_longitude = 0
-            # update user
-            user.save()
-            return Response(
-                data=serializer.validated_data, status=status.HTTP_201_CREATED
-            )
+            result = serializer.save()
+            return Response(data=UserSerializer(result).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ApiGetPutDeleteUser(GenericAPIView):
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = UserUpdateSerializer
 
@@ -85,20 +67,9 @@ class ApiGetPutDeleteUser(GenericAPIView):
 
         serializer = UserUpdateSerializer(user, data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            # geodata injection
-            try:
-                (
-                    user.location_latitude,
-                    user.location_longitude,
-                ) = GeoLocation.get_geolocation_from_city(user.location_city)
-            except:
-                user.location_latitude = 0
-                user.location_longitude = 0
-            # update user
-            user.save()
+            updated_user = serializer.save()
             return Response(
-                data=serializer.validated_data, status=status.HTTP_202_ACCEPTED
+                data=UserSerializer(updated_user).data, status=status.HTTP_202_ACCEPTED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -111,17 +82,15 @@ class ApiGetPutDeleteUser(GenericAPIView):
 class ApiGetMails(ListAPIView):
     """List of all Mails"""
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-    queryset = MessageMail.objects.all()
+    queryset = MessageMail.objects.all().order_by("-pk")
     serializer_class = MailSerializer
 
 
 class ApiGetMail(RetrieveAPIView):
     """Detail mail view"""
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
     queryset = MessageMail.objects.all()
@@ -131,17 +100,15 @@ class ApiGetMail(RetrieveAPIView):
 class ApiGetChats(ListAPIView):
     """List of all Chats"""
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-    queryset = MessageChat.objects.all()
+    queryset = MessageChat.objects.all().order_by("-pk")
     serializer_class = ChatSerializer
 
 
 class ApiGetChat(RetrieveAPIView):
     """List of all Chats"""
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
     queryset = MessageChat.objects.all()
@@ -151,17 +118,15 @@ class ApiGetChat(RetrieveAPIView):
 class ApiGetSocks(ListAPIView):
     """Lists all socks"""
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-    queryset = Sock.objects.all()
+    queryset = Sock.objects.all().order_by("-pk")
     serializer_class = SockSerializer
 
 
 class ApiGetSock(RetrieveAPIView):
     """Sock detail view"""
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
     queryset = Sock.objects.all()

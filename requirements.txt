@@ -116,4 +116,4 @@ websockets==10.4
 yarl==1.8.2
 zope.interface==5.5.2
 drf-spectacular[sidecar]
-djangorestframework-simplejwt
+djangorestframework-simplejwt[crypto]

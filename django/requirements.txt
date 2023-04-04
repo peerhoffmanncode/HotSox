@@ -19,4 +19,4 @@ pyOpenSSL
 uvicorn[standard]
 python-dotenv
 drf-spectacular[sidecar]
-djangorestframework-simplejwt
+djangorestframework-simplejwt[crypto]
