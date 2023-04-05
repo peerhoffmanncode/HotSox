@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework.authtoken",
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "app_home",
@@ -292,8 +293,9 @@ REST_FRAMEWORK = {
     # permissions & authentication
     # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.BasicAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
+        # "rest_framework.authentication.BasicAuthentication",
+        # "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
 }

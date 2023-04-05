@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
 from rest_framework.generics import (
@@ -30,7 +30,7 @@ from app_geo.utilities import GeoLocation
 class ApiGetUsers(ListAPIView):
     """List of all Users"""
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     queryset = User.objects.all().order_by("-pk")
     serializer_class = UserSerializer
@@ -84,7 +84,7 @@ class ApiGetPutDeleteUser(GenericAPIView):
 class ApiGetMails(ListAPIView):
     """List of all Mails"""
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     queryset = MessageMail.objects.all().order_by("-pk")
     serializer_class = MailSerializer
@@ -102,7 +102,7 @@ class ApiGetMail(RetrieveAPIView):
 class ApiGetChats(ListAPIView):
     """List of all Chats"""
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     queryset = MessageChat.objects.all().order_by("-pk")
     serializer_class = ChatSerializer
@@ -120,7 +120,7 @@ class ApiGetChat(RetrieveAPIView):
 class ApiGetSocks(ListAPIView):
     """Lists all socks"""
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     queryset = Sock.objects.all().order_by("-pk")
     serializer_class = SockSerializer
