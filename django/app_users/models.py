@@ -176,11 +176,9 @@ def create_user(sender, instance, **kwargs):
 
 
 class UserProfilePicture(models.Model):
-    # User.profile_picture.user.pk = User.pk  | himself
     user = models.ForeignKey(
         User, related_name="profile_picture", on_delete=models.CASCADE
     )
-    # url = models.URLField(max_length=255, blank=False)
     profile_picture = CloudinaryField("profile picture")
 
     def delete(self, *args, **kwargs):
@@ -195,8 +193,6 @@ class UserProfilePicture(models.Model):
 
 
 class UserMatch(models.Model):
-    # User.him.user.pk = User.pk  | himself
-    # User.matched.other.objects.all() = all Other user !
     user = models.ForeignKey(
         User,
         related_name="user_match",
@@ -228,7 +224,6 @@ class UserMatch(models.Model):
 
 
 class Sock(models.Model):
-    # User.sock.user.pk = User.pk  | himself
     user = models.ForeignKey(User, related_name="sock", on_delete=models.CASCADE)
     info_joining_date = models.DateField(auto_now_add=True, blank=False)
 
@@ -362,11 +357,9 @@ class Sock(models.Model):
 
 
 class SockProfilePicture(models.Model):
-    # Sock.profile_picture.sock.pk = Sock.pk  | sock himself
     sock = models.ForeignKey(
         Sock, related_name="profile_picture", on_delete=models.CASCADE
     )
-    # url = models.URLField(max_length=255, blank=False)
     profile_picture = CloudinaryField("profile picture")
 
     def __str__(self) -> str:
@@ -382,9 +375,6 @@ class SockProfilePicture(models.Model):
 
 
 class SockLike(models.Model):
-    # Sock.me.sock.pk = Sock.pk  | sock himself
-    # Sock.like.like.objects.all() = socks i like
-    # Sock.dislike.dislike.objects.all() = socks i don't like
     sock = models.ForeignKey(
         Sock, related_name="sock_likes", on_delete=models.CASCADE, blank=False
     )
@@ -408,7 +398,6 @@ class SockLike(models.Model):
 
 
 class MessageMail(models.Model):
-    # User.mail.user.pk = User.pk  | user himself
     user = models.ForeignKey(User, related_name="mail", on_delete=models.CASCADE)
     subject = models.CharField(max_length=255, blank=False)
     content = models.TextField(blank=False)
@@ -419,8 +408,6 @@ class MessageMail(models.Model):
 
 
 class MessageChat(models.Model):
-    # User.chat_sending.user.pk = User.pk  | user himself
-    # User.chat_receiving.other.objects.all() = user send to !
     user = models.ForeignKey(
         User, related_name="chat_sending", on_delete=models.CASCADE
     )
