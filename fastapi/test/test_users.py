@@ -112,7 +112,7 @@ def mock_upload_file():
 
 def login(username: str, password: str) -> dict:
     response = client.post(
-        PREFIX + "/login/",
+        PREFIX + "/token/",
         data={"username": username, "password": password},
     )
     token = response.json().get("access_token", None)
