@@ -41,12 +41,6 @@ class AboutView(TemplateView):
         else:
             context = {"user": None}
 
-        celery_send_mail.delay(
-            email_subject="some nice subject",
-            email_message="some nice message",
-            recipient_list=[request.user.email],
-        )
-
         return render(request, "app_home/about.html", context)
 
     def post(self, request, *args, **kwargs):
