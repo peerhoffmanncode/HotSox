@@ -10,6 +10,8 @@ from app_users.models import User, Sock, SockLike, UserMatch
 from .pre_prediction_algorithm import PrePredictionAlgorithm
 from app_geo.utilities import GeoLocation
 
+from app_mail.tasks import celery_send_mail
+
 
 class HomeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
     model = User
@@ -38,6 +40,12 @@ class AboutView(TemplateView):
             context = {"user": user}
         else:
             context = {"user": None}
+
+        celery_send_mail.delay(
+            email_subject="some nice subject",
+            email_message="some nice message",
+            recipient_list=[request.user.email],
+        )
 
         return render(request, "app_home/about.html", context)
 

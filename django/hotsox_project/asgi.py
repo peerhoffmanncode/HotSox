@@ -40,7 +40,7 @@ from asgiref.sync import sync_to_async
 from django.conf import settings
 from .utilities import create_db_entry_social_app
 
-settings.SITE_ID = create_db_entry_social_app(
+created, settings.SITE_ID = create_db_entry_social_app(
     site_name="127.0.0.1:8000",
     site_domain="127.0.0.1:8000",
     provider="google",
@@ -48,4 +48,5 @@ settings.SITE_ID = create_db_entry_social_app(
     client_id=os.environ.get("GOOGLE_CLIENT_ID"),
     secret=os.environ.get("GOOGLE_SECRET"),
 )
-print("included google to AllAuth, set SITE_ID to:", settings.SITE_ID)
+if created:
+    print("included google to AllAuth, set SITE_ID to:", settings.SITE_ID)

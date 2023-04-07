@@ -15,3 +15,5 @@ httpx
 pytest-cov
 pytest
 fastapi-mail
+celery
+redis

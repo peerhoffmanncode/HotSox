@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
 
+  # main database
   postgresql:
     container_name: hotsox_postgresql_db
     image: postgres
@@ -16,21 +17,19 @@ services:
       - POSTGRES_DB=${DB_NAME}
     command: -p 5432
 
-  django:
-    container_name: hotsox_django
-    build: ./django
-    restart: unless-stopped
-    command: bash -c "cd django &&
-                      python manage.py collectstatic --noinput &&
-                      python manage.py migrate &&
-                      uvicorn hotsox_project.asgi:application --reload --host=0.0.0.0 --port=8000"
-    volumes:
-      - .:/app
-    ports:
-      - 8000:8000
-    depends_on:
-      - postgresql
 
+  # message broker for fastapi-celery
+  redis-fastapi:
+    container_name: hotsox_redis_fastapi
+    image: redis
+
+  # message broker for django-celery
+  redis-django:
+    container_name: hotsox_redis_django
+    image: redis
+
+
+  # alternative restfull API
   fastapi:
     container_name: hotsox_fastapi
     build: ./fastapi
@@ -43,7 +42,61 @@ services:
     #  - 8010:8010
     depends_on:
       - postgresql
+      - redis-fastapi
 
+  # main web server (including DRF API)
+  django:
+    container_name: hotsox_django
+    build: ./django
+    restart: unless-stopped
+    command: bash -c "cd django &&
+                      python manage.py collectstatic --noinput &&
+                      python manage.py migrate &&
+                      uvicorn hotsox_project.asgi:application --reload --host=0.0.0.0 --port=8000"
+    volumes:
+      - .:/app
+    # ports:
+    #   - 8000:8000
+    depends_on:
+      - postgresql
+      - redis-django
+
+
+# celery container for fastapi
+  celery_fastapi:
+    container_name: hotsox_celery_fastapi
+    build: ./fastapi
+    restart: unless-stopped
+    environment:
+        - REMAP_SIGTERM=SIGQUIT
+        - REDIS_URL=${REDIS_FASTAPI_URL}
+        - CELERY_BROKER=${REDIS_FASTAPI_URL}
+        - CELERY_BACKEND=${REDIS_FASTAPI_URL}
+    command: bash -c "celery -A celery_app:celery_app worker --loglevel=INFO --concurrency=2"
+    depends_on:
+      - redis-fastapi
+      - fastapi
+
+  # celery container for django
+  celery_django:
+    container_name: hotsox_celery_django
+    build: ./django
+    restart: unless-stopped
+    command: bash -c "cd django &&
+                      celery -A hotsox_project worker --loglevel=INFO --concurrency=2"
+    volumes:
+      - .:/app
+    environment:
+        - REMAP_SIGTERM=SIGQUIT
+        - REDIS_URL=${REDIS_DJANGO_URL}
+        - CELERY_BROKER=${REDIS_DJANGO_URL}
+        - CELERY_BACKEND=${REDIS_DJANGO_URL}
+    depends_on:
+      - redis-django
+      - django
+
+
+  # hotsox proxy router
   nginx:
     container_name: hotsox_nginx_router
     restart: always

@@ -1,6 +1,6 @@
 black==22.10.0
 crispy-bootstrap5==0.7
-Django==4.1.7
+Django==4.2
 django-allauth==0.52.0
 django-crispy-forms==1.14.0
 django-extensions==3.2.1
@@ -8,7 +8,7 @@ djangorestframework
 channels==3.0.5
 cloudinary==1.32.0
 ipython==8.7.0
-psycopg2
+psycopg
 pytest-cov==4.0.0
 pytest-django==4.5.2
 names==0.3.0
@@ -20,3 +20,6 @@ uvicorn[standard]
 python-dotenv
 drf-spectacular[sidecar]
 djangorestframework-simplejwt[crypto]
+celery
+django-celery-results
+Redis

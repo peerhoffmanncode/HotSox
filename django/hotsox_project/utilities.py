@@ -5,6 +5,7 @@ from django.contrib.sites.models import Site
 def create_db_entry_social_app(
     site_name, site_domain, provider, name, client_id, secret
 ):
+    created = False
     try:
         site = Site.objects.get(domain=site_domain)
         if site.domain != site_domain:
@@ -20,6 +21,7 @@ def create_db_entry_social_app(
             social_app.client_id = client_id
             social_app.secret = secret
             social_app.save()
+            created = True
     except SocialApp.DoesNotExist:
         # If the social application does not exist, create it
         social_app = SocialApp.objects.create(
@@ -29,4 +31,4 @@ def create_db_entry_social_app(
         social_app.save()
 
     # return current SITE_ID
-    return Site.objects.get(domain=site_domain).id
+    return created, Site.objects.get(domain=site_domain).id

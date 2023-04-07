@@ -41,26 +41,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-# The following settings need more investigation
-# certain conditions produce unexpeded/ buggy results!
-# AVOIDE to set these to True, even when suggested!
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True
-# SECURE_SSL_REDIRECT = False
-# CORS_ALLOW_ALL_ORIGINS = True
-CSRF_TRUSTED_ORIGINS = [
-    "http://*.127.0.0.1",
-    "https://*.eu.ngrok.io",
-    "http://*.eu.ngrok.io",
-]
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (os.environ.get("DEBUG"),)
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(", ")
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    "CSRF_TRUSTED_ORIGINS",
+    "http://*.127.0.0.1, https://*.eu.ngrok.io, http://*.eu.ngrok.io",
+).split(", ")
+
 
 # Application definition
-
 INSTALLED_APPS = [
     "channels",
     "django.contrib.admin",
@@ -83,6 +74,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "drf_spectacular",
     "drf_spectacular_sidecar",
+    "django_celery_results",
     "app_home",
     "app_users",
     "app_geo",
@@ -94,16 +86,6 @@ ASGI_APPLICATION = "hotsox_project.asgi.application"
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 AUTHENTICATION_BACKENDS = ["allauth.account.auth_backends.AuthenticationBackend"]
-
-# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-# email credentials
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = os.getenv("MAIL_SERVER", "smtp.gmail.com")
-EMAIL_PORT = int(os.getenv("MAIL_PORT", "587"))
-EMAIL_HOST_USER = os.getenv("MAIL_USERNAME")
-EMAIL_HOST_PASSWORD = os.getenv("MAIL_PASSWORD")
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
 
 # all auth defaul forms
 ACCOUNT_FORMS = {
@@ -118,7 +100,6 @@ ACCOUNT_FORMS = {
     "disconnect": "allauth.socialaccount.forms.DisconnectForm",
     "user_token": "allauth.account.forms.UserTokenForm",
 }
-
 
 # AllAUth configuration
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
@@ -155,10 +136,10 @@ SOCIALACCOUNT_PROVIDERS = {
 # Requirements for Allauth support
 SITE_ID = 1
 # add these constants to define route for login/ logout destinations
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = "/user/login/"
 LOGOUT_URL = "/user/logout/"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_SIGNUP_REDIRECT_URL = "/user/profile/picture/"
 
 # register the hotsox_user as user AllAuth model!
@@ -200,7 +181,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 if os.getenv("GITHUB_WORKFLOW"):
-    # check if we are in GITHUB ACTION MODE ?
+    # check if we are in GITHUB ACTION MODE
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -212,11 +193,10 @@ if os.getenv("GITHUB_WORKFLOW"):
         }
     }
 else:
-    # check if we have ENV Vars set e.g. env.py/Dockerfile/...?
+    # check if we run pytest/unittest locally
     import sys
 
     if "test" in sys.argv[0] or "test" in sys.argv[1]:
-        TEST = True
         DATABASES = {
             "default": {
                 "ENGINE": "django.db.backends.postgresql",
@@ -231,13 +211,18 @@ else:
         DATABASES = {
             "default": {
                 "ENGINE": "django.db.backends.postgresql",
-                "NAME": os.getenv("DB_NAME"),
-                "USER": os.getenv("DB_USER"),
-                "PASSWORD": os.getenv("DB_PASSWORD"),
-                "HOST": os.getenv("DB_HOST"),
-                "PORT": os.getenv("DB_PORT"),
+                "NAME": os.getenv("DB_NAME", "postgres"),
+                "USER": os.getenv("DB_USER", "postgres"),
+                "PASSWORD": os.getenv("DB_PASSWORD", "postgres"),
+                "HOST": os.getenv("DB_HOST", "localhsot"),
+                "PORT": os.getenv("DB_PORT", "5432"),
             },
         }
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -261,11 +246,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "Europe/Berlin"
-
 USE_I18N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
@@ -275,17 +257,11 @@ STATIC_URL = "/staticfiles/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
-
 GEOIP_PATH = os.path.join(BASE_DIR, "app_geo/geo_database")
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# initial work to use jwt token validation soon!
+# Main configuration for DRF
 REST_FRAMEWORK = {
-    # swagger
+    # swagger documentation
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     # pagination
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
@@ -300,6 +276,19 @@ REST_FRAMEWORK = {
     ],
 }
 
+# configuration for swagger
+SPECTACULAR_SETTINGS = {
+    "TITLE": "HotSox Django Rest Framework API",
+    "DESCRIPTION": "HotSox API",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # shorthand to use the sidecar instead
+    "SWAGGER_UI_DIST": "SIDECAR",
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
+}
+
+# configuration for SimpleJWT
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
@@ -334,13 +323,22 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
-SPECTACULAR_SETTINGS = {
-    "TITLE": "HotSox Django Rest Framework API",
-    "DESCRIPTION": "HotSox API",
-    "VERSION": "1.0.0",
-    "SERVE_INCLUDE_SCHEMA": False,
-    # shorthand to use the sidecar instead
-    "SWAGGER_UI_DIST": "SIDECAR",
-    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
-    "REDOC_DIST": "SIDECAR",
-}
+# email configuration
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend" # debug only!
+EMAIL_HOST = os.getenv("MAIL_SERVER", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("MAIL_PORT", "587"))
+EMAIL_HOST_USER = os.getenv("MAIL_USERNAME")
+EMAIL_HOST_PASSWORD = os.getenv("MAIL_PASSWORD")
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+# Celery configuration
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = os.getenv("CELERY_TASK_TIME_LIMIT")
+CELERY_BROKER_URL = os.getenv("REDIS_DJANGO_URL")
+CELERY_RESULT_BACKEND = os.getenv("REDIS_DJANGO_URL")
