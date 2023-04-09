@@ -37,7 +37,6 @@ class ApiGetUsers(ListAPIView):
 
 
 class ApiCreateUser(GenericAPIView):
-
     serializer_class = UserCreateSerializer
 
     def post(self, request, *args, **kwargs):
@@ -51,7 +50,6 @@ class ApiCreateUser(GenericAPIView):
 
 
 class ApiGetPutDeleteUser(GenericAPIView):
-
     permission_classes = [IsAuthenticated]
     serializer_class = UserUpdateSerializer
 

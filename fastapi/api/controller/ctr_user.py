@@ -128,13 +128,7 @@ def edit_user(username: str, request: schemas.EditUser, db: Session):
 
 def delete_user(username: str, db: Session):
     """Business logic to delete specific user in db"""
-    user = (
-        db.query(models.User)
-        .filter(
-            models.User.username == username
-        )
-        .first()
-    )
+    user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
