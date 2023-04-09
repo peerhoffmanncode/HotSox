@@ -58,7 +58,9 @@ TEST_USER1 = {
     "social_facebook": "",
     "social_twitter": "",
     "social_spotify": "",
-    "password": "admin",
+    "password": Hash.encrypt("admin"),
+    "is_active": True,
+    "is_superuser": True,
 }
 
 TEST_USER2 = {
@@ -77,7 +79,9 @@ TEST_USER2 = {
     "social_facebook": "",
     "social_twitter": "",
     "social_spotify": "",
-    "password": "testuser2",
+    "password": Hash.encrypt("testuser2"),
+    "is_active": True,
+    "is_superuser": False,
 }
 
 
@@ -85,20 +89,29 @@ TEST_USER2 = {
 def test_db_setup():
     Base.metadata.create_all(bind=engine)
 
-    # creat admin user
-    response = client.post(
-        PREFIX + "/user/",
-        json=TEST_USER1,
-    )
-    response = client.post(
-        PREFIX + "/user/",
-        json=TEST_USER2,
-    )
-    # assert response.status_code == 200
-    data = response.json()
-    # assert "id" in data
+    with Session(engine) as db:
+        # create db object
+        new_user1 = User(**TEST_USER1)
+        new_user2 = User(**TEST_USER2)
+        # write to db / commit!
+        db.add(new_user1)
+        db.add(new_user2)
+        db.commit()
+        db.refresh(new_user1)
+        db.refresh(new_user2)
+
+    # # creat admin user
+    # response = client.post(
+    #     PREFIX + "/user/",
+    #     json=TEST_USER1,
+    # )
+    # response = client.post(
+    #     PREFIX + "/user/",
+    #     json=TEST_USER2,
+    # )
+
     try:
-        yield data
+        yield
         Base.metadata.drop_all(bind=engine)
     except:
         Base.metadata.drop_all(bind=engine)
@@ -121,17 +134,17 @@ def token(username: str, password: str) -> dict:
 
 
 def test_show_users_login_incorrect_cedentials(test_db_setup):
-    response = client.get(PREFIX + "/users/")
+    response = client.get(PREFIX + "/users")
     assert response.status_code == 401
 
 
 def test_show_users_login_correct_cedentials(test_db_setup):
-    response = client.get(PREFIX + "/users/", headers=token("admin", "admin"))
+    response = client.get(PREFIX + "/users", headers=token("admin", "admin"))
     assert response.status_code == 200
 
 
 def test_show_user_admin(test_db_setup):
-    response = client.get(PREFIX + "/user/admin", headers=token("admin", "admin"))
+    response = client.get(PREFIX + "/user", headers=token("admin", "admin"))
     assert response.status_code == 200
     # check for correct user
     with Session(engine) as db:
@@ -143,8 +156,8 @@ def test_show_user_admin(test_db_setup):
 
 
 def test_show_user_that_do_not_exist(test_db_setup):
-    response = client.get(PREFIX + "/user/DoNotExist", headers=token("admin", "admin"))
-    assert response.status_code == 404
+    response = client.get(PREFIX + "/user", headers=token("DoNotExist", "DoNotExist"))
+    assert response.status_code == 401
     # test database if user really do not exist
     with Session(engine) as db:
         db_user = db.query(User).filter(User.username == "DoNotExist").first()
@@ -171,7 +184,7 @@ def test_update_user_admin(test_db_setup):
     }
 
     response = client.put(
-        PREFIX + "/user/admin", json=update_data, headers=token("admin", "admin")
+        PREFIX + "/user", json=update_data, headers=token("admin", "admin")
     )
     assert response.status_code == 202
     assert response.json() == update_data
@@ -324,19 +337,16 @@ def test_create_user_dupliceate(test_db_setup):
 
 
 def test_delete_user(test_db_setup):
-    username = "testuser2"
-    email = "testuser2@testuser2.com"
 
     response = client.request(
         "DELETE",
         PREFIX + "/user",
-        json={"username": username, "email": email},
         headers=token("admin", "admin"),
     )
     assert response.status_code == 204
     # check if element done not exists in the database
     with Session(engine) as db:
-        db_user = db.query(User).filter(User.username == username).first()
+        db_user = db.query(User).filter(User.username == "admin").first()
         assert db_user == None
 
 
@@ -344,10 +354,9 @@ def test_delete_noneexisting_user(test_db_setup):
     response = client.request(
         "DELETE",
         PREFIX + "/user",
-        json={"username": "DoNotExist", "email": "DoNotExist@DoNotExist.com"},
-        headers=token("admin", "admin"),
+        headers=token("DoNotExist", "DoNotExist"),
     )
-    assert response.status_code == 404
+    assert response.status_code == 401
 
 
 @mock.patch("api.controller.ctr_user.uploader.upload")
@@ -367,9 +376,9 @@ def test_user_upload_profilepic(mock_uploader_upload, test_db_setup):
         # send a request to add a profile picture
         with open("./requirements.txt", "rb") as mock_file:
             response = client.post(
-                f"{PREFIX}/user/{db_user.username}/profilepic",
+                f"{PREFIX}/user/profilepic/",
                 files={"file": ("filename", mock_file)},
-                headers=token(username=username, password=password),
+                headers=token(username="testuser2", password="testuser2"),
             )
 
         # check that the response is what we expect
@@ -409,9 +418,9 @@ def test_user_delete_profilepic(
         # send a request to add a profile picture
         with open("./requirements.txt", "rb") as mock_file:
             response = client.post(
-                f"{PREFIX}/user/{db_user.username}/profilepic",
+                f"{PREFIX}/user/profilepic",
                 files={"file": ("filename", mock_file)},
-                headers=token(username=username, password=password),
+                headers=token(username="testuser2", password="testuser2"),
             )
 
         # make a test user and get all pictures
@@ -421,9 +430,8 @@ def test_user_delete_profilepic(
         # send a request to delete a profile picture
         response = client.request(
             "DELETE",
-            f"{PREFIX}/user/{TEST_USER2['username']}/profilepic/{before_delete_profilepics[0].id}",
-            json={"username": TEST_USER2["username"], "email": TEST_USER2["email"]},
-            headers=token(TEST_USER2["username"], TEST_USER2["password"]),
+            f"{PREFIX}/user/profilepic/{before_delete_profilepics[0].id}",
+            headers=token("testuser2", "testuser2"),
         )
 
         # check that the response is what is expect
@@ -440,14 +448,14 @@ def test_user_delete_profilepic(
 
 def test_user_mails_no_mails_in_db(test_db_setup):
     response = client.get(
-        PREFIX + f"/user/mails/{TEST_USER1['username']}",
+        PREFIX + f"/user/mail",
         headers=token("admin", "admin"),
     )
     assert response.status_code == 404
     assert response.json() == {"detail": "No mail available for user <admin>"}
 
 
-@mock.patch("api.controller.ctr_user.FastMail.send_message")
+@mock.patch("api.controller.ctr_user.celery_send_mail_to_user")
 def test_user_mail_send(mock_send_message, test_db_setup):
     # setup mock
     mock_send_message.return_value = {
@@ -456,7 +464,7 @@ def test_user_mail_send(mock_send_message, test_db_setup):
     }
 
     response = client.post(
-        PREFIX + f"/user/mail/{TEST_USER1['username']}",
+        PREFIX + f"/user/mail",
         headers=token("admin", "admin"),
         json={
             "subject": "TestMailSubject",
@@ -474,7 +482,7 @@ def test_user_mail_send(mock_send_message, test_db_setup):
 
     # double check database feedback
     response = client.get(
-        PREFIX + f"/user/mails/{TEST_USER1['username']}",
+        PREFIX + f"/user/mail",
         headers=token("admin", "admin"),
     )
     assert response.status_code == 200
@@ -484,7 +492,7 @@ def test_user_mail_send(mock_send_message, test_db_setup):
 
 def test_user_chats_no_chats(test_db_setup):
     response = client.get(
-        PREFIX + f"/user/chats/{TEST_USER1['username']}",
+        PREFIX + f"/user/chats",
         headers=token("admin", "admin"),
     )
     assert response.status_code == 404
@@ -493,7 +501,7 @@ def test_user_chats_no_chats(test_db_setup):
 
 def test_user_chats_no_chats_between_users(test_db_setup):
     response = client.get(
-        PREFIX + f"/user/chat/{TEST_USER1['username']}/{TEST_USER2['username']}",
+        PREFIX + f"/user/chat/{TEST_USER2['username']}",
         headers=token("admin", "admin"),
     )
     assert response.status_code == 404

@@ -138,7 +138,7 @@ def delete_user(username: str, db: Session):
     # delete the user with custom method
     user.delete(db)
     db.commit()
-    return {"message": f"Success! User <{request.username}> was deleted!"}
+    return {"message": f"Success! User <{username}> was deleted!"}
 
 
 ##
