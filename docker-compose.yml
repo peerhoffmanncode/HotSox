@@ -72,7 +72,10 @@ services:
         - REDIS_URL=${REDIS_FASTAPI_URL}
         - CELERY_BROKER=${REDIS_FASTAPI_URL}
         - CELERY_BACKEND=${REDIS_FASTAPI_URL}
-    command: bash -c "celery -A celery_app:celery_app worker --loglevel=INFO --concurrency=2"
+    command: bash -c "cd fastapi &&
+                      celery -A celery_app worker --loglevel=INFO --concurrency=2"
+    volumes:
+      - .:/app
     depends_on:
       - redis-fastapi
       - fastapi

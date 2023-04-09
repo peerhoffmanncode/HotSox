@@ -14,8 +14,13 @@ def show_all(db: Session):
     return sock
 
 
-def show_specific(id: int, db: Session):
-    sock = db.query(models.Sock).filter(models.Sock.id == id).first()
+def show_specific(username: str, id: int, db: Session):
+    query = db.query(models.Sock).join(models.User)
+    sock = query.filter(
+        models.User.username == username,
+        models.Sock.id == id,
+    ).first()
+
     if not sock:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

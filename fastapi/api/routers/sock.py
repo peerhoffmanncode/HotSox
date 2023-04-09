@@ -17,7 +17,11 @@ router = APIRouter(
 )
 
 
-@router.get("s/", response_model=list[schemas.ShowSock])
+@router.get(
+    "s/",
+    response_model=list[schemas.ShowSock],
+    dependencies=[Depends(oauth2.check_active)],
+)
 async def get_all_user(
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
@@ -25,13 +29,17 @@ async def get_all_user(
     return ctr_sock.show_all(db)
 
 
-@router.get("/{id}", response_model=schemas.ShowSock)
+@router.get(
+    "/{id}",
+    response_model=schemas.ShowSock,
+    dependencies=[Depends(oauth2.check_active)],
+)
 async def get_user(
     id: int,
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return ctr_sock.show_specific(id, db)
+    return ctr_sock.show_specific(current_user.username, id, db)
 
 
 # @router.post("/", response_model=schemas.ShowUser)

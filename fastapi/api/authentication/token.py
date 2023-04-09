@@ -20,8 +20,13 @@ def verify_token(token: str, credentials_exception):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub", None)
+        active: str = payload.get("active", False)
+        superuser: str = payload.get("superuser", False)
         if username is None:
             raise credentials_exception
-        token_data = schemas.TokenData(username=username)
+        token_data = schemas.TokenData(
+            username=username, active=bool(active), superuser=bool(superuser)
+        )
+        return token_data
     except JWTError:
         raise credentials_exception

@@ -110,7 +110,7 @@ def mock_upload_file():
         yield mocked
 
 
-def login(username: str, password: str) -> dict:
+def token(username: str, password: str) -> dict:
     response = client.post(
         PREFIX + "/token/",
         data={"username": username, "password": password},
@@ -126,12 +126,12 @@ def test_show_users_login_incorrect_cedentials(test_db_setup):
 
 
 def test_show_users_login_correct_cedentials(test_db_setup):
-    response = client.get(PREFIX + "/users/", headers=login("admin", "admin"))
+    response = client.get(PREFIX + "/users/", headers=token("admin", "admin"))
     assert response.status_code == 200
 
 
 def test_show_user_admin(test_db_setup):
-    response = client.get(PREFIX + "/user/admin", headers=login("admin", "admin"))
+    response = client.get(PREFIX + "/user/admin", headers=token("admin", "admin"))
     assert response.status_code == 200
     # check for correct user
     with Session(engine) as db:
@@ -143,7 +143,7 @@ def test_show_user_admin(test_db_setup):
 
 
 def test_show_user_that_do_not_exist(test_db_setup):
-    response = client.get(PREFIX + "/user/DoNotExist", headers=login("admin", "admin"))
+    response = client.get(PREFIX + "/user/DoNotExist", headers=token("admin", "admin"))
     assert response.status_code == 404
     # test database if user really do not exist
     with Session(engine) as db:
@@ -171,7 +171,7 @@ def test_update_user_admin(test_db_setup):
     }
 
     response = client.put(
-        PREFIX + "/user/admin", json=update_data, headers=login("admin", "admin")
+        PREFIX + "/user/admin", json=update_data, headers=token("admin", "admin")
     )
     assert response.status_code == 202
     assert response.json() == update_data
@@ -206,7 +206,7 @@ def test_update_user_that_do_not_exist(test_db_setup):
     }
 
     response = client.put(
-        PREFIX + "/user/DoNotExist", json=update_data, headers=login("admin", "admin")
+        PREFIX + "/user/DoNotExist", json=update_data, headers=token("admin", "admin")
     )
     assert response.status_code == 404
     # check that the user do not exist in the database
@@ -331,7 +331,7 @@ def test_delete_user(test_db_setup):
         "DELETE",
         PREFIX + "/user",
         json={"username": username, "email": email},
-        headers=login("admin", "admin"),
+        headers=token("admin", "admin"),
     )
     assert response.status_code == 204
     # check if element done not exists in the database
@@ -345,7 +345,7 @@ def test_delete_noneexisting_user(test_db_setup):
         "DELETE",
         PREFIX + "/user",
         json={"username": "DoNotExist", "email": "DoNotExist@DoNotExist.com"},
-        headers=login("admin", "admin"),
+        headers=token("admin", "admin"),
     )
     assert response.status_code == 404
 
@@ -369,7 +369,7 @@ def test_user_upload_profilepic(mock_uploader_upload, test_db_setup):
             response = client.post(
                 f"{PREFIX}/user/{db_user.username}/profilepic",
                 files={"file": ("filename", mock_file)},
-                headers=login(username=username, password=password),
+                headers=token(username=username, password=password),
             )
 
         # check that the response is what we expect
@@ -411,7 +411,7 @@ def test_user_delete_profilepic(
             response = client.post(
                 f"{PREFIX}/user/{db_user.username}/profilepic",
                 files={"file": ("filename", mock_file)},
-                headers=login(username=username, password=password),
+                headers=token(username=username, password=password),
             )
 
         # make a test user and get all pictures
@@ -423,7 +423,7 @@ def test_user_delete_profilepic(
             "DELETE",
             f"{PREFIX}/user/{TEST_USER2['username']}/profilepic/{before_delete_profilepics[0].id}",
             json={"username": TEST_USER2["username"], "email": TEST_USER2["email"]},
-            headers=login(TEST_USER2["username"], TEST_USER2["password"]),
+            headers=token(TEST_USER2["username"], TEST_USER2["password"]),
         )
 
         # check that the response is what is expect
@@ -441,7 +441,7 @@ def test_user_delete_profilepic(
 def test_user_mails_no_mails_in_db(test_db_setup):
     response = client.get(
         PREFIX + f"/user/mails/{TEST_USER1['username']}",
-        headers=login("admin", "admin"),
+        headers=token("admin", "admin"),
     )
     assert response.status_code == 404
     assert response.json() == {"detail": "No mail available for user <admin>"}
@@ -457,7 +457,7 @@ def test_user_mail_send(mock_send_message, test_db_setup):
 
     response = client.post(
         PREFIX + f"/user/mail/{TEST_USER1['username']}",
-        headers=login("admin", "admin"),
+        headers=token("admin", "admin"),
         json={
             "subject": "TestMailSubject",
             "content": "TestMailContent",
@@ -475,7 +475,7 @@ def test_user_mail_send(mock_send_message, test_db_setup):
     # double check database feedback
     response = client.get(
         PREFIX + f"/user/mails/{TEST_USER1['username']}",
-        headers=login("admin", "admin"),
+        headers=token("admin", "admin"),
     )
     assert response.status_code == 200
     assert response.json()[0]["content"] == "TestMailContent"
@@ -485,7 +485,7 @@ def test_user_mail_send(mock_send_message, test_db_setup):
 def test_user_chats_no_chats(test_db_setup):
     response = client.get(
         PREFIX + f"/user/chats/{TEST_USER1['username']}",
-        headers=login("admin", "admin"),
+        headers=token("admin", "admin"),
     )
     assert response.status_code == 404
     assert response.json() == {"detail": "No chats available for user <admin>"}
@@ -494,7 +494,7 @@ def test_user_chats_no_chats(test_db_setup):
 def test_user_chats_no_chats_between_users(test_db_setup):
     response = client.get(
         PREFIX + f"/user/chat/{TEST_USER1['username']}/{TEST_USER2['username']}",
-        headers=login("admin", "admin"),
+        headers=token("admin", "admin"),
     )
     assert response.status_code == 404
     assert response.json() == {

@@ -6,16 +6,43 @@ from fastapi import HTTPException, status, UploadFile, BackgroundTasks
 from fastapi.responses import JSONResponse
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from ..authentication.hashing import Hash
-
 from datetime import datetime
-
 from cloudinary import api, uploader
+
+from celery_app import (
+    celery_send_mail_to_user,
+    celery_send_mail_to_all,
+    celery_send_mail_to_all_fanout,
+)
+
+
+def fastapi_send_mail_background_task(
+    background_tasks: BackgroundTasks, message: MessageSchema
+):
+    """utility function to send an email in a background task"""
+    # build eMail Config
+    conf = ConnectionConfig(
+        MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
+        MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
+        MAIL_FROM=os.getenv("MAIL_FROM"),
+        MAIL_PORT=int(os.getenv("MAIL_PORT")),
+        MAIL_SERVER=os.getenv("MAIL_SERVER"),
+        MAIL_FROM_NAME=os.getenv("MAIL_FROM_NAME"),
+        MAIL_STARTTLS=True,
+        MAIL_SSL_TLS=False,
+        USE_CREDENTIALS=True,
+        # TEMPLATE_FOLDER="./templates/email",
+    )
+
+    # send the mail in the background
+    background_tasks.add_task(FastMail(conf).send_message, message)
 
 
 ##
 ## Users
 ##
 def show_all_user(db: Session):
+    """Business logic to show all users in db"""
     users = db.query(models.User).order_by(models.User.id.desc()).all()
     if not users:
         raise HTTPException(
@@ -26,6 +53,7 @@ def show_all_user(db: Session):
 
 
 def show_specific_user(username: str, db: Session):
+    """Business logic to show specific user in db"""
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
         raise HTTPException(
@@ -36,6 +64,8 @@ def show_specific_user(username: str, db: Session):
 
 
 def create_user(request: schemas.CreateUser, db: Session):
+    """Business logic to create specific user in db"""
+
     # hash password before storing it to the db!
     request.password = Hash.encrypt(request.password)
 
@@ -71,6 +101,7 @@ def create_user(request: schemas.CreateUser, db: Session):
 
 
 def edit_user(username: str, request: schemas.EditUser, db: Session):
+    """Business logic to edit specific user in db"""
     current_user = (
         db.query(models.User).filter(models.User.username == username).first()
     )
@@ -95,18 +126,19 @@ def edit_user(username: str, request: schemas.EditUser, db: Session):
     return current_user
 
 
-def delete_user(request: schemas.SimplyUser, db: Session):
+def delete_user(username: str, db: Session):
+    """Business logic to delete specific user in db"""
     user = (
         db.query(models.User)
         .filter(
-            models.User.username == request.username, models.User.email == request.email
+            models.User.username == username
         )
         .first()
     )
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with the username <{request.username}> and email <{request.email}> is not available!",
+            detail=f"User with the username <{username}> is not available!",
         )
 
     # delete the user with custom method
@@ -119,6 +151,7 @@ def delete_user(request: schemas.SimplyUser, db: Session):
 ## Profile pic
 ##
 def create_user_pic(username: str, file: UploadFile, db: Session):
+    """Business logic to create a profilepic for specific user in db"""
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
         raise HTTPException(
@@ -148,6 +181,7 @@ def create_user_pic(username: str, file: UploadFile, db: Session):
 
 
 def delete_user_pic(username: str, id: int, db: Session):
+    """Business logic to delete a profilepic for specific user in db"""
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
         raise HTTPException(
@@ -175,6 +209,7 @@ def delete_user_pic(username: str, id: int, db: Session):
 ## Mail
 ##
 def show_all_mails(username: str, db: Session):
+    """Business logic to show all mails in db"""
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
         raise HTTPException(
@@ -197,6 +232,7 @@ async def send_mail_background(
     message_body: schemas.MessageMailSending,
     db: Session,
 ):
+    """Business logic to send a mail to specific user and store it to db"""
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
         raise HTTPException(
@@ -204,20 +240,6 @@ async def send_mail_background(
             detail=f"User with the username <{username}> is not available",
         )
     try:
-        # build eMail Config
-        conf = ConnectionConfig(
-            MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
-            MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
-            MAIL_FROM=os.getenv("MAIL_FROM"),
-            MAIL_PORT=int(os.getenv("MAIL_PORT")),
-            MAIL_SERVER=os.getenv("MAIL_SERVER"),
-            MAIL_FROM_NAME=os.getenv("MAIL_FROM_NAME"),
-            MAIL_STARTTLS=True,
-            MAIL_SSL_TLS=False,
-            USE_CREDENTIALS=True,
-            # TEMPLATE_FOLDER="./templates/email",
-        )
-
         # build eMail Schema
         message = MessageSchema(
             subject=message_body.dict().get("subject", "A email from hotsox"),
@@ -225,9 +247,18 @@ async def send_mail_background(
             body=message_body.dict().get("content", "A email from hotsox"),
             subtype="html",
         )
+        # fastapi_send_mail_background_task(background_tasks, message)
 
-        # send the mail in the background
-        background_tasks.add_task(FastMail(conf).send_message, message)
+        celery_send_mail_to_user.delay(
+            email=user.email,
+            subject=message_body.dict().get(
+                "subject", "eMail form then Hotsox project fastapi"
+            ),
+            content=message_body.dict().get(
+                "content",
+                "sad things happen, we miss some important message this time! stay safe and believe in the unicorn!",
+            ),
+        )
 
         # create db object
         new_mail = models.MessageMail(user_id=user.id, **message_body.dict())
@@ -243,7 +274,7 @@ async def send_mail_background(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error sending email to <{user.username}>, <{user.email}>",
+            detail=f"Error sending email to <{user.username}>, <{user.email}>, {e}",
         )
 
 
@@ -251,6 +282,7 @@ async def send_mail_background(
 ## Chats
 ##
 def show_all_chats(username: str, db: Session):
+    """Business logic to show all chats for specific user"""
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
         raise HTTPException(
@@ -268,6 +300,7 @@ def show_all_chats(username: str, db: Session):
 
 
 def show_specific_chat(username: str, receiver: str, db: Session):
+    """Business logic to show all chats between specific users"""
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
         raise HTTPException(
