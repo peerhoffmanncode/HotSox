@@ -11,7 +11,7 @@ class SimplyUser(BaseModel):
     username: str | None
     # first_name: str | None
     # last_name: str | None
-    email: str | None
+    email: EmailStr | None
 
     class Config:
         orm_mode = True
@@ -102,18 +102,18 @@ class ShowSock(BaseModel):
     info_joining_date: date | None
     info_name: str | None
     info_about: str | None
-    info_color: int | None
-    info_fabric: int | None
-    info_fabric_thickness: int | None
-    info_brand: int | None
-    info_type: int | None
-    info_size: int | None
+    info_color: int | None = Field(1, ge=1, le=10)
+    info_fabric: int | None = Field(1, ge=1, le=7)
+    info_fabric_thickness: int | None = Field(1, ge=1, le=7)
+    info_brand: int | None = Field(1, ge=1, le=13)
+    info_type: int | None = Field(1, ge=1, le=9)
+    info_size: int | None = Field(1, ge=1, le=7)
     info_age: int | None
     info_separation_date: date | None
-    info_condition: int | None
+    info_condition: int | None = Field(1, ge=1, le=12)
     info_holes: int | None
     info_kilometers: int | None
-    info_inoutdoor: int | None
+    info_inoutdoor: int | None = Field(1, ge=1, le=9)
     info_washed: int | None
     info_special: str | None
     profile_pictures: Optional[list[SockProfilePicture]]
@@ -154,7 +154,7 @@ class ShowUser(BaseModel):
     # password: str
     first_name: str
     last_name: str
-    email: str
+    email: EmailStr
     last_login: Optional[datetime]
     is_superuser: bool
     is_staff: bool
@@ -162,7 +162,7 @@ class ShowUser(BaseModel):
     date_joined: Optional[datetime]
     info_about: Optional[str]
     info_birthday: Optional[date]
-    info_gender: Optional[int | None] = 0
+    info_gender: Optional[int | None] = Field(1, ge=1, le=8)
     location_city: Optional[str]
     location_latitude: Optional[float]
     location_longitude: Optional[float]
@@ -190,7 +190,7 @@ class EditUser(BaseModel):
     email: EmailStr
     info_about: str | None
     info_birthday: date
-    info_gender: int
+    info_gender: int = Field(1, ge=1, le=8)
     location_city: str | None
     location_latitude: float | None
     location_longitude: float | None
@@ -204,6 +204,7 @@ class EditUser(BaseModel):
         orm_mode = True
 
     @validator("info_birthday")
+    @classmethod
     def at_least_18years_oĺd(cls, value):
         if isinstance(value, date):
             difference = date.today() - value
