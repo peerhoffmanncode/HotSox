@@ -31,7 +31,9 @@ router = APIRouter(
 ## Image
 ##
 @router.post(
-    "/profilepic", status_code=201, dependencies=[Depends(oauth2.check_active)]
+    "/profilepic",
+    status_code=201,
+    dependencies=[Depends(oauth2.check_active)],
 )
 async def add_user_profile_picture(
     file: UploadFile = File(...),

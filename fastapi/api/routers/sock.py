@@ -22,6 +22,7 @@ router = APIRouter(
     "s/",
     response_model=list[schemas.ShowSock],
     dependencies=[Depends(oauth2.check_active)],
+    status_code=200,
 )
 async def get_all_socks(
     db: Session = Depends(get_db),
@@ -34,6 +35,7 @@ async def get_all_socks(
     "/{id}",
     response_model=schemas.ShowSock,
     dependencies=[Depends(oauth2.check_active)],
+    status_code=200,
 )
 async def get_sock(
     id: int,

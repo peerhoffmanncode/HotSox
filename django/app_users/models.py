@@ -11,6 +11,8 @@ from cloudinary.models import CloudinaryField
 
 from app_geo.utilities import GeoLocation
 
+from .tasks import destroy_profilepicture_on_cloud
+
 # CHOICES FOR USER
 from .models_choices import (
     GENDER_CHOICES,
@@ -185,7 +187,9 @@ class UserProfilePicture(models.Model):
         """Function to delete a UserProfilePicture
         delete all pictures form the cloud as well!"""
         if self.profile_picture.public_id:
-            uploader.destroy(self.profile_picture.public_id)
+            # call to celery
+            destroy_profilepicture_on_cloud.delay(self.profile_picture.public_id)
+            # uploader.destroy(self.profile_picture.public_id)
         super().delete(*args, **kwargs)
 
     def __str__(self) -> str:
@@ -369,7 +373,9 @@ class SockProfilePicture(models.Model):
         """Function to delete a UserProfilePicture
         delete all pictures form the cloud as well!"""
         if self.profile_picture.public_id:
-            uploader.destroy(self.profile_picture.public_id)
+            # call to celery
+            destroy_profilepicture_on_cloud.delay(self.profile_picture.public_id)
+            # uploader.destroy(self.profile_picture.public_id)
 
         super().delete(*args, **kwargs)
 

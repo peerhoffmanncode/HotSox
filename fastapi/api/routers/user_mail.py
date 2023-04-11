@@ -34,6 +34,7 @@ router = APIRouter(
     "/mail",
     response_model=list[schemas.MessageMail_with_id],
     dependencies=[Depends(oauth2.check_active)],
+    status_code=200,
 )
 async def get_all_mail(
     db: Session = Depends(get_db),
@@ -46,6 +47,7 @@ async def get_all_mail(
     "/mail",
     response_model=schemas.MessageMail_with_id,
     dependencies=[Depends(oauth2.check_active)],
+    status_code=201,
 )
 async def send_mail(
     background_tasks: BackgroundTasks,
@@ -61,6 +63,7 @@ async def send_mail(
 @router.delete(
     "/mail/{id}",
     dependencies=[Depends(oauth2.check_active)],
+    status_code=204,
 )
 async def delete_mail(
     id: int,

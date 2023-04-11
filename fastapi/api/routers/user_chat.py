@@ -33,6 +33,7 @@ router = APIRouter(
     "/chats",
     response_model=list[schemas.MessageChat],
     dependencies=[Depends(oauth2.check_active)],
+    status_code=200,
 )
 async def get_all_chats(
     db: Session = Depends(get_db),
@@ -45,6 +46,7 @@ async def get_all_chats(
     "/chat/{receiver}",
     response_model=list[schemas.MessageChat],
     dependencies=[Depends(oauth2.check_active)],
+    status_code=200,
 )
 async def get_chats(
     receiver: str,

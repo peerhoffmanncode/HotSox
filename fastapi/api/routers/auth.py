@@ -11,7 +11,10 @@ import os
 router = APIRouter(prefix=os.environ.get("API_URL", "/api"), tags=["Authentication"])
 
 
-@router.post("/token")
+@router.post(
+    "/token",
+    status_code=200,
+)
 async def token(
     request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(setup.get_db)
 ):
