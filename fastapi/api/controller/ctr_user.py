@@ -10,8 +10,6 @@ from datetime import datetime
 from cloudinary import api, uploader
 
 
-
-
 ##
 ## Users
 ##
