@@ -2,13 +2,21 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 import os
 from dotenv import load_dotenv
-from celery import Celery
-import yagmail
 
 load_dotenv("../.env")
 if os.environ.get("SECRET_KEY", None) is None:
     print("can not find env file!")
     exit(-1)
+
+# from sqlalchemy.orm import Session
+from celery import Celery
+import yagmail
+from cloudinary import uploader
+
+from api.database.setup import celery_db
+
+# from api.database.models import UserProfilePicture, SockProfilePicture
+
 
 # Setup celery app
 celery_app = Celery(__name__)
@@ -45,3 +53,9 @@ def celery_send_mail_to_all_fanout(emails: list, subject: str, content: list):
     for email in emails:
         celery_send_mail_to_user(email, subject, content)
     return {"message": f"email was send to {emails}"}
+
+
+@celery_app.task(name="destroy_profilepicture_on_cloud")
+def destroy_profilepicture_on_cloud(public_id):
+    uploader.destroy(public_id)
+    return {"message": f"profile on cloud storage destroyed!"}

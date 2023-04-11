@@ -336,7 +336,10 @@ def test_create_user_dupliceate(test_db_setup):
     }
 
 
-def test_delete_user(test_db_setup):
+@mock.patch("api.database.models.destroy_profilepicture_on_cloud")
+def test_delete_user(mock_celery, test_db_setup):
+    mock_celery.return_value = {"message": f"user profile picture was deleted"}
+
     response = client.request(
         "DELETE",
         PREFIX + "/user",
@@ -349,7 +352,10 @@ def test_delete_user(test_db_setup):
         assert db_user == None
 
 
-def test_delete_noneexisting_user(test_db_setup):
+@mock.patch("api.database.models.destroy_profilepicture_on_cloud")
+def test_delete_noneexisting_user(mock_celery, test_db_setup):
+    mock_celery.return_value = {"message": f"user profile picture was deleted"}
+
     response = client.request(
         "DELETE",
         PREFIX + "/user",
@@ -396,10 +402,14 @@ def test_user_upload_profilepic(mock_uploader_upload, test_db_setup):
         )
 
 
+@mock.patch("api.database.models.destroy_profilepicture_on_cloud")
 @mock.patch("api.database.models.uploader.destroy")
 @mock.patch("api.controller.ctr_user.uploader.upload")
 def test_user_delete_profilepic(
-    mock_uploader_upload, mock_uploader_destroy, test_db_setup
+    mock_uploader_upload,
+    mock_uploader_destroy,
+    mock_celery,
+    test_db_setup,
 ):
     with Session(engine) as db:
         username = TEST_USER2["username"]
@@ -410,6 +420,7 @@ def test_user_delete_profilepic(
             "url": "https://cloudinary.com/mock_image.jpg"
         }
         mock_uploader_destroy.return_value = True
+        mock_celery.return_value = {"message": f"user profile picture was deleted"}
 
         # make a test user
         db_user = db.query(User).filter(User.username == username).first()

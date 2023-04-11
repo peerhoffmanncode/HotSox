@@ -16,7 +16,7 @@ from api.database.setup import engine, get_db
 from api.database import models
 
 # import routers
-from api.routers import auth, user, sock
+from api.routers import auth, user, user_pic, user_mail, user_chat, sock, sock_pic
 
 
 # Setup Cloudinary
@@ -41,4 +41,8 @@ app = FastAPI(
 # include API routs
 app.include_router(auth.router)
 app.include_router(user.router)
+app.include_router(user_pic.router)
+app.include_router(user_mail.router)
+app.include_router(user_chat.router)
 app.include_router(sock.router)
+app.include_router(sock_pic.router)

@@ -41,3 +41,7 @@ Base = declarative_base()
 def get_db():
     with SessionLocal() as db:
         yield db
+
+
+def celery_db():
+    return SessionLocal()

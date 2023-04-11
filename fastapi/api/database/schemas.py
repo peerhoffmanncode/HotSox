@@ -94,7 +94,7 @@ class SockLikes(BaseModel):
 
 # basic schema for sock profile pics
 class SockProfilePicture(BaseModel):
-    # id: int | None
+    id: int | None
     profile_picture: str | None
     # sock_id: str | None
 
@@ -131,6 +131,35 @@ class ShowSock(BaseModel):
         allow_population_by_field_name = True
 
 
+# basic schema for socks
+class CreateUpdateSock(BaseModel):
+    # id: int | None = Field(..., alias="id_sock")
+    # user_id: int
+    # info_joining_date: date | None
+    info_name: str | None
+    info_about: str | None
+    info_color: int | None = Field(1, ge=1, le=10)
+    info_fabric: int | None = Field(1, ge=1, le=7)
+    info_fabric_thickness: int | None = Field(1, ge=1, le=7)
+    info_brand: int | None = Field(1, ge=1, le=13)
+    info_type: int | None = Field(1, ge=1, le=9)
+    info_size: int | None = Field(1, ge=1, le=7)
+    info_age: int | None
+    info_separation_date: date | None
+    info_condition: int | None = Field(1, ge=1, le=12)
+    info_holes: int | None
+    info_kilometers: int | None
+    info_inoutdoor: int | None = Field(1, ge=1, le=9)
+    info_washed: int | None
+    info_special: str | None
+    # profile_pictures: Optional[list[SockProfilePicture]]
+    # sock_likes: Optional[list[SockLikes]]
+
+    class Config:
+        orm_mode = True
+        allow_population_by_field_name = True
+
+
 # basic schema for user matches
 class UserMatch(BaseModel):
     # id: int | None
@@ -146,7 +175,7 @@ class UserMatch(BaseModel):
 
 # basic schema for user profile pics
 class UserProfilePicture(BaseModel):
-    # id: int | None
+    id: int | None
     profile_picture: str | None
     # user_id: str | None
 

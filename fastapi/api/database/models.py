@@ -15,6 +15,8 @@ from cloudinary import uploader
 from .setup import Base
 from datetime import datetime
 
+from celery_app import destroy_profilepicture_on_cloud
+
 
 class User(Base):
     __tablename__ = "app_users_user"
@@ -157,7 +159,9 @@ class UserProfilePicture(Base):
         public_id = self.profile_picture.split("/")[-1]
         public_id = public_id[: public_id.find(".")]
         if public_id:
-            uploader.destroy(public_id)
+            # call to celery
+            destroy_profilepicture_on_cloud.delay(public_id)
+            # uploader.destroy(public_id)
         db.delete(self)
 
 
@@ -198,7 +202,7 @@ class Sock(Base):
         Integer,
         ForeignKey("app_users_user.id", ondelete="CASCADE"),
     )
-    info_joining_date = Column(DateTime)
+    info_joining_date = Column(DateTime, default=datetime.utcnow)
     info_name = Column(String)
     info_about = Column(String)
     info_color = Column(Integer)
@@ -279,7 +283,9 @@ class SockProfilePicture(Base):
         public_id = self.profile_picture.split("/")[-1]
         public_id = public_id[: public_id.find(".")]
         if public_id:
-            uploader.destroy(public_id)
+            # call to celery
+            destroy_profilepicture_on_cloud.delay(public_id)
+            # uploader.destroy(public_id)
         db.delete(self)
 
 

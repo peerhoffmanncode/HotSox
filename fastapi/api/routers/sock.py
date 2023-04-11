@@ -9,6 +9,7 @@ from ..authentication import oauth2
 # load business logic
 from ..controller import ctr_sock
 
+
 import os
 
 # build routes
@@ -22,7 +23,7 @@ router = APIRouter(
     response_model=list[schemas.ShowSock],
     dependencies=[Depends(oauth2.check_active)],
 )
-async def get_all_user(
+async def get_all_socks(
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
@@ -34,7 +35,7 @@ async def get_all_user(
     response_model=schemas.ShowSock,
     dependencies=[Depends(oauth2.check_active)],
 )
-async def get_user(
+async def get_sock(
     id: int,
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
@@ -42,6 +43,39 @@ async def get_user(
     return ctr_sock.show_specific(current_user.username, id, db)
 
 
-# @router.post("/", response_model=schemas.ShowUser)
-# def create_user(request: schemas.User, db: Session = Depends(get_db)):
-#     return create(request, db)
+@router.post("/", response_model=schemas.ShowSock, status_code=201)
+async def create_sock(
+    request: schemas.CreateUpdateSock,
+    db: Session = Depends(get_db),
+    current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
+):
+    return ctr_sock.create_sock(current_user.username, request, db)
+
+
+@router.put(
+    "/{id}",
+    response_model=schemas.ShowSock,
+    status_code=202,
+    dependencies=[Depends(oauth2.check_active)],
+)
+async def edit_sock(
+    id: int,
+    request: schemas.CreateUpdateSock,
+    db: Session = Depends(get_db),
+    current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
+):
+    return ctr_sock.edit_sock(current_user.username, id, request, db)
+
+
+# permission handling superuser!
+@router.delete(
+    "/{id}", status_code=204, dependencies=[Depends(oauth2.check_active)]
+)  # , response_model=schemas.SimplyUser)
+async def delete_sock(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
+):
+    # as long as response is set to 204
+    # we do net get a JSON as return :-( !
+    return ctr_sock.delete_sock(current_user.username, id, db)
