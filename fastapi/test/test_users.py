@@ -454,7 +454,7 @@ def test_user_mails_no_mails_in_db(test_db_setup):
     assert response.json() == {"detail": "No mail available for user <admin>"}
 
 
-@mock.patch("api.controller.ctr_user.celery_send_mail_to_user")
+@mock.patch("api.controller.ctr_mail.celery_send_mail_to_user")
 def test_user_mail_send(mock_send_message, test_db_setup):
     # setup mock
     mock_send_message.return_value = {
