@@ -64,6 +64,13 @@ class MessageMail(BaseModel):
         orm_mode = True
 
 
+class MessageMail_with_id(MessageMail):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
 # basic schema for sending mails
 class MessageMailSending(BaseModel):
     # id: int | None

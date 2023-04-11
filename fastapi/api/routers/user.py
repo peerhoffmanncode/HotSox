@@ -17,7 +17,7 @@ from ..database import models, schemas
 from ..authentication import oauth2
 
 # load business logic
-from ..controller import ctr_user
+from ..controller import ctr_user, ctr_user_pic, ctr_mail, ctr_chat
 
 import os
 
@@ -93,7 +93,7 @@ async def add_user_profile_picture(
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return ctr_user.create_user_pic(current_user.username, file, db)
+    return ctr_user_pic.create_user_pic(current_user.username, file, db)
 
 
 @router.delete(
@@ -104,7 +104,7 @@ async def delete_user_profile_picture(
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return ctr_user.delete_user_pic(current_user.username, id, db)
+    return ctr_user_pic.delete_user_pic(current_user.username, id, db)
 
 
 ##
@@ -112,19 +112,19 @@ async def delete_user_profile_picture(
 ##
 @router.get(
     "/mail",
-    response_model=list[schemas.MessageMail],
+    response_model=list[schemas.MessageMail_with_id],
     dependencies=[Depends(oauth2.check_active)],
 )
 async def get_all_mail(
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return ctr_user.show_all_mails(current_user.username, db)
+    return ctr_mail.show_all_mails(current_user.username, db)
 
 
 @router.post(
     "/mail",
-    response_model=schemas.MessageMailSending,
+    response_model=schemas.MessageMail_with_id,
     dependencies=[Depends(oauth2.check_active)],
 )
 async def send_mail(
@@ -133,9 +133,23 @@ async def send_mail(
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return await ctr_user.send_mail_background(
+    return await ctr_mail.send_mail_background(
         background_tasks, current_user.username, message_body, db
     )
+
+
+@router.delete(
+    "/mail/{id}",
+    dependencies=[Depends(oauth2.check_active)],
+)
+async def delete_mail(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
+):
+    # as long as response is set to 204
+    # we do net get a JSON as return :-( !
+    return ctr_mail.delete_mail(current_user.username, id, db)
 
 
 ##
@@ -150,8 +164,7 @@ async def get_all_chats(
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    all_chats = ctr_user.show_all_chats(current_user.username, db)
-    return all_chats
+    return ctr_chat.show_all_chats(current_user.username, db)
 
 
 @router.get(
@@ -164,4 +177,4 @@ async def get_chats(
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return ctr_user.show_specific_chat(current_user.username, receiver, db)
+    return ctr_chat.show_specific_chat(current_user.username, receiver, db)
