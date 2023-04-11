@@ -337,7 +337,6 @@ def test_create_user_dupliceate(test_db_setup):
 
 
 def test_delete_user(test_db_setup):
-
     response = client.request(
         "DELETE",
         PREFIX + "/user",
