@@ -1,13 +1,7 @@
-import os
 from sqlalchemy.orm import Session
-from sqlalchemy import exc, or_
-from ..database import models, schemas
-from fastapi import HTTPException, status, UploadFile, BackgroundTasks
-from fastapi.responses import JSONResponse
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
-from ..authentication.hashing import Hash
-from datetime import datetime
-from cloudinary import api, uploader
+from sqlalchemy import or_, and_
+from ..database import models
+from fastapi import HTTPException, status
 
 
 ##
@@ -21,7 +15,12 @@ def show_all_chats(username: str, db: Session):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with the username <{username}> is not available",
         )
-    chats = db.query(models.MessageChat).filter(models.MessageChat.user == user).all()
+
+    chats = (
+        db.query(models.MessageChat)
+        .filter((models.MessageChat.user == user) | (models.MessageChat.other == user))
+        .all()
+    )
     if not chats:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -45,10 +44,23 @@ def show_specific_chat(username: str, receiver: str, db: Session):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Receiver with the username <{receiver}> is not available",
         )
-
+    if user == other:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Receiver and sender are the same <{receiver}>, you can not chat with yourself!",
+        )
     chats = (
         db.query(models.MessageChat)
-        .filter(models.MessageChat.user == user, models.MessageChat.other == other)
+        .filter(
+            or_(
+                and_(
+                    models.MessageChat.user == user, models.MessageChat.other == other
+                ),
+                and_(
+                    models.MessageChat.user == other, models.MessageChat.other == user
+                ),
+            )
+        )
         .all()
     )
     if not chats:

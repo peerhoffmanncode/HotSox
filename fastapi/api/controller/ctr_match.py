@@ -1,9 +1,7 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
-from ..database import models, schemas
+from ..database import models
 from fastapi import HTTPException, status
-import uuid
-from api.utilities.pre_prediction_algorithm import PrePredictionAlgorithm
+
 
 
 def get_all_matches(username: str, db: Session):

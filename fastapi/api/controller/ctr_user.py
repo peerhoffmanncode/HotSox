@@ -1,14 +1,8 @@
-import os
 from sqlalchemy.orm import Session
-from sqlalchemy import exc, or_
+from sqlalchemy import exc
 from ..database import models, schemas
-from fastapi import HTTPException, status, UploadFile, BackgroundTasks
-from fastapi.responses import JSONResponse
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from fastapi import HTTPException, status
 from ..authentication.hashing import Hash
-from datetime import datetime
-from cloudinary import api, uploader
-
 
 ##
 ## Users

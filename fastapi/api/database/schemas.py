@@ -51,6 +51,14 @@ class MessageChat(BaseModel):
         allow_population_by_field_name = True
 
 
+class MessageChatWithSender(MessageChat):
+    user: Optional[SimplyUser | None] = Field(..., alias="sender")
+
+    class Config:
+        orm_mode = True
+        allow_population_by_field_name = True
+
+
 # basic schema for mails
 class MessageMail(BaseModel):
     id: int | None
