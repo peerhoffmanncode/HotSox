@@ -1,8 +1,10 @@
-from django.db.models import Q
-from app_users.models import User, Sock, SockLike, UserMatch
 import random
 from datetime import datetime, timedelta
 from difflib import SequenceMatcher
+from sqlalchemy import func, or_, and_, not_
+from sqlalchemy.orm import aliased
+from api.database.models import User, Sock, SockLike, UserMatch
+from api.database.setup import get_db_session
 
 
 class PrePredictionAlgorithm:
@@ -13,7 +15,6 @@ class PrePredictionAlgorithm:
     @staticmethod
     def _compare_socks(current_sock, challenger_sock):
         """function to calculate a similarity score between two socks"""
-
         similarity_score = -1
 
         # Weightage of each attribute
@@ -95,41 +96,59 @@ class PrePredictionAlgorithm:
         useen ones and return a list. All the liked and disliked socks as well as the
         socks of the user him/herself are excluded from the list.
         """
-
-        # get a queryset of all the unseen socks
-        processed_socks = (
-            SockLike.objects.filter(Q(like__isnull=False) | Q(dislike__isnull=False))
-            .filter(sock=current_user_sock)
-            .values_list("like", "dislike")
+        db = get_db_session()
+        all_none_user_socks = (
+            db.query(Sock).filter(Sock.user_id != current_user.id).all()
         )
-        # create a list of all the pks of the unseen socks
-        processed_socks_pks = [
-            sock_pk for sock_like in processed_socks for sock_pk in sock_like if sock_pk
+        all_seen_socks = [
+            sock.dislike if sock.dislike is not None else sock.like
+            for sock in db.query(SockLike)
+            .filter(SockLike.sock_id == current_user_sock.id)
+            .all()
         ]
-
-        # get the queryset of all available socks, but:
-        # exclude all the seen socks from the list of all the socks (above)
-        # exclude the socks of the current user too!
-        unseen_socks = (
-            Sock.objects.all()
-            .exclude(pk__in=processed_socks_pks)
-            .exclude(user=current_user)
-        )
-
-        # build a list of users that have been unmatched,
-        # so that we can exclude their socks of the unseen socks!
-        # TODO: could be extended to exclude socks of any matched user too!
         unwanted_user_list = [
             match.user if match.user != current_user else match.other
-            for match in current_user.get_unmatched()
+            for match in current_user.get_unmatched(db, current_user)
+        ]
+
+        unseen_socks = [
+            sock for sock in all_none_user_socks if not sock in all_seen_socks
         ]
 
         # exclude all the socks without any pictures & unwanted users
         unseen_socks = [
             sock
             for sock in unseen_socks
-            if sock.get_all_pictures() and sock.user not in unwanted_user_list
+            if sock.profile_pictures and sock.user_id not in unwanted_user_list
         ]
+
+        # #### DEEEBUUUUUGGG ####
+        # print("****************************************************************")
+        # print(current_user, current_user_sock)
+        # print("****************************************************************")
+        # print("all_user_socks : ", len(current_user.socks))
+        # for s in current_user.socks:
+        #     print("all_none_user_sock:", s)
+
+        # print("****************************************************************")
+        # print("all_none_user_socks : ", len(all_none_user_socks))
+        # for s in all_none_user_socks:
+        #     print("all_none_user_sock:", s)
+
+        # print("****************************************************************")
+        # print("all_seen_socks : ", len(all_seen_socks))
+        # for s in all_seen_socks:
+        #     print("all_seen_sock:", s)
+
+        # print("****************************************************************")
+        # print("all unseen socks : ", len(unseen_socks))
+        # for s in unseen_socks:
+        #     print("unseen_sock:", s, s.user_id)
+
+        # print("****************************************************************")
+        # print("all unwanted_user_list : ", len(unwanted_user_list))
+        # for s in unwanted_user_list:
+        #     print("unseen_sock:", s)
 
         if unseen_socks:
             return unseen_socks
@@ -157,6 +176,7 @@ class PrePredictionAlgorithm:
                 score = PrePredictionAlgorithm._compare_socks(
                     current_user_sock, challenger_sock
                 )
+                print(challenger_sock, score)
                 # detect if sock is better match then current best
                 if score > max_score:
                     max_score = score

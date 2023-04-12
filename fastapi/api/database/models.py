@@ -9,6 +9,7 @@ from sqlalchemy import (
     Boolean,
     UniqueConstraint,
 )
+from sqlalchemy import func, or_, and_, not_
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from cloudinary import uploader
@@ -93,6 +94,23 @@ class User(Base):
     #     foreign_keys="SocialaccountSocialaccount.user_id",
     #     cascade="all, delete-orphan",
     # )
+    def __str__(self):
+        return f"<User: id:{self.id}, name:{self.username}>"
+
+    def get_unmatched(self, db, user):
+        """
+        Function to get all user matches.
+        Retrieves all UserMatch objects associated with the User instance.
+        Returns a queryset
+        """
+        matches = (
+            db.query(UserMatch)
+            .filter(UserMatch.user_id == user.id or UserMatch.other_id == user.id)
+            .filter(UserMatch.unmatched == True)
+        ).all()
+        if not matches:
+            return []
+        return matches
 
     def delete(self, db):
         """
@@ -233,6 +251,9 @@ class Sock(Base):
         cascade="all, delete-orphan",
     )
 
+    def __str__(self):
+        return f"<Sock: id:{self.id}, name:{self.info_name}>"
+
     def delete(self, db):
         """
         Function to fix buggy SQLAlchemy cascade deletion!
@@ -369,6 +390,9 @@ class MessageChat(Base):
         back_populates="chat",
         foreign_keys=[other_id],
     )
+
+    def __str__(self):
+        return f"<Chat {self.user_id}:{self.other_id} msg:{self.message} @{self.sent_date}/{self.seen_date}>"
 
 
 # class AdminLog(Base):

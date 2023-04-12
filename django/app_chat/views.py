@@ -29,6 +29,8 @@ def chat_with_match(request, matched_user_name):
             Q(user=request.user, other=matched_user)
             | Q(user=matched_user, other=request.user)
         )
+        if user_match_object.unmatched:
+            return redirect(error_url)
         chatroom_uuid = str(user_match_object.chatroom_uuid)
         request.session["chatroom_uuid"] = chatroom_uuid
     except UserMatch.DoesNotExist:

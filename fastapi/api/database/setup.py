@@ -43,5 +43,5 @@ def get_db():
         yield db
 
 
-def celery_db():
+def get_db_session():
     return SessionLocal()

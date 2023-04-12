@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from ..database import models, schemas
 from fastapi import HTTPException, status
-from ..authentication.hashing import Hash
 
 
 def show_all(db: Session):

@@ -13,10 +13,6 @@ from celery import Celery
 import yagmail
 from cloudinary import uploader
 
-from api.database.setup import celery_db
-
-# from api.database.models import UserProfilePicture, SockProfilePicture
-
 
 # Setup celery app
 celery_app = Celery(__name__)
