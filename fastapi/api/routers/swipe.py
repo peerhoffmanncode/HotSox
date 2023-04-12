@@ -34,7 +34,7 @@ async def get_next_sock(
 
 @router.get(
     "/{user_sock_id}/judge/{other_sock_id}",
-    #response_model=schemas.UserMatch,
+    # response_model=schemas.UserMatch,
     dependencies=[Depends(oauth2.check_active)],
     status_code=200,
 )
