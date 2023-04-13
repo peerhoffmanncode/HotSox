@@ -63,7 +63,7 @@ async def get_chats(
     dependencies=[Depends(oauth2.check_active)],
     status_code=200,
 )
-async def get_chats(
+async def send_chats(
     receiver: str,
     chat_message: str,
     db: Session = Depends(get_db),
