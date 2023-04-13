@@ -3,7 +3,6 @@ from ..database import models
 from fastapi import HTTPException, status
 
 
-
 def get_all_matches(username: str, db: Session):
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:

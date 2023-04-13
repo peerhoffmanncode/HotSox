@@ -149,7 +149,6 @@ class PrePredictionAlgorithm:
 
         # check if there are remaining socks
         if unseen_socks:
-
             max_score = -1
             chosen_one = unseen_socks[0]
             # find best contender for match

@@ -122,34 +122,6 @@ class PrePredictionAlgorithm:
             if sock.profile_pictures and sock.user_id not in unwanted_user_list
         ]
 
-        # #### DEEEBUUUUUGGG ####
-        # print("****************************************************************")
-        # print(current_user, current_user_sock)
-        # print("****************************************************************")
-        # print("all_user_socks : ", len(current_user.socks))
-        # for s in current_user.socks:
-        #     print("all_none_user_sock:", s)
-
-        # print("****************************************************************")
-        # print("all_none_user_socks : ", len(all_none_user_socks))
-        # for s in all_none_user_socks:
-        #     print("all_none_user_sock:", s)
-
-        # print("****************************************************************")
-        # print("all_seen_socks : ", len(all_seen_socks))
-        # for s in all_seen_socks:
-        #     print("all_seen_sock:", s)
-
-        # print("****************************************************************")
-        # print("all unseen socks : ", len(unseen_socks))
-        # for s in unseen_socks:
-        #     print("unseen_sock:", s, s.user_id)
-
-        # print("****************************************************************")
-        # print("all unwanted_user_list : ", len(unwanted_user_list))
-        # for s in unwanted_user_list:
-        #     print("unseen_sock:", s)
-
         if unseen_socks:
             return unseen_socks
         return []
@@ -168,7 +140,6 @@ class PrePredictionAlgorithm:
 
         # check if there are remaining socks
         if unseen_socks:
-
             max_score = -1
             chosen_one = unseen_socks[0]
             # find best contender for match

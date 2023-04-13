@@ -69,3 +69,53 @@ def show_specific_chat(username: str, receiver: str, db: Session):
             detail=f"No chats available between user <{username}> and <{receiver}>",
         )
     return chats
+
+
+def send_specific_chat(username: str, receiver: str, chat_message: str, db: Session):
+    """Business logic to show all chats for specific user"""
+    user = db.query(models.User).filter(models.User.username == username).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with the username <{username}> is not available",
+        )
+
+    other = db.query(models.User).filter(models.User.username == receiver).first()
+    if not other:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Receiver with the username <{receiver}> is not available",
+        )
+    if user == other:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Receiver and sender are the same <{receiver}>, you can not chat with yourself!",
+        )
+
+    match = (
+        db.query(models.UserMatch)
+        .filter(
+            (
+                (models.UserMatch.user_id == other.id)
+                & (models.UserMatch.other_id == user.id)
+            )
+            | (
+                (models.UserMatch.user_id == user.id)
+                & (models.UserMatch.other_id == other.id)
+            )
+        )
+        .first()
+    )
+    if not match:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"You have no match with the user <{receiver}>!",
+        )
+
+    chat = models.MessageChat(user_id=user.id, other_id=other.id, message=chat_message)
+    db.add(chat)
+    db.commit()
+    db.refresh(chat)
+
+    # TODO: possible integration of WEBSOCKET support here
+    return chat

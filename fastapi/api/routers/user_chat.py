@@ -26,6 +26,7 @@ router = APIRouter(
     prefix=os.environ.get("API_URL", "/api") + "/user", tags=["User Chats"]
 )
 
+
 ##
 ## Chat
 ##
@@ -54,3 +55,20 @@ async def get_chats(
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
     return ctr_chat.show_specific_chat(current_user.username, receiver, db)
+
+
+@router.post(
+    "/chat/{receiver}",
+    response_model=schemas.MessageChatWithSender,
+    dependencies=[Depends(oauth2.check_active)],
+    status_code=200,
+)
+async def get_chats(
+    receiver: str,
+    chat_message: str,
+    db: Session = Depends(get_db),
+    current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
+):
+    return ctr_chat.send_specific_chat(
+        current_user.username, receiver, chat_message, db
+    )

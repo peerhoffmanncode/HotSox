@@ -4,6 +4,7 @@ from ..database import models, schemas
 from fastapi import HTTPException, status
 from ..authentication.hashing import Hash
 
+
 ##
 ## Users
 ##
