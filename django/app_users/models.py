@@ -284,8 +284,8 @@ class Sock(models.Model):
     )
 
     def serialize_attributes(self) -> dict:
-        """Function to represent the model as a json dictionary
-        !Important: update if changes on the model are made!"""
+        """Function to represent the model as a json/dict dictionary
+        !Important: update if changes on the model is made!"""
         return {
             "pk": self.pk,
             "info_name": self.info_name,
@@ -311,8 +311,8 @@ class Sock(models.Model):
         }
 
     def to_json(self) -> dict:
-        """Function to represent the model as a json dictionary
-        !Important: update if changes on the model are made!"""
+        """Function to represent the model as a json/dict dictionary
+        !Important: update if changes on the model is made!"""
         return {
             "Name": self.info_name,
             "My story": self.info_about,
