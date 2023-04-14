@@ -283,6 +283,33 @@ class Sock(models.Model):
         blank=False,
     )
 
+    def serialize_attributes(self) -> dict:
+        """Function to represent the model as a json dictionary
+        !Important: update if changes on the model are made!"""
+        return {
+            "pk": self.pk,
+            "info_name": self.info_name,
+            "info_about": self.info_about,
+            "info_special": self.info_special,
+            "info_color": COLOR_CHOICES[int(self.info_color) - 1][1],
+            "info_fabric": FABRIC_CHOICES[int(self.info_fabric) - 1][1],
+            "info_fabric_thickness": FABRIC_THICKNESS_CHOICES[
+                int(self.info_fabric_thickness) - 1
+            ][1],
+            "info_separation_date": self.info_separation_date,
+            "info_brand": BRAND_CHOICES[int(self.info_brand) - 1][1],
+            "info_type": TYPE_CHOICES[int(self.info_type) - 1][1],
+            "info_size": SIZE_CHOICES[int(self.info_size) - 1][1],
+            "info_age": self.info_age,
+            "info_holes": self.info_holes,
+            "info_kilometers": self.info_kilometers,
+            "info_condition": CONDITION_CHOICES[int(self.info_condition) - 1][1],
+            "info_inoutdoor": ENVIRONMENT_CHOICES[int(self.info_inoutdoor) - 1][1],
+            "info_washed": self.info_washed,
+            "get_picture_urls": self.get_picture_urls,
+            "get_all_pictures": self.get_all_pictures,
+        }
+
     def to_json(self) -> dict:
         """Function to represent the model as a json dictionary
         !Important: update if changes on the model are made!"""

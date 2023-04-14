@@ -7,28 +7,33 @@
             <h2>Swipe for your next match</h2>
         </div>
     </div>
+
     <div class="row">
         <div class="col-md-4 offset-4">
-            <h6 class="flex-center">select a sock you like to swipe for</h6>
-            <ul class="list-inline flex-center">
-                {% for sock in user_socks %}
-                <li class="col-6 col-sm3 list-inline-item select-sock flex-center">
-                    <form action="" method="POST" class="flex-center">
-                        {% csrf_token %}
-                        <input type="hidden" name="change_sock" value="{{ sock.pk }}">
-                        <button class="col-6 col-sm3 flex-center btn-img-hide">
-                            {% if sock.get_picture_urls.0 %}
-                            <img class="select-sock-pic swipe-button" src="{{ sock.get_picture_urls.0 }}" alt="">
-                            {% else %}
-                            <p>{{sock.info_name}}</p>
-                            {% endif %}
-                        </button>
-                    </form>
-                </li>
-                {% endfor %}
-            </ul>
+            <h6 class="flex-center">select your sock you like to swipe for</h6>
+            <div class="rounded p-3 border">
+                <ul class="list-inline flex-center">
+                    {% for sock in user_socks %}
+                    <li class="col-6 col-sm3 list-inline-item select-sock flex-center">
+                        <form action="" method="POST" class="flex-center">
+                            {% csrf_token %}
+                            <input type="hidden" name="change_sock" value="{{ sock.pk }}">
+                            <button class="col-6 col-sm3 flex-center btn-img-hide">
+                                {% if sock.get_picture_urls.0 %}
+                                <img class="select-sock-pic swipe-button" src="{{ sock.get_picture_urls.0 }}" alt="">
+                                {% else %}
+                                <p>{{sock.info_name}}</p>
+                                {% endif %}
+                            </button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
+
+
 
     <div class="row swipe-panel">
         <div class="col-md-4">
@@ -37,15 +42,19 @@
                 {% csrf_token %}
                 <input type="hidden" name="sock_pk" value="{{sock.pk}}">
                 <input type="hidden" name="decision" value="dislike">
-                <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();"><img src="/staticfiles/drake-no.png"
-                        alt="dislike" class="swipe-button"><p>Nope, gimme da next!</p></button>
+                <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();">
+                    <img src="/staticfiles/drake-no.png" alt="dislike" class="swipe-button">
+                    <p>Nope, gimme da next!</p>
+                </button>
             </form>
             {% endif %}
         </div>
-        <div class="col-md-4 ">
+        <div class="col-md-4">
             {% if sock %}
             {% if sock.get_picture_urls %}
-            <img src="{{ sock.get_picture_urls.0 }}" alt="" class="sock-img">
+            <button class="btn-img-hide" data-bs-toggle="modal" data-bs-target="#sock-modal">
+                <img src="{{ sock.get_picture_urls.0 }}" alt="" class="sock-img">
+            </button>
             {% else %}
             <p>No sock picture found :( !</p>
             {% endif %}
@@ -53,6 +62,12 @@
             <img src="/staticfiles/sad_face.jpg" alt="" class="sock-img">
             <p>No more socks currently available!</p>
             {% endif %}
+            <div class="row swipe-panel">
+                <div class="col-md-4 offset-4">
+                    <h2 class="center">{{ sock.info_name }}</h2>
+                    <p class="center">{{ sock.info_about }}</p>
+                </div>
+            </div>
         </div>
 
         <div class="col-md-4">
@@ -61,18 +76,75 @@
                 {% csrf_token %}
                 <input type="hidden" name="sock_pk" value="{{sock.pk}}">
                 <input type="hidden" name="decision" value="like">
-                <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();"><img src="/staticfiles/drake-yes.png"
-                        alt="like" class="swipe-button"><p>Yeah, i like !!</p></button>
+                <button class="btn-img-hide" onclick="this.disabled=true,this.form.submit();">
+                    <img src="/staticfiles/drake-yes.png" alt="like" class="swipe-button">
+                    <p>Yeah, i like !!</p>
+                </button>
             </form>
             {% endif %}
         </div>
     </div>
-    <div class="row swipe-panel">
-        <div class="col-md-4 offset-4">
-            <h2 class="center">{{ sock.info_name }}</h2>
-            <p class="center">{{ sock.info_about }}</p>
+
+    <!-- The modal -->
+    <div class="modal fade" id="sock-modal" aria-labelledby="sock-modal-label">
+        <div class="modal-dialog modal-dialog-custom">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sock-modal-label">{{ sock.info_name.title }}</h5>
+                </div>
+                <div class="modal-body">
+
+                    {% for picture_url in sock.get_picture_urls %}
+                    <div style="display: flex; justify-content: center; align-items: center;"
+                        id="profile-pic-{{ forloop.counter }}">
+                        <img src="{{ picture_url }}" alt="" class="selector sock-img-modal">
+                    </div>
+                    {% endfor %}
+
+                    <hr>
+                    <p>This socks story is:</p>
+                    <textarea class="form-control" rows="4" style="resize: none; overflow-y: scroll">{{ sock.info_about }}
+                    </textarea>
+                    <hr>
+                    <p>Its speciality is {{ sock.info_special }}</p>
+                    <p>Its brand is {{ sock.info_brand }}, it is made of {{ sock.info_fabric }} as
+                        {{sock.info_fabric_thickness}}</p>
+                    <p>Its size is {{ sock.info_size }} and the type is {{ sock.info_type }}</p>
+                    <p>With its age of {{ sock.info_age }} years it has a {{ sock.info_condition }} condition</p>
+                    <p>It has {{ sock.info_holes }} holes and is usually used as {{ sock.info_inoutdoor }}</p>
+                    <p>With a milage of {{ sock.info_kilometers }}km it is usually washed {{ sock.info_washed }} times
+                        per week
+                    </p>
+                    <hr>
+                    <p>It is lonely since {{ sock.info_separation_date }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Let me decide now</button>
+                </div>
+            </div>
         </div>
     </div>
+
 </div>
+
+
+<!-- Rotate the user profile picture -->
+<script>
+    const pictures = document.querySelectorAll('.selector');
+    // Hide all pictures at the beginning
+    for (let i = 1; i < pictures.length; i++) {
+        pictures[i].style.display = 'none';
+    }
+    function changePicture() {
+        let pictures = document.querySelectorAll('.selector');
+        let index = 0;
+        setInterval(function () {
+            pictures[index].style.display = 'none';
+            index = (index + 1) % pictures.length;
+            pictures[index].style.display = 'block';
+        }, 5000);
+    }
+    changePicture();
+</script>
 
 {% endblock %}
