@@ -26,6 +26,7 @@ from .forms import (
 )
 
 from allauth.account.views import SignupView
+from app_mail.tasks import celery_send_mail
 
 
 def validate_sock_ownership(request, valid_sock=None, picture_pk=None):
@@ -593,9 +594,14 @@ class UserMatchDelete(HotSoxLogInAndValidationCheckMixin, TemplateView):
             match.unmatched = True
             match.save()
 
-        # TODO: set all the match_user socks to seen!
         messages.success(
             request, f"match with {match_user.username} successfully deleted."
         )
+
+        # email to confirm deleted match
+        match_message = f"The match between {match_user.username} and {current_user.username} has been deleted"
+        celery_send_mail.delay(email_subject=f"You have unmached with {match_user.username}", email_message=match_message, recipient_list=[current_user.email], notification=current_user.notification)
+        celery_send_mail.delay(email_subject=f"{current_user.username} has unmached you", email_message=match_message, recipient_list=[match_user.email], notification=match_user.notification)
+
         # return to match overview
         return redirect(reverse("app_users:user-matches"))
