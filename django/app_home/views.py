@@ -124,8 +124,18 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
                 if user_match_created:
                     # sending match email
                     match_message = "Please visit HotSox to check your new match:)"
-                    celery_send_mail.delay(email_subject=f"You have a match with {sock_to_be_decided_on.user.username}", email_message=match_message, recipient_list=[current_user_sock.user.email], notification=current_user_sock.user.notification)
-                    celery_send_mail.delay(email_subject=f"You have a match with {current_user_sock.user.username}", email_message=match_message, recipient_list=[sock_to_be_decided_on.user.email], notification=sock_to_be_decided_on.user.notification)
+                    celery_send_mail.delay(
+                        email_subject=f"You have a match with {sock_to_be_decided_on.user.username}",
+                        email_message=match_message,
+                        recipient_list=[current_user_sock.user.email],
+                        notification=current_user_sock.user.notification,
+                    )
+                    celery_send_mail.delay(
+                        email_subject=f"You have a match with {current_user_sock.user.username}",
+                        email_message=match_message,
+                        recipient_list=[sock_to_be_decided_on.user.email],
+                        notification=sock_to_be_decided_on.user.notification,
+                    )
 
                     context = {
                         "user": current_user_sock.user,

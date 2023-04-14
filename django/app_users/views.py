@@ -600,8 +600,18 @@ class UserMatchDelete(HotSoxLogInAndValidationCheckMixin, TemplateView):
 
         # email to confirm deleted match
         match_message = f"The match between {match_user.username} and {current_user.username} has been deleted"
-        celery_send_mail.delay(email_subject=f"You have unmached with {match_user.username}", email_message=match_message, recipient_list=[current_user.email], notification=current_user.notification)
-        celery_send_mail.delay(email_subject=f"{current_user.username} has unmached you", email_message=match_message, recipient_list=[match_user.email], notification=match_user.notification)
+        celery_send_mail.delay(
+            email_subject=f"You have unmached with {match_user.username}",
+            email_message=match_message,
+            recipient_list=[current_user.email],
+            notification=current_user.notification,
+        )
+        celery_send_mail.delay(
+            email_subject=f"{current_user.username} has unmached you",
+            email_message=match_message,
+            recipient_list=[match_user.email],
+            notification=match_user.notification,
+        )
 
         # return to match overview
         return redirect(reverse("app_users:user-matches"))

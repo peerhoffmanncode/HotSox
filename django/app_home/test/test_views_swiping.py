@@ -1,4 +1,5 @@
 from django.test import TestCase
+from unittest import mock
 from app_users.models import User, Sock, SockLike, UserMatch
 from datetime import date, timedelta
 
@@ -168,7 +169,10 @@ class Test(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTemplateUsed("app_user/swipe.html")
 
-    def test_swipe_page_with_sock_selected_user_match(self):
+    @mock.patch("app_home.views.celery_send_mail")
+    def test_swipe_page_with_sock_selected_user_match(self, celery_mock):
+        celery_mock.return_value = {"msg": "done"}
+
         # log user in
         self.client.force_login(user=self.user2)
         # create session data
