@@ -14,7 +14,7 @@ import os
 
 # build routes
 router = APIRouter(
-    prefix=os.environ.get("API_URL", "/api") + "/user/swipe", tags=["Swipe"]
+    prefix=os.environ.get("API_URL", "/fastapi/v1") + "/user/swipe", tags=["Swipe"]
 )
 
 
@@ -32,7 +32,7 @@ async def get_next_sock(
     return ctr_swipe.get_next_sock(current_user.username, user_sock_id, db)
 
 
-@router.get(
+@router.post(
     "/{user_sock_id}/judge/{other_sock_id}",
     # response_model=schemas.UserMatch,
     dependencies=[Depends(oauth2.check_active)],

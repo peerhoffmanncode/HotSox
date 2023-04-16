@@ -8,7 +8,9 @@ from ..authentication.token import create_access_token
 
 import os
 
-router = APIRouter(prefix=os.environ.get("API_URL", "/api"), tags=["Authentication"])
+router = APIRouter(
+    prefix=os.environ.get("API_URL", "/fastapi/v1"), tags=["Authentication"]
+)
 
 
 @router.post(

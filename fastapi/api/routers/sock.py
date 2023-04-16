@@ -14,7 +14,7 @@ import os
 
 # build routes
 router = APIRouter(
-    prefix=os.environ.get("API_URL", "/api") + "/user/sock", tags=["Socks"]
+    prefix=os.environ.get("API_URL", "/fastapi/v1") + "/user/sock", tags=["Socks"]
 )
 
 
@@ -28,7 +28,7 @@ async def get_all_socks(
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return ctr_sock.show_all(db)
+    return ctr_sock.show_all(current_user.username, db)
 
 
 @router.get(

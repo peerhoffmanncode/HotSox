@@ -46,7 +46,7 @@ def create_sock_pic(username: str, id: int, file: UploadFile, db: Session):
     db.refresh(current_sock)
 
     # return latest picture
-    return user.profile_pictures[-1]
+    return current_sock.profile_pictures[-1]
 
 
 def delete_sock_pic(username: str, sock_id: int, pic_id: int, db: Session):

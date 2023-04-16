@@ -22,7 +22,9 @@ from ..controller import ctr_user
 import os
 
 # build routes
-router = APIRouter(prefix=os.environ.get("API_URL", "/api") + "/user", tags=["User"])
+router = APIRouter(
+    prefix=os.environ.get("API_URL", "/fastapi/v1") + "/user", tags=["User"]
+)
 
 
 ##

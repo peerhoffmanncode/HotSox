@@ -6,6 +6,8 @@ from sqlalchemy.orm import aliased
 from api.database.models import User, Sock, SockLike, UserMatch
 from api.database.setup import get_db_session
 
+from sqlalchemy.orm import Session
+
 
 class PrePredictionAlgorithm:
     """basic preprediction algorithm for hotsox
@@ -13,7 +15,7 @@ class PrePredictionAlgorithm:
     """
 
     @staticmethod
-    def _compare_socks(current_sock, challenger_sock):
+    def _compare_socks(db: Session, current_sock, challenger_sock):
         """function to calculate a similarity score between two socks"""
         similarity_score = -1
 
@@ -90,52 +92,60 @@ class PrePredictionAlgorithm:
 
     @staticmethod
     def _prefilter_list_of_all_socks(
-        current_user: User, current_user_sock: Sock
-    ) -> list:
+        db: Session, current_user: User, current_user_sock: Sock
+    ) -> list | None:
         """This method is used to pre filter the list of all socks to the currently
         useen ones and return a list. All the liked and disliked socks as well as the
         socks of the user him/herself are excluded from the list.
         """
-        db = get_db_session()
+        # open db session
+        # db = get_db_session()
+
         all_none_user_socks = (
             db.query(Sock).filter(Sock.user_id != current_user.id).all()
         )
+
         all_seen_socks = [
             sock.dislike if sock.dislike is not None else sock.like
             for sock in db.query(SockLike)
             .filter(SockLike.sock_id == current_user_sock.id)
             .all()
         ]
+
         unwanted_user_list = [
             match.user if match.user != current_user else match.other
             for match in current_user.get_unmatched(db, current_user)
         ]
 
-        unseen_socks = [
-            sock for sock in all_none_user_socks if not sock in all_seen_socks
-        ]
-
-        # exclude all the socks without any pictures & unwanted users
+        # exclude all the socks without any pictures & unwanted users & already seen socks
         unseen_socks = [
             sock
-            for sock in unseen_socks
-            if sock.profile_pictures and sock.user_id not in unwanted_user_list
+            for sock in all_none_user_socks
+            if (sock not in all_seen_socks)
+            and (sock.user_id not in unwanted_user_list)
+            and sock.profile_pictures
         ]
 
+        # close db session
+        # db.close()
         if unseen_socks:
             return unseen_socks
-        return []
+        return None
 
     @staticmethod
-    def get_next_sock(current_user, current_user_sock: Sock) -> Sock | None:
+    def get_next_sock(
+        db: Session, current_user: User, current_user_sock: Sock | None
+    ) -> Sock | None:
         """currently this method is a simple mockup of the later version!
         It is used to give a random record (sock) from the remaining pool of
         unseen socks. We use basic randomization for that - nothing fancy!
         """
+        if current_user_sock is None:
+            return None
 
         # remaining unseen socks as list
         unseen_socks = PrePredictionAlgorithm._prefilter_list_of_all_socks(
-            current_user, current_user_sock
+            db, current_user, current_user_sock
         )
 
         # check if there are remaining socks
@@ -145,9 +155,8 @@ class PrePredictionAlgorithm:
             # find best contender for match
             for challenger_sock in unseen_socks:
                 score = PrePredictionAlgorithm._compare_socks(
-                    current_user_sock, challenger_sock
+                    db, current_user_sock, challenger_sock
                 )
-                print(challenger_sock, score)
                 # detect if sock is better match then current best
                 if score > max_score:
                     max_score = score

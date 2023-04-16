@@ -8,6 +8,7 @@ from api.utilities.pre_prediction_algorithm import PrePredictionAlgorithm
 
 
 def get_next_sock(username: str, id: int, db: Session):
+
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
         raise HTTPException(
@@ -21,7 +22,7 @@ def get_next_sock(username: str, id: int, db: Session):
             detail=f"Sock with the id <{id}> is not available!",
         )
 
-    sock = PrePredictionAlgorithm.get_next_sock(user, current_sock)
+    sock = PrePredictionAlgorithm.get_next_sock(db, user, current_sock)
     if not sock:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -89,24 +90,30 @@ def judge_sock(
 
     # check if we have a match!
     # check if like happens from boths ends!
-    successful_user_match = (
+    successful_user_match1 = (
         db.query(models.SockLike)
         .filter(
             (
                 (models.SockLike.sock_id == other_sock_id)
                 & (models.SockLike.like_id == user_sock_id)
             )
-            | (
+        )
+        .first()
+    )
+    successful_user_match2 = (
+        db.query(models.SockLike)
+        .filter(
+            (
                 (models.SockLike.sock_id == user_sock_id)
                 & (models.SockLike.like_id == other_sock_id)
             )
         )
-        .all()
+        .first()
     )
 
     # found a valid match!
     set_valid_match = None
-    if successful_user_match:
+    if successful_user_match1 and successful_user_match2:
         # find already existing match
         existing_match = (
             db.query(models.UserMatch)

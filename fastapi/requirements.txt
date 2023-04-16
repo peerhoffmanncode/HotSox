@@ -18,3 +18,4 @@ fastapi-mail
 celery
 redis
 yagmail
+hypothesis

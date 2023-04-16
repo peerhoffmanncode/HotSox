@@ -14,7 +14,7 @@ import os
 
 # build routes
 router = APIRouter(
-    prefix=os.environ.get("API_URL", "/api") + "/user/match", tags=["Matches"]
+    prefix=os.environ.get("API_URL", "/fastapi/v1") + "/user/match", tags=["Matches"]
 )
 
 
@@ -45,7 +45,7 @@ async def get_specific_user_match(
     return ctr_match.get_match(current_user.username, id, db)
 
 
-@router.post(
+@router.delete(
     "/{id}",
     response_model=schemas.UserMatch,
     dependencies=[Depends(oauth2.check_active)],

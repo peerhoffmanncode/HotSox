@@ -23,7 +23,8 @@ import os
 
 # build routes
 router = APIRouter(
-    prefix=os.environ.get("API_URL", "/api") + "/user/sock", tags=["Sock ProfilePic"]
+    prefix=os.environ.get("API_URL", "/fastapi/v1") + "/user/sock",
+    tags=["Sock ProfilePic"],
 )
 
 
