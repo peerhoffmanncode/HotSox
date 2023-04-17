@@ -51,6 +51,11 @@ def get_match(username: str, id: int, db: Session):
             detail=f"Specific match <{id}> for user <{user.username}> is not available!",
         )
 
+    # swap user_id and other_id if necessary (reverse match!)
+    if match.user_id != user.id:
+        match.other_id = match.user_id
+        match.user_id = user.id
+
     return match
 
 

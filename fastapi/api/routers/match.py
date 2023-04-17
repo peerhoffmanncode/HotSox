@@ -47,9 +47,8 @@ async def get_specific_user_match(
 
 @router.delete(
     "/{id}",
-    response_model=schemas.UserMatch,
     dependencies=[Depends(oauth2.check_active)],
-    status_code=202,
+    status_code=204,
 )
 async def delete_specific_user_match(
     id: int,
