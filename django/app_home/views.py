@@ -53,6 +53,8 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         """show initial swipe view with a pre predicted sock"""
+
+        # check if the user has a sock selected
         if request.session.get("sock_pk", None):
             # get a pre predicted sock
             sock = PrePredictionAlgorithm.get_next_sock(
@@ -71,7 +73,18 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
             else:
                 context = {"sock": None, "user_socks": user_socks}
             return render(request, "app_home/swipe.html", context)
-        # fail back route
+
+        # user has NO sock selected
+        else:
+            # get all socks of the current user
+            socks = request.user.get_socks()
+
+            # user has only one sock, select that one!
+            if len(socks) == 1:
+                request.session["sock_pk"] = socks[0].pk
+                return redirect(reverse("app_home:swipe"))
+
+        # no sock selected and user has more than one sock!
         return redirect(reverse("app_users:sock-overview"))
 
     def post(self, request, *args, **kwargs):
