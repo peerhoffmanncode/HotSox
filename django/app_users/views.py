@@ -296,6 +296,9 @@ class SockSelection(HotSoxLogInAndValidationCheckMixin, TemplateView):
         redirect_url = request.POST.get("redirect_url", None)
 
         # add specific routes to redirect to here
+        if request.session.get("redirect_url", None) == reverse("app_home:swipe"):
+            request.session["redirect_url"] = None
+            return redirect(reverse("app_home:swipe"))
         if redirect_url == reverse("app_users:sock-details"):
             return redirect(reverse("app_users:sock-details"))
         if redirect_url == reverse("app_users:sock-picture"):

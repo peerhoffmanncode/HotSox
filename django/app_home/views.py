@@ -85,6 +85,7 @@ class SwipeView(HotSoxLogInAndValidationCheckMixin, TemplateView):
                 return redirect(reverse("app_home:swipe"))
 
         # no sock selected and user has more than one sock!
+        request.session["redirect_url"] = reverse("app_home:swipe")
         return redirect(reverse("app_users:sock-overview"))
 
     def post(self, request, *args, **kwargs):
