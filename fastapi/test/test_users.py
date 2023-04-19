@@ -1,6 +1,10 @@
 from unittest import mock
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
+import warnings
+from fastapi_pagination.utils import FastAPIPaginationWarning
+
+warnings.simplefilter("ignore", FastAPIPaginationWarning)
 
 from .inital_test_setup import (
     client,
@@ -31,7 +35,7 @@ def test_show_users_login_incorrect_permission(test_db_setup):
 
 def test_show_users_login_correct_cedentials(test_db_setup):
     response = client.get(PREFIX + "/users", headers=token("admin", "admin"))
-    content = response.json()
+    content = response.json()["items"]
     assert response.status_code == 200
     assert len(content) == 2
     assert content[0].get("username") == "testuser2"

@@ -7,6 +7,8 @@ from fastapi import (
     UploadFile,
     BackgroundTasks,
 )
+from fastapi_pagination import Page, Params, add_pagination, paginate
+
 from sqlalchemy.orm import Session
 
 # load database
@@ -32,14 +34,15 @@ router = APIRouter(
 ##
 @router.get(
     "s/",
-    response_model=list[schemas.ShowUser],
+    response_model=Page[schemas.ShowUser],
     dependencies=[Depends(oauth2.check_superuser)],
 )
 async def get_all_user(
+    params: Params = Depends(),
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return ctr_user.show_all_user(db)
+    return paginate(ctr_user.show_all_user(db), params)
 
 
 @router.get(

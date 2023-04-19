@@ -2,6 +2,11 @@ from unittest import mock
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 from datetime import datetime, date, timedelta
+import warnings
+from fastapi_pagination.utils import FastAPIPaginationWarning
+
+warnings.simplefilter("ignore", FastAPIPaginationWarning)
+
 from .inital_test_setup import (
     client,
     PREFIX,
@@ -78,7 +83,7 @@ def test_show_all_socks_of_a_user_with_socks(test_db_setup):
 
     # check socks for current user (with socks!)
     response = client.get(PREFIX + "/user/socks", headers=token("admin", "admin"))
-    content = response.json()
+    content = response.json()["items"]
     assert response.status_code == 200
     assert len(content) == 2
 

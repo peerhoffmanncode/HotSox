@@ -1,4 +1,6 @@
 fastapi
+fastapi-pagination
+fastapi-mail
 sqlmodel
 sqlalchemy
 uvicorn[standard]
@@ -14,7 +16,6 @@ cloudinary
 httpx
 pytest-cov
 pytest
-fastapi-mail
 celery
 redis
 yagmail

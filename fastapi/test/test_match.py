@@ -1,6 +1,10 @@
 from unittest import mock
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
+import warnings
+from fastapi_pagination.utils import FastAPIPaginationWarning
+
+warnings.simplefilter("ignore", FastAPIPaginationWarning)
 
 from .inital_test_setup import (
     client,
@@ -47,14 +51,14 @@ def test_all_matches(test_db_setup):
         headers=token(username="admin", password="admin"),
     )
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
-    assert response.json()[0]["id"] == 1
-    assert response.json()[0]["matched_with"] == {
+    assert isinstance(response.json()["items"], list)
+    assert response.json()["items"][0]["id"] == 1
+    assert response.json()["items"][0]["matched_with"] == {
         "email": "testuser2@testuser2.com",
         "username": "testuser2",
     }
-    assert response.json()[0]["unmatched"] == False
-    assert len(response.json()[0]["chatroom_uuid"]) == 36
+    assert response.json()["items"][0]["unmatched"] == False
+    assert len(response.json()["items"][0]["chatroom_uuid"]) == 36
 
 
 def test_specific_match(test_db_setup):

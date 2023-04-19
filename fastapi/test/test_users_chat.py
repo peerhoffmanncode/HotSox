@@ -1,7 +1,11 @@
 from unittest import mock
 from fastapi.testclient import TestClient
-
 from sqlalchemy.orm import Session
+
+import warnings
+from fastapi_pagination.utils import FastAPIPaginationWarning
+
+warnings.simplefilter("ignore", FastAPIPaginationWarning)
 
 from .inital_test_setup import (
     client,
@@ -44,13 +48,13 @@ def test_user_chats_with_chats(test_db_setup):
         headers=token("admin", "admin"),
     )
     assert response.status_code == 200
-    assert response.json()[0]["receiver"] == {
+    assert response.json()["items"][0]["receiver"] == {
         "username": "testuser2",
         "email": "testuser2@testuser2.com",
     }
-    assert response.json()[0]["message"] == "test message"
-    assert response.json()[0]["seen_date"] == None
-    assert response.json()[0]["sender"] == {
+    assert response.json()["items"][0]["message"] == "test message"
+    assert response.json()["items"][0]["seen_date"] == None
+    assert response.json()["items"][0]["sender"] == {
         "username": "admin",
         "email": "admin@admin.com",
     }
@@ -81,13 +85,14 @@ def test_user_chats_with_chats_between_users(test_db_setup):
         headers=token("admin", "admin"),
     )
     assert response.status_code == 200
-    assert response.json()[0]["receiver"] == {
+    response_json = response.json()[0]
+    assert response_json["receiver"] == {
         "username": "testuser2",
         "email": "testuser2@testuser2.com",
     }
-    assert response.json()[0]["message"] == "test message"
-    assert response.json()[0]["seen_date"] == None
-    assert response.json()[0]["sender"] == {
+    assert response_json["message"] == "test message"
+    assert response_json["seen_date"] == None
+    assert response_json["sender"] == {
         "username": "admin",
         "email": "admin@admin.com",
     }

@@ -3,6 +3,11 @@ from fastapi.testclient import TestClient
 
 from sqlalchemy.orm import Session
 
+import warnings
+from fastapi_pagination.utils import FastAPIPaginationWarning
+
+warnings.simplefilter("ignore", FastAPIPaginationWarning)
+
 from .inital_test_setup import (
     client,
     PREFIX,

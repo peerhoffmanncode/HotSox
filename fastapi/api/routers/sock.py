@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status
+from fastapi_pagination import Page, Params, paginate
 from sqlalchemy.orm import Session
 
 from ..database.setup import get_db
@@ -20,15 +21,16 @@ router = APIRouter(
 
 @router.get(
     "s/",
-    response_model=list[schemas.ShowSock],
+    response_model=Page[schemas.ShowSock],
     dependencies=[Depends(oauth2.check_active)],
     status_code=200,
 )
 async def get_all_socks(
+    params: Params = Depends(),
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return ctr_sock.show_all(current_user.username, db)
+    return paginate(ctr_sock.show_all(current_user.username, db), params)
 
 
 @router.get(

@@ -7,6 +7,7 @@ from fastapi import (
     UploadFile,
     BackgroundTasks,
 )
+from fastapi_pagination import Page, Params, paginate
 from sqlalchemy.orm import Session
 
 # load database
@@ -32,15 +33,16 @@ router = APIRouter(
 ##
 @router.get(
     "/chats",
-    response_model=list[schemas.MessageChatWithSender],
+    response_model=Page[schemas.MessageChatWithSender],
     dependencies=[Depends(oauth2.check_active)],
     status_code=200,
 )
 async def get_all_chats(
+    params: Params = Depends(),
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return ctr_chat.show_all_chats(current_user.username, db)
+    return paginate(ctr_chat.show_all_chats(current_user.username, db), params)
 
 
 @router.get(

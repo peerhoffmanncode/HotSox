@@ -1,4 +1,6 @@
 import os
+import warnings
+from fastapi_pagination.utils import FastAPIPaginationWarning
 from dotenv import load_dotenv
 
 load_dotenv("../.env")
@@ -28,7 +30,6 @@ from api.routers import (
     match,
 )
 
-
 # Setup Cloudinary
 cloudinary.config(
     cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
@@ -36,6 +37,7 @@ cloudinary.config(
     api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
 )
 
+warnings.simplefilter("ignore", FastAPIPaginationWarning)
 
 # build FastAPI app / Hide schemas from docs
 app = FastAPI(
@@ -44,7 +46,7 @@ app = FastAPI(
     docs_url=os.environ.get("API_URL", "//fastapi/v1") + "/docs",
     swagger_ui_parameters={"defaultModelsExpandDepth": -1},
 )
-
+# warnings.simplefilter("ignore", FastAPIPaginationWarning)
 # setup SQLAlchemy database engine
 # models.Base.metadata.create_all(engine)
 

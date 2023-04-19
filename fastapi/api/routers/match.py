@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status
+from fastapi_pagination import Page, Params, paginate
 from sqlalchemy.orm import Session
 
 from ..database.setup import get_db
@@ -8,6 +9,9 @@ from ..authentication import oauth2
 
 # load business logic
 from ..controller import ctr_match
+
+import warnings
+
 
 
 import os
@@ -20,15 +24,16 @@ router = APIRouter(
 
 @router.get(
     "es/",
-    response_model=list[schemas.UserMatch],
+    response_model=Page[schemas.UserMatch],
     dependencies=[Depends(oauth2.check_active)],
     status_code=200,
 )
 async def get_all_user_matches(
+    params: Params = Depends(),
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return ctr_match.get_all_matches(current_user.username, db)
+    return paginate(ctr_match.get_all_matches(current_user.username, db), params)
 
 
 @router.get(

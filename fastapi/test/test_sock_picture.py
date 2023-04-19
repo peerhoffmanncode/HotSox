@@ -2,6 +2,10 @@ from unittest import mock
 from fastapi.testclient import TestClient
 from datetime import datetime, date, timedelta
 from sqlalchemy.orm import Session
+import warnings
+from fastapi_pagination.utils import FastAPIPaginationWarning
+
+warnings.simplefilter("ignore", FastAPIPaginationWarning)
 
 from .inital_test_setup import (
     client,

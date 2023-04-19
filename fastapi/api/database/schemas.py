@@ -204,7 +204,7 @@ class ShowUser(BaseModel):
     date_joined: Optional[datetime]
     info_about: Optional[str]
     info_birthday: Optional[date]
-    info_gender: Optional[int | None] = Field(1, ge=1, le=8)
+    info_gender: Optional[int | None] #= Field(1, ge=1, le=8)
     location_city: Optional[str]
     location_latitude: Optional[float]
     location_longitude: Optional[float]

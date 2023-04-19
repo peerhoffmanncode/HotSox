@@ -3,6 +3,11 @@ from fastapi.testclient import TestClient
 
 from sqlalchemy.orm import Session
 
+import warnings
+from fastapi_pagination.utils import FastAPIPaginationWarning
+
+warnings.simplefilter("ignore", FastAPIPaginationWarning)
+
 from .inital_test_setup import (
     client,
     PREFIX,
@@ -60,8 +65,8 @@ def test_user_mail_send(mock_send_message, test_db_setup):
         headers=token("admin", "admin"),
     )
     assert response.status_code == 200
-    assert response.json()[0]["content"] == "TestMailContent"
-    assert response.json()[0]["subject"] == "TestMailSubject"
+    assert response.json()["items"][0]["content"] == "TestMailContent"
+    assert response.json()["items"][0]["subject"] == "TestMailSubject"
 
 
 @mock.patch("api.controller.ctr_mail.celery_send_mail_to_user")
