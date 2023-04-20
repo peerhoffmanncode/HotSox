@@ -27,7 +27,7 @@ class UserModelTestCase(TestCase):
         )
         self.user2 = User.objects.create(
             username="quirky_unicorn2",
-            email="quirkyunicorn@example.com",
+            email="quirkyunicorn2@example.com",
             password="p4ssword",
             first_name="Quirky",
             last_name="Unicorn",
@@ -44,7 +44,7 @@ class UserModelTestCase(TestCase):
         )
         self.user3 = User.objects.create(
             username="quirk-unicorn3",
-            email="quirk-unicorn@example.com",
+            email="quirk-unicorn3@example.com",
             password="testpassword",
             first_name="Quirk",
             last_name="Unicorn",

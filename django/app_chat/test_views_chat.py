@@ -53,7 +53,7 @@ class Test(TestCase):
 
         self.user2 = User.objects.create(
             username="quirk-unicorn 2",
-            email="quirk-unicorn1@example.com",
+            email="quirk-unicorn2@example.com",
             password="p4ssword",
             first_name="Quirky2",
             last_name="Unicorn2",
