@@ -25,6 +25,15 @@ from .serializers_users import (
 )
 
 from app_geo.utilities import GeoLocation
+from rest_framework import permissions
+
+
+# create custom permission handling for methods
+class IsAuthenticatedOrAllowAny(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return bool(request.user and request.user.is_authenticated)
 
 
 class ApiGetUsers(ListAPIView):
@@ -36,34 +45,22 @@ class ApiGetUsers(ListAPIView):
     serializer_class = UserSerializer
 
 
-class ApiCreateUser(GenericAPIView):
-    serializer_class = UserCreateSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = UserCreateSerializer(data=request.data)
-        if serializer.is_valid():
-            result = serializer.save()
-            return Response(
-                data=UserSerializer(result).data, status=status.HTTP_201_CREATED
-            )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class ApiGetPutDeleteUser(GenericAPIView):
-    permission_classes = [IsAuthenticated]
+class ApiGetPutCreateDeleteUser(GenericAPIView):
+    permissions.SAFE_METHODS = ["POST"]
+    permission_classes = [IsAuthenticatedOrAllowAny]
     serializer_class = UserUpdateSerializer
 
     # show user with id
     def get(self, request, *args, **kwargs):
         # get expected user instance
-        user = get_object_or_404(User, pk=kwargs["pk"])
+        user = request.user
         # serialize user instance
         serialized_user = UserSerializer(user).data
         return Response(data=serialized_user, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
         # get expected user instance
-        user = get_object_or_404(User, pk=kwargs["pk"])
+        user = request.user
 
         serializer = UserUpdateSerializer(user, data=request.data)
         if serializer.is_valid():
@@ -74,9 +71,18 @@ class ApiGetPutDeleteUser(GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
-        user = get_object_or_404(User, pk=kwargs["pk"])
+        user = request.user
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def post(self, request, *args, **kwargs):
+        serializer = UserCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            result = serializer.save()
+            return Response(
+                data=UserSerializer(result).data, status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ApiGetMails(ListAPIView):

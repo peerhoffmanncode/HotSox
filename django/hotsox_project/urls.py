@@ -29,6 +29,6 @@ urlpatterns = [
     path("user/", include("allauth.urls")),
     path("chat/", include("app_chat.urls")),
     # API Routes
-    path("api/", include("app_restapi.urls")),
+    path("api/v1/", include("app_restapi.urls")),
     # path('api/auth/', include('rest_framework.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_URL)

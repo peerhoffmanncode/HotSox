@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.db.models import signals
+from django.utils.translation import gettext_lazy as _
 from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
@@ -31,7 +32,7 @@ class User(AbstractUser):
     # fields we inherit from AbstractUser:
     # username, password, password_conf, email, first_name, last_name,
     # joining_date, last_login, is_staff, is_active, is_superuser
-
+    email = models.EmailField(_("email address"), blank=True, unique=True)
     info_about = models.TextField(blank=True)
     info_birthday = models.DateField(default=timezone.now, blank=False)
     info_gender = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=False)
