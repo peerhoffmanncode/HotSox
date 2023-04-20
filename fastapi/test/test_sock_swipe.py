@@ -138,7 +138,6 @@ def create_test_records():
 
 @mock.patch("api.controller.ctr_sock_pic.uploader.upload")
 def test_swipe_next_sock(mock_uploader_upload, test_db_setup):
-
     # set up the mock return value
     mock_uploader_upload.return_value = {"url": "https://cloudinary.com/mock_image.jpg"}
 
@@ -156,7 +155,6 @@ def test_swipe_next_sock(mock_uploader_upload, test_db_setup):
 
 @mock.patch("api.controller.ctr_sock_pic.uploader.upload")
 def test_swipe_judge_sock(mock_uploader_upload, test_db_setup):
-
     # set up the mock return value
     mock_uploader_upload.return_value = {"url": "https://cloudinary.com/mock_image.jpg"}
 

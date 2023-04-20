@@ -8,7 +8,6 @@ from api.utilities.pre_prediction_algorithm import PrePredictionAlgorithm
 
 
 def get_next_sock(username: str, id: int, db: Session):
-
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
         raise HTTPException(

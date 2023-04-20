@@ -68,7 +68,6 @@ TEST_USER2 = {
 
 @pytest.fixture()
 def test_db_setup():
-
     # hack to be able to drop all tables in postgresql CASCADE style
     @compiles(DropTable, "postgresql")
     def _compile_drop_table(

@@ -42,7 +42,6 @@ def setup_match_records():
 
 
 def test_all_matches(test_db_setup):
-
     # setup database
     setup_match_records()
 
@@ -62,7 +61,6 @@ def test_all_matches(test_db_setup):
 
 
 def test_specific_match(test_db_setup):
-
     # setup database
     setup_match_records()
 
@@ -98,7 +96,6 @@ def test_specific_match(test_db_setup):
 
 
 def test_specific_match(test_db_setup):
-
     # setup database
     setup_match_records()
 

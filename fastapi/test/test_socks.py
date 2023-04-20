@@ -105,7 +105,6 @@ def test_show_sock_of_a_user_no_sock(test_db_setup):
 
 
 def test_show_sock_of_a_user_with_sock(test_db_setup):
-
     with Session(engine) as db:
         db_user = db.query(User).filter(User.username == "admin").first()
 
@@ -160,7 +159,6 @@ def test_show_sock_of_a_user_with_sock(test_db_setup):
 
 
 def test_update_sock_of_a_user_with_sock(test_db_setup):
-
     with Session(engine) as db:
         db_user = db.query(User).filter(User.username == "admin").first()
 
@@ -236,7 +234,6 @@ def test_update_sock_of_a_user_with_sock(test_db_setup):
 
 
 def test_create_and_delete_sock_of_a_user(test_db_setup):
-
     with Session(engine) as db:
         db_user = db.query(User).filter(User.username == "admin").first()
         all_socks_before = db.query(Sock).filter(Sock.user_id == db_user.id).all()

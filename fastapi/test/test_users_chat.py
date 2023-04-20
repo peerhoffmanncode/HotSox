@@ -34,7 +34,6 @@ def test_user_chats_no_chats(test_db_setup):
 
 
 def test_user_chats_with_chats(test_db_setup):
-
     with Session(engine) as db:
         user1 = db.query(User).filter(User.username == TEST_USER1["username"]).first()
         user2 = db.query(User).filter(User.username == TEST_USER2["username"]).first()
@@ -72,7 +71,6 @@ def test_user_chats_no_chats_between_users(test_db_setup):
 
 
 def test_user_chats_with_chats_between_users(test_db_setup):
-
     with Session(engine) as db:
         user1 = db.query(User).filter(User.username == TEST_USER1["username"]).first()
         user2 = db.query(User).filter(User.username == TEST_USER2["username"]).first()

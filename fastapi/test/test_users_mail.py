@@ -71,7 +71,6 @@ def test_user_mail_send(mock_send_message, test_db_setup):
 
 @mock.patch("api.controller.ctr_mail.celery_send_mail_to_user")
 def test_user_mail_delete(mock_send_message, test_db_setup):
-
     # setup db
     with Session(engine) as db:
         # get user
