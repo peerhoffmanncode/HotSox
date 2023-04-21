@@ -22,6 +22,7 @@ from .serializers_users import (
     UserCreateSerializer,
     UserUpdateSerializer,
     ChatSerializer,
+    ChatSendSerializer,
     MailSerializer,
     SockSerializer,
 )
@@ -113,9 +114,6 @@ class ApiGetMails(ListCreateAPIView):
 
         if serializer.is_valid():
             result = serializer.save(user=request.user)
-            # MessageMail.objects.create(
-            #     user=request.user, subject=result.subject, content=result.content
-            # )
             # send actual mail via celery
             celery_send_mail.delay(
                 email_subject=result.subject,
@@ -140,19 +138,64 @@ class ApiDeleteMail(DestroyAPIView):
 class ApiGetChats(ListAPIView):
     """List of all Chats"""
 
-    permission_classes = [IsAdminUser]
-
-    queryset = MessageChat.objects.all().order_by("-pk")
+    permission_classes = [IsAuthenticated]
     serializer_class = ChatSerializer
 
+    def get(self, request, *args, **kwargs):
+        # get expected user instance
+        user = request.user
+        queryset = MessageChat.objects.all().filter(user=user).order_by("-pk")
+        # serialize user instance
+        serialized_user = ChatSerializer(queryset, many=True).data
+        return Response(data=serialized_user, status=status.HTTP_200_OK)
 
-class ApiGetChat(RetrieveAPIView):
-    """List of all Chats"""
+
+class ApiGetSendChat(GenericAPIView):
+    """
+    Get a chat with a specific receiver
+    Sned a chat to a specific receiver
+    """
 
     permission_classes = [IsAuthenticated]
 
-    queryset = MessageChat.objects.all()
-    serializer_class = ChatSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return ChatSendSerializer
+        return ChatSerializer
+
+    def get(self, request, *args, **kwargs):
+        # get expected user instance
+        user = request.user
+        receiver_user = get_object_or_404(User, username=kwargs.get("receiver", None))
+
+        if user and receiver_user and user != receiver_user:
+            queryset = (
+                MessageChat.objects.all()
+                .filter(user=user, other=receiver_user)
+                .order_by("-pk")
+            )
+            # serialize user instance
+            serialized_user = ChatSerializer(queryset, many=True).data
+            return Response(data=serialized_user, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request, *args, **kwargs):
+        # get expected user instance
+        user = request.user
+        receiver_user = get_object_or_404(User, username=kwargs.get("receiver", None))
+
+        if user and receiver_user and user != receiver_user:
+            print(request.data)
+            chat = MessageChat.objects.create(
+                user=user, other=receiver_user, **request.data
+            )
+
+            # serialize instance
+            serialized_chat = ChatSerializer(chat).data
+            return Response(data=serialized_chat, status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class ApiGetSocks(ListAPIView):

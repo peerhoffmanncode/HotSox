@@ -50,10 +50,24 @@ class MailSerializer(serializers.ModelSerializer):
         exclude = ["user"]
 
 
+class UserChatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username", "email"]
+
+
 class ChatSerializer(serializers.ModelSerializer):
+    other = UserChatSerializer()
+
     class Meta:
         model = MessageChat
         exclude = ["user"]
+
+
+class ChatSendSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MessageChat
+        fields = ["message"]
 
 
 class UserMatchSerializer(serializers.ModelSerializer):
