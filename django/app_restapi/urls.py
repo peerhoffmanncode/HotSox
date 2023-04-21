@@ -40,8 +40,8 @@ urlpatterns = [
         views.ApiGetPutCreateDeleteUser.as_view(),
         name="api_user_crud",
     ),
-    path("user/mail/", views.ApiGetMails.as_view(), name="api_mail_list"),
-    path("user/mail/<int:pk>/", views.ApiGetMail.as_view(), name="api_mail_detail"),
+    path("user/mail/", views.ApiGetMails.as_view(), name="api_mail_listsend"),
+    path("user/mail/<int:pk>/", views.ApiDeleteMail.as_view(), name="api_mail_delete"),
     path("user/chats/", views.ApiGetChats.as_view(), name="api_chats_list"),
     path(
         "user/chat/<str:receiver>/", views.ApiGetChat.as_view(), name="api_chat_detail"

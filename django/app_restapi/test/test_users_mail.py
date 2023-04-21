@@ -23,72 +23,67 @@ class TestUser(TestCase):
 
     def test_user_mails_no_mails_in_db(self):
         response = self.client.get(
-            reverse("app_restapi:api_mail_list"),
+            reverse("app_restapi:api_mail_listsend"),
             headers=token(self.client, "admin", "admin"),
             format="json",
         )
         assert response.status_code == 200
-        assert response.json()["results"] == []
+        assert response.json() == []
 
-    # @mock.patch("api.controller.ctr_mail.celery_send_mail_to_user")
-    # def test_user_mail_send(mock_send_message, self):
-    #     # setup mock
-    #     mock_send_message.return_value = {
-    #         "subject": "TestMailSubject",
-    #         "content": "TestMailContent",
-    #     }
+    def test_user_mail_delete(self):
+        # setup db
 
-    #     response = self.client.post(
-    #         reverse("app_restapi:api_mail_send"),
-    #         headers=token(self.client, "admin", "admin"),
-    #         data={
-    #             "subject": "TestMailSubject",
-    #             "content": "TestMailContent",
-    #         },
-    #         format="json",
-    #     )
-    #     assert response.status_code == 200
-    #     assert response.json() == {
-    #         "status": "email has been sent",
-    #         "email": {
-    #             "subject": "TestMailSubject",
-    #             "content": "TestMailContent",
-    #         },
-    #     }
+        # get user
+        user = User.objects.get(username="admin")
+        # create mail
+        mail = MessageMail.objects.create(
+            user=user, subject="TestMailSubject", content="TestMailContent"
+        )
 
-    #     # double check database feedback
-    #     response = self.client.get(
-    #         reverse("app_restapi:api_mail_list"),
-    #         headers=token(self.client, "admin", "admin"),
-    #         format="json",
-    #     )
-    #     assert response.status_code == 200
-    #     assert response.json()["results"][0]["content"] == "TestMailContent"
-    #     assert response.json()["results"][0]["subject"] == "TestMailSubject"
+        # delete mail
+        response = self.client.delete(
+            reverse("app_restapi:api_mail_delete", kwargs={"pk": mail.pk}),
+            headers=token(self.client, "admin", "admin"),
+            format="json",
+        )
 
-    # @mock.patch("api.controller.ctr_mail.celery_send_mail_to_user")
-    # def test_user_mail_delete(mock_send_message, self):
-    #     # setup db
+        # get all remaining mails after delete
+        try:
+            mail = MessageMail.objects.get(pk=mail.pk)
+        except MessageMail.DoesNotExist:
+            mail = None
 
-    #     # get user
-    #     user = User.objects.get(username="admin")
-    #     # create mail
-    #     mail = MessageMail.objects.create(
-    #         user=user, subject="TestMailSubject", content="TestMailContent"
-    #     )
+        assert response.status_code == 204
+        assert not mail
 
-    #     # delete mail
-    #     response = self.client.delete(
-    #         reverse("app_restapi:api_mail_delete", kwargs={"pk": mail.pk}),
-    #         headers=token(self.client, "admin", "admin"),
-    #         format="json",
-    #     )
+    @mock.patch("app_restapi.views.celery_send_mail")
+    def test_user_mail_send(self, mock_send_message):
+        # setup mock
+        mock_send_message.return_value = {
+            "subject": "TestMailSubject",
+            "content": "TestMailContent",
+        }
 
-    #     # get all remaining mails after delete
-    #     try:
-    #         mail = MessageMail.objects.get(pk=mail.pk)
-    #     except MessageMail.DoesNotExist:
-    #         mail = None
+        response = self.client.post(
+            reverse("app_restapi:api_mail_listsend"),
+            headers=token(self.client, "admin", "admin"),
+            data={
+                "subject": "TestMailSubject",
+                "content": "TestMailContent",
+            },
+            format="json",
+        )
 
-    #     assert response.status_code == 204
-    #     assert not mail
+        assert response.status_code == 201
+        assert response.json()["subject"] == "TestMailSubject"
+        assert response.json()["content"] == "TestMailContent"
+
+        # double check database feedback
+        response = self.client.get(
+            reverse("app_restapi:api_mail_listsend"),
+            headers=token(self.client, "admin", "admin"),
+            format="json",
+        )
+        assert response.status_code == 200
+        assert response.json()[0]["subject"] == "TestMailSubject"
+        assert response.json()[0]["content"] == "TestMailContent"

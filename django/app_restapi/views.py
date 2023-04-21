@@ -2,10 +2,12 @@ from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
+from rest_framework import permissions
 
 from rest_framework.generics import (
     GenericAPIView,
     ListAPIView,
+    ListCreateAPIView,
     CreateAPIView,
     RetrieveAPIView,
     UpdateAPIView,
@@ -25,8 +27,7 @@ from .serializers_users import (
 )
 
 from app_geo.utilities import GeoLocation
-from rest_framework import permissions
-
+from app_mail.tasks import celery_send_mail
 
 # create custom permission handling for methods
 class IsAuthenticatedOrAllowAny(permissions.BasePermission):
@@ -48,9 +49,16 @@ class ApiGetUsers(ListAPIView):
 class ApiGetPutCreateDeleteUser(GenericAPIView):
     permissions.SAFE_METHODS = ["POST"]
     permission_classes = [IsAuthenticatedOrAllowAny]
-    serializer_class = UserUpdateSerializer
 
-    # show user with id
+    # serializer_class = UserCreateSerializer
+    # generate different serializer classes for different methods
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return UserCreateSerializer
+        elif self.request.method == "PUT":
+            return UserUpdateSerializer
+        return UserSerializer
+
     def get(self, request, *args, **kwargs):
         # get expected user instance
         user = request.user
@@ -58,11 +66,18 @@ class ApiGetPutCreateDeleteUser(GenericAPIView):
         serialized_user = UserSerializer(user).data
         return Response(data=serialized_user, status=status.HTTP_200_OK)
 
+    def post(self, request, *args, **kwargs):
+        serializer = UserCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            result = serializer.save()
+            return Response(
+                data=UserSerializer(result).data, status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request, *args, **kwargs):
         # get expected user instance
-        user = request.user
-
-        serializer = UserUpdateSerializer(user, data=request.data)
+        serializer = UserUpdateSerializer(user=request.user, data=request.data)
         if serializer.is_valid():
             updated_user = serializer.save()
             return Response(
@@ -75,27 +90,45 @@ class ApiGetPutCreateDeleteUser(GenericAPIView):
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def post(self, request, *args, **kwargs):
-        serializer = UserCreateSerializer(data=request.data)
-        if serializer.is_valid():
-            result = serializer.save()
-            return Response(
-                data=UserSerializer(result).data, status=status.HTTP_201_CREATED
-            )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class ApiGetMails(ListAPIView):
+class ApiGetMails(ListCreateAPIView):
     """List of all Mails"""
 
-    permission_classes = [IsAdminUser]
-
+    permission_classes = [IsAuthenticated]
     queryset = MessageMail.objects.all().order_by("-pk")
     serializer_class = MailSerializer
 
+    def get(self, request, *args, **kwargs):
+        # get expected user instance
+        queryset = MessageMail.objects.all().filter(user=request.user).order_by("-pk")
+        # serialize user instance
+        serialized_mail = MailSerializer(queryset, many=True).data
+        return Response(data=serialized_mail, status=status.HTTP_200_OK)
 
-class ApiGetMail(RetrieveAPIView):
-    """Detail mail view"""
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        data["user"] = request.user
+        serializer = MailSerializer(data=request.data)
+
+        if serializer.is_valid():
+            result = serializer.save(user=request.user)
+            # MessageMail.objects.create(
+            #     user=request.user, subject=result.subject, content=result.content
+            # )
+            # send actual mail via celery
+            celery_send_mail.delay(
+                email_subject=result.subject,
+                email_message=result.content,
+                recipient_list=[result.user.email],
+                notification=result.user.notification,
+            )
+            return Response(
+                data=MailSerializer(result).data, status=status.HTTP_201_CREATED
+            )
+
+
+class ApiDeleteMail(DestroyAPIView):
+    """Destroy mail view"""
 
     permission_classes = [IsAuthenticated]
 
