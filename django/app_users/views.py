@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.db.models import Q
@@ -168,6 +168,30 @@ class UserProfileUpdate(LoginRequiredMixin, TemplateView):
                 "right_arrow_go_to_url": reverse("app_users:sock-overview"),
             },
         )
+
+
+class UserProfileDelete(HotSoxLogInAndValidationCheckMixin, TemplateView):
+    """View to delete the user profile and all related details"""
+
+    def get(self, request, *args, **kwargs):
+        # get current user
+        user = request.user
+        # send email about account deletion
+        celery_send_mail.delay(
+            recipient_list=[user.email],
+            notification=user.notification,
+            email_subject="HotSox Account Deletion",
+            email_message="Your HotSox account has been deleted. We are very sorry to see you go :(",
+        )
+        # delete user
+        user.delete()
+        # logout
+        logout(request)
+        # return to login site plus message
+        messages.success(
+            request, "Profile successfully deleted. Sorry to see you go :("
+        )
+        return redirect(reverse("account_login"))
 
 
 class UserProfilePictureUpdate(HotSoxLogInAndValidationCheckMixin, TemplateView):

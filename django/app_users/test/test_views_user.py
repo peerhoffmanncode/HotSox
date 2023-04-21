@@ -276,3 +276,28 @@ class UserSignUpTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("app_users:user-matches"))
+
+    @mock.patch("app_users.views.celery_send_mail")
+    def test_user_deletion(self, mock_email):
+        mock_email.return_value = "Success"
+        # define URL
+        self.url = reverse("app_users:user-profile-delete")
+
+        # make sure the user is logged in:
+        self.client.force_login(self.user)
+
+        user_id_before_deletion = self.user.id
+
+        # Test GET request with valid form data
+        response = self.client.get(
+            self.url,
+        )
+        self.assertEqual(response.status_code, 302)  # check redirect status code
+
+        # check that the user is not present anymore in database
+        try:
+            user_object = User.objects.get(pk=user_id_before_deletion)
+        except User.DoesNotExist:
+            user_object = None
+
+        self.assertEqual(user_object, None)
