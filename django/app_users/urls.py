@@ -15,6 +15,11 @@ urlpatterns = [
         name="user-profile-update",
     ),
     path(
+        "profile/delete/",
+        views.UserProfileDelete.as_view(),
+        name="user-profile-delete",
+    ),
+    path(
         "profile/picture/",
         views.UserProfilePictureUpdate.as_view(),
         name="user-profile-picture",
