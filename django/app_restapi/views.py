@@ -29,6 +29,7 @@ from .serializers_users import (
 from app_geo.utilities import GeoLocation
 from app_mail.tasks import celery_send_mail
 
+
 # create custom permission handling for methods
 class IsAuthenticatedOrAllowAny(permissions.BasePermission):
     def has_permission(self, request, view):

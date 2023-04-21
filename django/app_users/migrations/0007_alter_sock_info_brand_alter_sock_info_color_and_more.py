@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("app_users", "0006_alter_socklike_sock_alter_usermatch_user"),
     ]
