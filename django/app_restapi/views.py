@@ -78,7 +78,7 @@ class ApiGetPutCreateDeleteUser(GenericAPIView):
 
     def put(self, request, *args, **kwargs):
         # get expected user instance
-        serializer = UserUpdateSerializer(user=request.user, data=request.data)
+        serializer = UserUpdateSerializer(instance=request.user, data=request.data)
         if serializer.is_valid():
             updated_user = serializer.save()
             return Response(

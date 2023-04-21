@@ -100,7 +100,7 @@ class TestUser(TestCase):
             headers=token(self.client, "admin", "admin"),
             format="json",
         )
-
+        breakpoint()
         assert response.status_code == 202
         assert response.json()["username"] == update_data["username"]
         assert response.json()["first_name"] == update_data["first_name"]
