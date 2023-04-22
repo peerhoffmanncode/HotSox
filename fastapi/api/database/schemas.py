@@ -279,5 +279,5 @@ class Token(BaseModel):
 # basic schema for JWT Token
 class TokenData(BaseModel):
     username: Optional[str] = None
-    superuser: Optional[bool]
-    active: Optional[bool]
+    superuser: Optional[bool] = False
+    active: Optional[bool] = True

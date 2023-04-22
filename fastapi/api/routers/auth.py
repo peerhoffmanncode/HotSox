@@ -7,6 +7,7 @@ from ..authentication.hashing import Hash
 from ..authentication.token import create_access_token
 
 import os
+from datetime import datetime, timedelta
 
 router = APIRouter(
     prefix=os.environ.get("API_URL", "/fastapi/v1"), tags=["Authentication"]
@@ -30,10 +31,10 @@ async def token(
 
     claims = {
         "sub": user.username,
-        "email": user.email,
+        "exp": datetime.utcnow() + timedelta(minutes=15),
         "superuser": user.is_superuser,
         "active": user.is_active,
     }
 
-    access_token = create_access_token(data=claims)
+    access_token = create_access_token(claims=claims)
     return {"access_token": access_token, "token_type": "bearer"}

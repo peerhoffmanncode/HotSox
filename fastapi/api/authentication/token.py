@@ -5,14 +5,15 @@ from ..database import schemas
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 15
 
 
-def create_access_token(data: dict):
-    to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+def create_access_token(claims: dict):
+    claims_to_encode = claims.copy()
+    claims_to_encode["exp"] = datetime.utcnow() + timedelta(
+        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+    )
+    encoded_jwt = jwt.encode(claims_to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 
