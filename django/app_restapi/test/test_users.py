@@ -1,8 +1,6 @@
 from unittest import mock
 from django.test import TestCase
-from django.contrib.auth.hashers import make_password, check_password
 from django.urls import reverse
-
 from app_users.models import User
 
 

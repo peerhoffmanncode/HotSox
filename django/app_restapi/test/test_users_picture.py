@@ -1,9 +1,8 @@
 from unittest import mock
 from django.test import TestCase
-from django.contrib.auth.hashers import make_password, check_password
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
-from app_users.models import User, MessageMail, MessageChat
+from app_users.models import User
 
 
 from .inital_test_setup import (
@@ -29,7 +28,6 @@ class TestUser(TestCase):
         # set up the mock return value
         mock_uploader_upload = "https://cloudinary.com/mock_image.jpg"
 
-        # make a test user
         db_user = User.objects.get(username=username)
 
         # send a request to add a profile picture
