@@ -11,7 +11,7 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 from django.urls import path
-from . import views
+from . import views_users, views_mail, views_chat, views_socks
 
 
 app_name = "app_restapi"
@@ -34,26 +34,41 @@ urlpatterns = [
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     # Users
-    path("users/", views.ApiGetUsers.as_view(), name="api_user_list"),
+    path("users/", views_users.ApiGetUsers.as_view(), name="api_user_list"),
     path(
-        "user/",
-        views.ApiGetPutCreateDeleteUser.as_view(),
-        name="api_user_crud",
+        "user/", views_users.ApiGetPutCreateDeleteUser.as_view(), name="api_user_crud"
+    ),
+    # Users profile pictures
+    path(
+        "user/profilepic",
+        views_users.ApiCreateProfilePic.as_view(),
+        name="api_user_profilepic_create",
+    ),
+    path(
+        "user/profilepic/<int:pk>",
+        views_users.ApiDeleteProfilePic.as_view(),
+        name="api_user_profilepic_delete",
     ),
     # Mail
-    path("user/mail/", views.ApiGetMails.as_view(), name="api_mail_listsend"),
-    path("user/mail/<int:pk>/", views.ApiDeleteMail.as_view(), name="api_mail_delete"),
+    path("user/mail/", views_mail.ApiGetMails.as_view(), name="api_mail_listsend"),
+    path(
+        "user/mail/<int:pk>/",
+        views_mail.ApiDeleteMail.as_view(),
+        name="api_mail_delete",
+    ),
     # Chat
-    path("user/chats/", views.ApiGetChats.as_view(), name="api_chats_list"),
+    path("user/chats/", views_chat.ApiGetChats.as_view(), name="api_chats_list"),
     path(
         "user/chat/<str:receiver>/",
-        views.ApiGetSendChat.as_view(),
+        views_chat.ApiGetSendChat.as_view(),
         name="api_chat_get_send",
     ),
     # User picture
     # Socks
-    path("user/socks/", views.ApiGetSocks.as_view(), name="api_sock_list"),
-    path("user/sock/<int:pk>/", views.ApiGetSock.as_view(), name="api_sock_detail"),
+    path("user/socks/", views_socks.ApiGetSocks.as_view(), name="api_sock_list"),
+    path(
+        "user/sock/<int:pk>/", views_socks.ApiGetSock.as_view(), name="api_sock_detail"
+    ),
     # Sock picture
     # Swipe
     # Match

@@ -275,6 +275,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
+    "COMPONENT_SPLIT_REQUEST": True,
 }
 
 # configuration for swagger
@@ -287,6 +288,7 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_DIST": "SIDECAR",
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
     "REDOC_DIST": "SIDECAR",
+    "COMPONENT_SPLIT_REQUEST": True,
 }
 
 # configuration for SimpleJWT

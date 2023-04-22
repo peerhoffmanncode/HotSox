@@ -30,7 +30,6 @@ class TestUser(TestCase):
         assert response.json() == []
 
     def test_user_chats_with_chats(self):
-
         user1 = User.objects.get(username=TEST_USER1["username"])
         user2 = User.objects.get(username=TEST_USER2["username"])
         MessageChat.objects.create(user=user1, other=user2, message="test message")
@@ -60,7 +59,6 @@ class TestUser(TestCase):
         assert response.json() == []
 
     def test_user_chats_with_chats_between_users(self):
-
         user1 = User.objects.get(username=TEST_USER1["username"])
         user2 = User.objects.get(username=TEST_USER2["username"])
         MessageChat.objects.create(user=user1, other=user2, message="test message")

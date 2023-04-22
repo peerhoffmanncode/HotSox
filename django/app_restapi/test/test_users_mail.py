@@ -56,7 +56,7 @@ class TestUser(TestCase):
         assert response.status_code == 204
         assert not mail
 
-    @mock.patch("app_restapi.views.celery_send_mail")
+    @mock.patch("app_restapi.views_mail.celery_send_mail")
     def test_user_mail_send(self, mock_send_message):
         # setup mock
         mock_send_message.return_value = {

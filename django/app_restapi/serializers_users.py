@@ -30,6 +30,9 @@ class SockLikeSerializer(serializers.ModelSerializer):
 
 
 class SockProfilePictureSerializer(serializers.ModelSerializer):
+    # this is needed to show a upload file dialog!
+    profile_picture = serializers.FileField()
+
     class Meta:
         model = SockProfilePicture
         exclude = ["sock"]
@@ -77,6 +80,9 @@ class UserMatchSerializer(serializers.ModelSerializer):
 
 
 class UserProfilePicSerializer(serializers.ModelSerializer):
+    # this is needed to show a upload file dialog!
+    profile_picture = serializers.FileField()
+
     class Meta:
         model = UserProfilePicture
         exclude = ["user"]
