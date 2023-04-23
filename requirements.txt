@@ -117,7 +117,7 @@ sniffio==1.3.0
 SQLAlchemy
 sqlalchemy2-stubs
 sqlmodel==0.0.8
-sqlparse==0.4.3
+sqlparse==0.4.4
 stack-data==0.6.2
 starlette==0.26.1
 traitlets==5.9.0
