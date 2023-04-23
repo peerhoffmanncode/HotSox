@@ -56,7 +56,7 @@ async def get_user(
     return ctr_user.show_specific_user(current_user.username, db)
 
 
-@router.post("/", response_model=schemas.CreateUser, status_code=201)
+@router.post("/", response_model=schemas.CreateUserOut, status_code=201)
 async def singup_user(request: schemas.CreateUser, db: Session = Depends(get_db)):
     return ctr_user.create_user(request, db)
 
