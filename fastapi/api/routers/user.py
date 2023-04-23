@@ -6,6 +6,7 @@ from fastapi import (
     File,
     UploadFile,
     BackgroundTasks,
+    Body,
 )
 from fastapi_pagination import Page, Params, add_pagination, paginate
 
@@ -62,12 +63,12 @@ async def singup_user(request: schemas.CreateUser, db: Session = Depends(get_db)
 
 @router.put(
     "/",
-    response_model=schemas.EditUser,
+    response_model=schemas.EditUserOut,
     status_code=202,
     dependencies=[Depends(oauth2.check_active)],
 )
 async def edit_user(
-    request: schemas.EditUser,
+    request: schemas.EditUser = Body(exclude_unset=True),
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):

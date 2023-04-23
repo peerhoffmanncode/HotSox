@@ -4,6 +4,8 @@ from ..database import models, schemas
 from fastapi import HTTPException, status
 from ..authentication.hashing import Hash
 
+from api.utilities.geo_location import get_geolocation_from_city
+
 
 ##
 ## Users
@@ -60,6 +62,9 @@ def create_user(request: schemas.CreateUser, db: Session):
 
     # create db object
     new_user = models.User(**request.dict())
+    new_user.location_latitude, new_user.location_longitude = get_geolocation_from_city(
+        new_user.location_city
+    )
     # write to db / commit!
     db.add(new_user)
     db.commit()
@@ -80,9 +85,19 @@ def edit_user(username: str, request: schemas.EditUser, db: Session):
 
     # check for duplicates
     try:
-        db.query(models.User).filter(models.User.username == username).update(
-            request.dict()
-        )
+        update_data = request.dict(exclude_unset=True)
+        if not update_data:
+            return current_user
+
+        if update_data.get("location_city", None):
+            (
+                update_data["location_latitude"],
+                update_data["location_longitude"],
+            ) = get_geolocation_from_city(update_data["location_city"])
+        for attr, value in update_data.items():
+            setattr(current_user, attr, value)
+
+        db.add(current_user)
         db.commit()
         db.refresh(current_user)
     except exc.IntegrityError as excep_text:

@@ -63,7 +63,9 @@ def test_show_user_that_do_not_exist(test_db_setup):
         assert db_user == None
 
 
-def test_update_user_admin(test_db_setup):
+@mock.patch("api.controller.ctr_user.get_geolocation_from_city", return_value=(0, 0))
+def test_update_user_admin(geo_mock, test_db_setup):
+    geo_mock.return_value = (0, 0)
     update_data = {
         "username": "admin",
         "first_name": "UPDATED1",
@@ -98,7 +100,9 @@ def test_update_user_admin(test_db_setup):
         assert db_user.social_spotify == update_data["social_spotify"]
 
 
-def test_update_user_that_do_not_exist(test_db_setup):
+@mock.patch("api.controller.ctr_user.get_geolocation_from_city", return_value=(0, 0))
+def test_update_user_that_do_not_exist(geo_mock, test_db_setup):
+    geo_mock.return_value = (0, 0)
     update_data = {
         "username": "admin",
         "first_name": "UPDATED1",
@@ -127,7 +131,9 @@ def test_update_user_that_do_not_exist(test_db_setup):
         assert db_user == None
 
 
-def test_create_user_wrong_data(test_db_setup):
+@mock.patch("api.controller.ctr_user.get_geolocation_from_city", return_value=(0, 0))
+def test_create_user_wrong_data(geo_mock, test_db_setup):
+    geo_mock.return_value = (0, 0)
     create_data = {
         "username": "bibo",
         "first_name": "bibo",
@@ -159,7 +165,9 @@ def test_create_user_wrong_data(test_db_setup):
         assert db_user == None
 
 
-def test_create_user_new(test_db_setup):
+@mock.patch("api.controller.ctr_user.get_geolocation_from_city", return_value=(50, 8))
+def test_create_user_new(geo_mock, test_db_setup):
+    geo_mock.return_value = (50, 8)
     create_data = {
         "username": "bibo",
         "first_name": "bibo",
@@ -195,7 +203,9 @@ def test_create_user_new(test_db_setup):
         assert db_user
 
 
-def test_create_user_dupliceate(test_db_setup):
+@mock.patch("api.controller.ctr_user.get_geolocation_from_city", return_value=(50, 8))
+def test_create_user_dupliceate(geo_mock, test_db_setup):
+    geo_mock.return_value = (50, 8)
     create_data = {
         "username": "bibo",
         "first_name": "bibo",

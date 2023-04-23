@@ -2,7 +2,7 @@ from typing import List, Optional
 from uuid import uuid4, UUID
 
 from datetime import datetime, date
-from pydantic import BaseModel, validator, Field, HttpUrl, EmailStr
+from pydantic import BaseModel, validator, Field, HttpUrl, EmailStr, AnyUrl
 
 
 # basic schema for simplified user display
@@ -209,10 +209,10 @@ class ShowUser(BaseModel):
     location_latitude: Optional[float]
     location_longitude: Optional[float]
     notification: Optional[bool]
-    social_instagram: Optional[str | None] = None
-    social_facebook: Optional[str | None] = None
-    social_twitter: Optional[str | None] = None
-    social_spotify: Optional[str | None] = None
+    social_instagram: Optional[str] = Field("https://www.instagram.com/")
+    social_facebook: Optional[str] = Field("https://www.facebook.com/")
+    social_twitter: Optional[str] = Field("https://twitter.com/")
+    social_spotify: Optional[str] = Field("https://open.spotify.com/")
     profile_pictures: Optional[list[UserProfilePicture]]
     user_matches: Optional[list[UserMatch]]
     mail: Optional[list[MessageMail]]
@@ -226,21 +226,19 @@ class ShowUser(BaseModel):
 
 # basic schema for user_edit
 class EditUser(BaseModel):
-    username: str
-    first_name: str
-    last_name: str
-    email: EmailStr
+    username: str | None
+    first_name: str | None
+    last_name: str | None
+    email: EmailStr | None
     info_about: str | None
-    info_birthday: date
+    info_birthday: date | None
     info_gender: int = Field(1, ge=1, le=8)
     location_city: str | None
-    location_latitude: float | None
-    location_longitude: float | None
-    notification: bool
-    social_instagram: str | None
-    social_facebook: str | None
-    social_twitter: str | None
-    social_spotify: str | None
+    notification: bool | None
+    social_instagram: Optional[str] = Field("https://www.instagram.com/")
+    social_facebook: Optional[str] = Field("https://www.facebook.com/")
+    social_twitter: Optional[str] = Field("https://twitter.com/")
+    social_spotify: Optional[str] = Field("https://open.spotify.com/")
 
     class Config:
         orm_mode = True
@@ -257,7 +255,15 @@ class EditUser(BaseModel):
         return value
 
 
-class CreateUser(EditUser):
+class EditUserOut(EditUser):
+    location_latitude: float | None
+    location_longitude: float | None
+
+    class Config:
+        orm_mode = True
+
+
+class CreateUser(EditUserOut):
     password: str
 
     class Config:
