@@ -269,11 +269,13 @@ class CreateUser(EditUser):
     class Config:
         orm_mode = True
 
+
 class CreateUserOut(EditUserOut):
     password: str
 
     class Config:
         orm_mode = True
+
 
 # basic schema for login
 class Login(BaseModel):
