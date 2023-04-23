@@ -30,6 +30,6 @@ urlpatterns = [
     path("user/", include("allauth.urls")),
     path("chat/", include("app_chat.urls")),
     # API Routes
-    path(os.environ.get("DRFAPI_URL", "/api/v1"), include("app_restapi.urls")),
+    path(os.environ.get("DRFAPI_URL", "api/v1") + "/", include("app_restapi.urls")),
     # path('api/auth/', include('rest_framework.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_URL)
