@@ -10,7 +10,7 @@ import os
 from datetime import datetime, timedelta
 
 router = APIRouter(
-    prefix=os.environ.get("API_URL", "/fastapi/v1"), tags=["Authentication"]
+    prefix=os.environ.get("FASTAPI_URL", "/fastapi/v1"), tags=["Authentication"]
 )
 
 

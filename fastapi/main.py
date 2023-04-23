@@ -42,11 +42,11 @@ warnings.simplefilter("ignore", FastAPIPaginationWarning)
 # build FastAPI app / Hide schemas from docs
 app = FastAPI(
     title="HotSox FastAPI",
-    openapi_url=os.environ.get("API_URL", "//fastapi/v1") + "/openapi.json",
-    docs_url=os.environ.get("API_URL", "//fastapi/v1") + "/docs",
+    openapi_url=os.environ.get("FASTAPI_URL", "/fastapi/v1") + "/openapi.json",
+    docs_url=os.environ.get("FASTAPI_URL", "/fastapi/v1") + "/docs",
     swagger_ui_parameters={"defaultModelsExpandDepth": -1},
 )
-# warnings.simplefilter("ignore", FastAPIPaginationWarning)
+
 # setup SQLAlchemy database engine
 # models.Base.metadata.create_all(engine)
 

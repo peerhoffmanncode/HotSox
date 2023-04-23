@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+import os
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -29,6 +30,6 @@ urlpatterns = [
     path("user/", include("allauth.urls")),
     path("chat/", include("app_chat.urls")),
     # API Routes
-    path("api/v1/", include("app_restapi.urls")),
+    path(os.environ.get("DRFAPI_URL", "/api/v1"), include("app_restapi.urls")),
     # path('api/auth/', include('rest_framework.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_URL)

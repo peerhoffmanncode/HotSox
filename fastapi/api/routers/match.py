@@ -17,7 +17,8 @@ import os
 
 # build routes
 router = APIRouter(
-    prefix=os.environ.get("API_URL", "/fastapi/v1") + "/user/match", tags=["Matches"]
+    prefix=os.environ.get("FASTAPI_URL", "/fastapi/v1") + "/user/match",
+    tags=["Matches"],
 )
 
 

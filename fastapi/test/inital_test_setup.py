@@ -20,7 +20,7 @@ from main import app
 client = TestClient(app)
 
 # API Prefix for routes
-PREFIX = os.environ.get("API_URL", "/fastapi/v1")
+PREFIX = os.environ.get("FASTAPI_URL", "/fastapi/v1")
 
 # setup test user
 TEST_USER1 = {
