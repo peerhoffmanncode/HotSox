@@ -6,6 +6,7 @@ from fastapi import (
     File,
     UploadFile,
     BackgroundTasks,
+    Request,
 )
 from fastapi_pagination import Page, Params, paginate
 from sqlalchemy.orm import Session
@@ -21,6 +22,10 @@ from ..authentication import oauth2
 from ..controller import ctr_mail
 
 import os
+from slowapi.util import get_remote_address
+from slowapi import Limiter
+
+limiter = Limiter(key_func=get_remote_address)
 
 # build routes
 router = APIRouter(
@@ -37,7 +42,9 @@ router = APIRouter(
     dependencies=[Depends(oauth2.check_active)],
     status_code=200,
 )
+@limiter.limit("30/minute")
 async def get_all_mail(
+    request: Request,
     params: Params = Depends(),
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
@@ -51,7 +58,9 @@ async def get_all_mail(
     dependencies=[Depends(oauth2.check_active)],
     status_code=201,
 )
+@limiter.limit("20/minute")
 async def send_mail(
+    request: Request,
     background_tasks: BackgroundTasks,
     message_body: schemas.MessageMailSending,
     db: Session = Depends(get_db),
@@ -67,7 +76,9 @@ async def send_mail(
     dependencies=[Depends(oauth2.check_active)],
     status_code=204,
 )
+@limiter.limit("20/minute")
 async def delete_mail(
+    request: Request,
     id: int,
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),

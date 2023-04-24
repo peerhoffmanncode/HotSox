@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Request
 from fastapi_pagination import Page, Params, paginate
 from sqlalchemy.orm import Session
 
@@ -10,10 +10,11 @@ from ..authentication import oauth2
 # load business logic
 from ..controller import ctr_match
 
-import warnings
-
-
 import os
+from slowapi.util import get_remote_address
+from slowapi import Limiter
+
+limiter = Limiter(key_func=get_remote_address)
 
 # build routes
 router = APIRouter(
@@ -28,7 +29,9 @@ router = APIRouter(
     dependencies=[Depends(oauth2.check_active)],
     status_code=200,
 )
+@limiter.limit("20/minute")
 async def get_all_user_matches(
+    request: Request,
     params: Params = Depends(),
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
@@ -42,7 +45,9 @@ async def get_all_user_matches(
     dependencies=[Depends(oauth2.check_active)],
     status_code=200,
 )
+@limiter.limit("20/minute")
 async def get_specific_user_match(
+    request: Request,
     id: int,
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
@@ -55,7 +60,9 @@ async def get_specific_user_match(
     dependencies=[Depends(oauth2.check_active)],
     status_code=204,
 )
+@limiter.limit("20/minute")
 async def delete_specific_user_match(
+    request: Request,
     id: int,
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),

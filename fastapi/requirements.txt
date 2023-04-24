@@ -20,3 +20,4 @@ celery
 redis
 yagmail
 geopy
+slowapi

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Request
 from fastapi_pagination import Page, Params, paginate
 from sqlalchemy.orm import Session
 
@@ -12,6 +12,10 @@ from ..controller import ctr_sock
 
 
 import os
+from slowapi.util import get_remote_address
+from slowapi import Limiter
+
+limiter = Limiter(key_func=get_remote_address)
 
 # build routes
 router = APIRouter(
@@ -25,7 +29,9 @@ router = APIRouter(
     dependencies=[Depends(oauth2.check_active)],
     status_code=200,
 )
+@limiter.limit("20/minute")
 async def get_all_socks(
+    request: Request,
     params: Params = Depends(),
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
@@ -39,7 +45,9 @@ async def get_all_socks(
     dependencies=[Depends(oauth2.check_active)],
     status_code=200,
 )
+@limiter.limit("30/minute")
 async def get_sock(
+    request: Request,
     id: int,
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
@@ -48,12 +56,14 @@ async def get_sock(
 
 
 @router.post("/", response_model=schemas.ShowSock, status_code=201)
+@limiter.limit("20/minute")
 async def create_sock(
-    request: schemas.CreateUpdateSock,
+    request: Request,
+    body: schemas.CreateUpdateSock,
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return ctr_sock.create_sock(current_user.username, request, db)
+    return ctr_sock.create_sock(current_user.username, body, db)
 
 
 @router.put(
@@ -62,20 +72,23 @@ async def create_sock(
     status_code=202,
     dependencies=[Depends(oauth2.check_active)],
 )
+@limiter.limit("20/minute")
 async def edit_sock(
+    request: Request,
     id: int,
-    request: schemas.CreateUpdateSock,
+    body: schemas.CreateUpdateSock,
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
 ):
-    return ctr_sock.edit_sock(current_user.username, id, request, db)
+    return ctr_sock.edit_sock(current_user.username, id, body, db)
 
 
-# permission handling superuser!
 @router.delete(
     "/{id}", status_code=204, dependencies=[Depends(oauth2.check_active)]
 )  # , response_model=schemas.SimplyUser)
+@limiter.limit("20/minute")
 async def delete_sock(
+    request: Request,
     id: int,
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Request
 from sqlalchemy.orm import Session
 
 from ..database.setup import get_db
@@ -11,6 +11,10 @@ from ..controller import ctr_swipe
 
 
 import os
+from slowapi.util import get_remote_address
+from slowapi import Limiter
+
+limiter = Limiter(key_func=get_remote_address)
 
 # build routes
 router = APIRouter(
@@ -24,7 +28,9 @@ router = APIRouter(
     dependencies=[Depends(oauth2.check_active)],
     status_code=200,
 )
+@limiter.limit("30/minute")
 async def get_next_sock(
+    request: Request,
     user_sock_id: int,
     db: Session = Depends(get_db),
     current_user: schemas.ShowUser = Depends(oauth2.get_current_user),
@@ -38,7 +44,9 @@ async def get_next_sock(
     dependencies=[Depends(oauth2.check_active)],
     status_code=200,
 )
+@limiter.limit("20/minute")
 async def judge_a_sock(
+    request: Request,
     judgement: bool,
     user_sock_id: int,
     other_sock_id: int,
