@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "django_celery_results",
+    "django_simple_cookie_consent.apps.DjangoSimpleCookieConsentConfig",
     "app_home",
     "app_users",
     "app_geo",

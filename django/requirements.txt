@@ -9,6 +9,7 @@ django-allauth==0.52.0
 django-crispy-forms==1.14.0
 django-extensions==3.2.1
 djangorestframework
+django-simple-cookie-consent==0.1.1
 drf-spectacular[sidecar]
 djangorestframework-simplejwt[crypto]
 folium==0.14.0
