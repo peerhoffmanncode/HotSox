@@ -34,8 +34,6 @@ class ApiGetSocks(ListAPIView):
     """Lists all socks"""
 
     permission_classes = [IsAuthenticated]
-
-    # queryset = Sock.objects.all().order_by("-pk")
     serializer_class = SockSerializer
 
     def get_queryset(self):
@@ -44,6 +42,8 @@ class ApiGetSocks(ListAPIView):
 
 
 class ApiCreateSock(GenericAPIView):
+    """Create a sock"""
+
     permission_classes = [IsAuthenticated]
     serializer_class = SockCreateSerializer
 
@@ -58,10 +58,10 @@ class ApiCreateSock(GenericAPIView):
 
 
 class ApiGetPutDeleteSock(GenericAPIView):
+    """Get, update or delete a sock"""
+
     permission_classes = [IsAuthenticated]
 
-    # serializer_class = UserCreateSerializer
-    # generate different serializer classes for different methods
     def get_serializer_class(self):
         if self.request.method == "PUT":
             return SockUpdateSerializer

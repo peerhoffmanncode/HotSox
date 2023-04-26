@@ -27,7 +27,6 @@ from api.database.setup import engine
 def test_show_all_socks_of_a_user_no_socks(test_db_setup):
     response = client.get(PREFIX + "/user/socks", headers=token("admin", "admin"))
     content = response.json()
-    print(content)
     assert response.status_code == 404
     assert content == {"detail": "No sock available"}
 
@@ -99,7 +98,6 @@ def test_show_all_socks_of_a_user_with_socks(test_db_setup):
 def test_show_sock_of_a_user_no_sock(test_db_setup):
     response = client.get(PREFIX + "/user/sock/1", headers=token("admin", "admin"))
     content = response.json()
-    print(content)
     assert response.status_code == 404
     assert content == {"detail": "Sock with the id 1 is not available"}
 

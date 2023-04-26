@@ -71,7 +71,6 @@ def test_user_upload_profilepic(mock_uploader_upload, test_db_setup):
             )
 
         # check that the response is what we expect
-        print(response.json())
         assert response.status_code == 201
         assert (
             response.json()["profile_picture"]
