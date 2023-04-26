@@ -47,6 +47,18 @@ class SockSerializer(serializers.ModelSerializer):
         exclude = ["user"]
 
 
+class SockCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sock
+        exclude = ["user"]
+
+
+class SockUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sock
+        exclude = ["user", "info_joining_date", "id"]
+
+
 class MailSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageMail
