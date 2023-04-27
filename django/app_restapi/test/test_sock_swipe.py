@@ -2,7 +2,7 @@ from unittest import mock
 from django.test import TestCase
 from django.contrib.auth.hashers import make_password, check_password
 from django.urls import reverse
-
+from django.core.files.uploadedfile import SimpleUploadedFile
 from app_users.models import User, Sock, SockProfilePicture, MessageMail, MessageChat
 
 from datetime import date, timedelta
@@ -54,12 +54,41 @@ sock_data2 = {
 
 
 class TestUser(TestCase):
-    def setUp(self):
+    @mock.patch("cloudinary.uploader.upload")
+    def setUp(self, mocky_the_mockmock):
+        mock_uploader_upload = "https://cloudinary.com/mock_image.jpg"
+
         self.client = APIClient()
         self.user1 = User.objects.create_superuser(**TEST_USER1)
         self.user2 = User.objects.create_user(**TEST_USER2)
         self.sock1 = Sock.objects.create(user=self.user1, **sock_data1)
         self.sock2 = Sock.objects.create(user=self.user2, **sock_data2)
+
+        # send a request to add a profile picture
+        picture = SimpleUploadedFile(
+            "picture.jpg", b"file_content", content_type="image/jpeg"
+        )
+        token(self.client, username="admin", password="admin")
+        response = self.client.post(
+            reverse(
+                "app_restapi:api_sock_profilepic_create",
+                kwargs={"sock_id": self.sock1.pk},
+            ),
+            data={"profile_picture": picture},
+        )
+
+        # send a request to add a profile picture
+        picture = SimpleUploadedFile(
+            "picture.jpg", b"file_content", content_type="image/jpeg"
+        )
+        token(self.client, username="testuser2", password="testuser2")
+        response = self.client.post(
+            reverse(
+                "app_restapi:api_sock_profilepic_create",
+                kwargs={"sock_id": self.sock2.pk},
+            ),
+            data={"profile_picture": picture},
+        )
 
     def test_swipe_next_sock(self):
 

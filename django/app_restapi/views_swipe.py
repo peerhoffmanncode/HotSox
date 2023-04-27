@@ -42,6 +42,9 @@ class ApiSwipeNextSock(GenericAPIView):
 
         # get a next sock to swipe for
         next_sock = PrePredictionAlgorithm.get_next_sock(current_user, current_sock)
+
+        print(current_user, current_sock, Sock.objects.all())
+
         if next_sock:
             # return the sock as json
             serialize_sock = SockForMatchWithIDSerializer(next_sock)
