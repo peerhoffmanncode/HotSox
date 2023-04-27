@@ -54,22 +54,12 @@ sock_data2 = {
 
 
 class TestUser(TestCase):
-    @mock.patch("cloudinary.uploader.upload")
-    def setUp(self, mocky_the_mockmock):
-        mocky_the_mockmock.return_value = "somefile.jpg"
-
+    def setUp(self):
         self.client = APIClient()
         self.user1 = User.objects.create_superuser(**TEST_USER1)
         self.user2 = User.objects.create_user(**TEST_USER2)
         self.sock1 = Sock.objects.create(user=self.user1, **sock_data1)
         self.sock2 = Sock.objects.create(user=self.user2, **sock_data2)
-
-        self.sock1_pic = SockProfilePicture.objects.create(
-            sock=self.sock1, profile_picture="test1.jpg"
-        )
-        self.sock2_pic = SockProfilePicture.objects.create(
-            sock=self.sock2, profile_picture="test2.jpg"
-        )
 
     def test_swipe_next_sock(self):
 
@@ -155,7 +145,6 @@ class TestUser(TestCase):
         content = response.json()
         assert response.status_code == 201
         assert content.get("match")
-        print(content["match"])
         assert content["match"]["user"]["username"] == self.user2.username
         assert content["match"]["other_user"]["username"] == self.user1.username
         assert len(content["match"]["chatroom_uuid"]) == 36
