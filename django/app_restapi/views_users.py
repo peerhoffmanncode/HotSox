@@ -40,6 +40,7 @@ class ApiGetUsers(ListAPIView):
 
 class ApiGetPutCreateDeleteUser(GenericAPIView):
     """Get, create, update or delete a user"""
+
     permissions.SAFE_METHODS = ["POST"]
     permission_classes = [IsAuthenticatedOrAllowAny]
 
@@ -86,6 +87,7 @@ class ApiGetPutCreateDeleteUser(GenericAPIView):
 
 class ApiCreateProfilePic(CreateAPIView):
     """Create a new profile picture"""
+
     permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser, FormParser, FileUploadParser)
     # queryset = UserProfilePicture.objects.all()
@@ -104,6 +106,7 @@ class ApiCreateProfilePic(CreateAPIView):
 
 class ApiDeleteProfilePic(GenericAPIView):
     """Delete a profile picture"""
+
     permission_classes = [IsAuthenticated]
 
     queryset = UserProfilePicture.objects.all()

@@ -71,8 +71,18 @@ urlpatterns = [
         views_socks.ApiGetPutDeleteSock.as_view(),
         name="api_sock_rud",
     ),
-    path("user/sock/", views_socks.ApiCreateSock.as_view(), name="api_sock_create")
+    path("user/sock/", views_socks.ApiCreateSock.as_view(), name="api_sock_create"),
     # Sock picture
+    path(
+        "user/sock/<int:sock_id>/profilepic/",
+        views_socks.ApiCreateSockProfilePic.as_view(),
+        name="api_sock_profilepic_create",
+    ),
+    path(
+        "user/sock/<int:sock_id>/profilepic/<int:pic_id>",
+        views_socks.ApiDeleteSockProfilePic.as_view(),
+        name="api_sock_profilepic_delete",
+    ),
     # Swipe
     # Match
 ]
