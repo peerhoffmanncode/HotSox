@@ -3,19 +3,23 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import permissions
 
+from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
+
 from rest_framework.generics import (
     GenericAPIView,
     ListAPIView,
     RetrieveAPIView,
+    CreateAPIView,
 )
 
 from django.shortcuts import get_object_or_404
 
-from app_users.models import Sock
+from app_users.models import Sock, SockProfilePicture
 from .serializers_users import (
     SockSerializer,
     SockCreateSerializer,
     SockUpdateSerializer,
+    SockProfilePictureSerializer,
 )
 
 from app_geo.utilities import GeoLocation
@@ -101,3 +105,64 @@ class ApiGetPutDeleteSock(GenericAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Sock.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class ApiCreateSockProfilePic(CreateAPIView):
+    """Create a new profile picture"""
+
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser, FileUploadParser)
+    # queryset = UserProfilePicture.objects.all()
+    serializer_class = SockProfilePictureSerializer
+
+    def post(self, request, *args, **kwargs):
+        current_user = request.user
+        try:
+            current_sock = Sock.objects.get(user=current_user, pk=kwargs.get("sock_id"))
+            picture_serializer = SockProfilePictureSerializer(data=request.data)
+            if picture_serializer.is_valid():
+                result = picture_serializer.save(sock=current_sock)
+                return Response(
+                    data=SockProfilePictureSerializer(result).data,
+                    status=status.HTTP_201_CREATED,
+                )
+            return Response(
+                picture_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Sock.DoesNotExist:
+            return Response(
+                {"error": "Could not find sock"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class ApiDeleteSockProfilePic(GenericAPIView):
+    """Delete a profile picture"""
+
+    permission_classes = [IsAuthenticated]
+
+    queryset = SockProfilePicture.objects.all()
+    serializer_class = SockProfilePictureSerializer
+
+    def delete(self, request, *args, **kwargs):
+        current_user = request.user
+        try:
+            current_sock = Sock.objects.get(user=current_user, pk=kwargs.get("sock_id"))
+        except Sock.DoesNotExist:
+            return Response(
+                {"detail": "Not found."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            picture = SockProfilePicture.objects.get(
+                sock=current_sock, pk=kwargs["pic_id"]
+            )
+        except SockProfilePicture.DoesNotExist:
+            return Response(
+                {"detail": "Not found."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if picture:
+            picture.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response({"detail": "Not found."}, status=status.HTTP_400_BAD_REQUEST)

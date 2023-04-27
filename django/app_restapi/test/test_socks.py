@@ -33,7 +33,6 @@ class TestUser(TestCase):
         assert content == {"count": 0, "next": None, "previous": None, "results": []}
 
     def test_show_all_socks_of_a_user_with_socks(self):
-
         db_user = User.objects.get(username="admin")
         sock1 = Sock.objects.create(
             user=db_user,
@@ -106,7 +105,6 @@ class TestUser(TestCase):
         assert response.data == None
 
     def test_show_sock_of_a_user_with_sock(self):
-
         db_user = User.objects.get(username="admin")
         sock1 = Sock.objects.create(
             user=db_user,
