@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 from app_users.models import User, Sock
 
+from datetime import date, timedelta
 
 from .inital_test_setup import (
     TEST_USER1,
@@ -13,71 +14,74 @@ from .inital_test_setup import (
 
 from rest_framework.test import APIClient
 
+sock_data1 = {
+    "info_name": "Main Sock",
+    "info_about": "This is a new fake sock.",
+    "info_color": 1,
+    "info_fabric": 1,
+    "info_fabric_thickness": 1,
+    "info_brand": 1,
+    "info_type": 1,
+    "info_size": 1,
+    "info_age": 1,
+    "info_separation_date": str(date.today() + timedelta(days=1)),
+    "info_condition": 1,
+    "info_holes": 1,
+    "info_kilometers": 1,
+    "info_inoutdoor": 1,
+    "info_washed": 1,
+    "info_special": "main sock!",
+}
+sock_data2 = {
+    "info_name": "Test Sock1",
+    "info_about": "This is a new fake sock.",
+    "info_color": 1,
+    "info_fabric": 1,
+    "info_fabric_thickness": 1,
+    "info_brand": 1,
+    "info_type": 1,
+    "info_size": 1,
+    "info_age": 1,
+    "info_separation_date": str(date.today() + timedelta(days=1)),
+    "info_condition": 1,
+    "info_holes": 1,
+    "info_kilometers": 1,
+    "info_inoutdoor": 1,
+    "info_washed": 1,
+    "info_special": "Test sock!",
+}
+
 
 class TestUser(TestCase):
     def setUp(self):
+
         self.client = APIClient()
         self.user1 = User.objects.create_superuser(**TEST_USER1)
         self.user2 = User.objects.create_user(**TEST_USER2)
-        self.sock1 = Sock.objects.create(
-            user=self.user1,
-            info_joining_date=date.today() - timedelta(days=365 * 5),
-            info_name="Fuzzy Wuzzy",
-            info_about="Fuzzy Wuzzy was a bear. Fuzzy Wuzzy had no hair. Fuzzy Wuzzy wasn't very fuzzy, was he?",
-            info_color="5",
-            info_fabric="2",
-            info_fabric_thickness="7",
-            info_brand="13",
-            info_type="4",
-            info_size="7",
-            info_age=10,
-            info_separation_date=date.today() - timedelta(days=365),
-            info_condition="9",
-            info_holes=3,
-            info_kilometers=1000,
-            info_inoutdoor="1",
-            info_washed=2,
-            info_special="Once won first place in a sock puppet competition",
-        )
-        self.sock2 = Sock.objects.create(
-            user=self.user2,
-            info_joining_date=date.today() - timedelta(days=365 * 5),
-            info_name="Fuzzy Wuzzy",
-            info_about="Fuzzy Wuzzy was a bear. Fuzzy Wuzzy had no hair. Fuzzy Wuzzy wasn't very fuzzy, was he?",
-            info_color="5",
-            info_fabric="2",
-            info_fabric_thickness="7",
-            info_brand="13",
-            info_type="4",
-            info_size="7",
-            info_age=10,
-            info_separation_date=date.today() - timedelta(days=365),
-            info_condition="9",
-            info_holes=3,
-            info_kilometers=1000,
-            info_inoutdoor="1",
-            info_washed=2,
-            info_special="Once won first place in a sock puppet competition",
-        )
+        self.sock1 = Sock.objects.create(user=self.user1, **sock_data1)
+        self.sock2 = Sock.objects.create(user=self.user2, **sock_data2)
 
     @mock.patch("cloudinary.uploader.upload")
-    def test_user_upload_profilepic(self, mock_uploader_upload):
+    def test_sock_upload_profilepic(self, mock_uploader_upload):
         username = TEST_USER2["username"]
         password = TEST_USER2["password"]
 
         # set up the mock return value
         mock_uploader_upload = "https://cloudinary.com/mock_image.jpg"
 
+        db_user = User.objects.get(username=username)
+
         # send a request to add a profile picture
         picture = SimpleUploadedFile(
             "picture.jpg", b"file_content", content_type="image/jpeg"
         )
+        token(self.client, username="testuser2", password="testuser2")
         response = self.client.post(
             reverse(
-                "app_restapi:api_sock_profilepic_create", kwargs={"pk": self.sock2.pk}
+                "app_restapi:api_sock_profilepic_create",
+                kwargs={"sock_id": self.sock2.pk},
             ),
             data={"profile_picture": picture},
-            headers=token(self.client, username="testuser2", password="testuser2"),
         )
 
         # check that the response is what we expect
@@ -85,8 +89,8 @@ class TestUser(TestCase):
 
         # check that the user in the database has the new profile picture
         try:
-            db_sock = Sock.objects.get(user=self.user2, pk=self.sock2.pk)
-        except Sock.DoesNotExist:
+            db_sock = Sock.objects.get(pk=self.sock2.pk)
+        except User.DoesNotExist:
             db_sock = None
         assert db_sock
         assert len(db_sock.get_all_pictures()) == 1
@@ -108,28 +112,36 @@ class TestUser(TestCase):
         picture = SimpleUploadedFile(
             "picture.jpg", b"file_content", content_type="image/jpeg"
         )
+        token(self.client, username="testuser2", password="testuser2")
         response = self.client.post(
             reverse(
-                "app_restapi:api_sock_profilepic_create", kwargs={"pk": self.sock2.pk}
+                "app_restapi:api_sock_profilepic_create",
+                kwargs={"sock_id": self.sock2.pk},
             ),
             data={"profile_picture": picture},
-            headers=token(self.client, username="testuser2", password="testuser2"),
         )
 
         # check that the response is what we expect
         assert response.status_code == 201
+        try:
+            db_sock = Sock.objects.get(pk=self.sock2.pk)
+        except Sock.DoesNotExist:
+            db_sock = None
+        assert db_sock
+        assert len(db_sock.get_all_pictures()) == 1
+        picture_id = response.json()["id"]
 
+        token(self.client, username="testuser2", password="testuser2")
         response = self.client.delete(
             reverse(
                 "app_restapi:api_sock_profilepic_delete",
-                kwargs={"pk": self.sock2.pk, "pk": 1},
+                kwargs={"sock_id": self.sock2.pk, "pic_id": picture_id},
             ),
-            headers=token(self.client, username="testuser2", password="testuser2"),
         )
 
         # check that the user in the database has the new profile picture
         try:
-            db_sock = Sock.objects.get(user=self.user2, pk=self.sock2.pk)
+            db_sock = Sock.objects.get(pk=self.sock2.pk)
         except Sock.DoesNotExist:
             db_sock = None
         assert db_sock
