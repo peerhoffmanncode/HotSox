@@ -1,7 +1,9 @@
+import os
+from datetime import date
 from allauth.socialaccount.models import SocialApp
 from django.contrib.sites.models import Site
+from django_simple_cookie_consent.models import CookieConsentSettings
 from app_users.models import User
-import datetime
 
 
 def create_db_entry_social_app(
@@ -33,6 +35,11 @@ def create_db_entry_social_app(
         social_app.sites.add(site)
         social_app.save()
 
+    # return current SITE_ID
+    return created, Site.objects.get(domain=site_domain).id
+
+
+def create_superuser():
     # Checks if there are any users in the database. If not, uses env file
     # details to create a superuser (so admin panel can be accessed)
     if len(User.objects.all()) == 0 and os.environ.get("ADMIN_USERNAME"):
@@ -40,11 +47,23 @@ def create_db_entry_social_app(
             username=os.environ.get("ADMIN_USERNAME", None),
             password=os.environ.get("ADMIN_PWD", None),
             email="admin@admin.com",
-            info_birthday=datetime.date(2000, 1, 1),
+            info_birthday=date(2000, 1, 1),
             info_gender="1",
             location_city="Berlin",
             notification=True,
         )
+        return True
+    return False
 
-    # return current SITE_ID
-    return created, Site.objects.get(domain=site_domain).id
+
+def create_cookie_message():
+    try:
+        cookie_set = CookieConsentSettings.objects.all()
+        if cookie_set:
+            return False
+        else:
+            CookieConsentSettings.objects.create()
+            return True
+    except CookieConsentSettings.DoesNotExist:
+        CookieConsentSettings.objects.create()
+        return True

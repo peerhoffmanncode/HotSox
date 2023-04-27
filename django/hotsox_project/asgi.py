@@ -38,7 +38,11 @@ application = ProtocolTypeRouter(
 # make sure google is stored in the socialaccount apps in the database
 from asgiref.sync import sync_to_async
 from django.conf import settings
-from .utilities import create_db_entry_social_app
+from .utilities import (
+    create_db_entry_social_app,
+    create_superuser,
+    create_cookie_message,
+)
 
 created, settings.SITE_ID = create_db_entry_social_app(
     site_name="127.0.0.1:8000",
@@ -50,3 +54,11 @@ created, settings.SITE_ID = create_db_entry_social_app(
 )
 if created:
     print("included google to AllAuth, set SITE_ID to:", settings.SITE_ID)
+
+created = create_superuser()
+if created:
+    print("Administrate account user created")
+
+created = create_cookie_message()
+if created:
+    print("Cookie message was created")
