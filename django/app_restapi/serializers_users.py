@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from datetime import date
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from app_users.models import (
     User,
     UserMatch,
@@ -40,6 +41,22 @@ class SockProfilePictureSerializer(serializers.ModelSerializer):
 
 class SockSerializer(serializers.ModelSerializer):
     sock_likes = SockLikeSerializer(many=True)
+    profile_picture = SockProfilePictureSerializer(many=True)
+
+    class Meta:
+        model = Sock
+        exclude = ["user"]
+
+
+class SockForMatchSerializer(serializers.ModelSerializer):
+    profile_picture = SockProfilePictureSerializer(many=True)
+
+    class Meta:
+        model = Sock
+        exclude = ["id", "user"]
+
+
+class SockForMatchWithIDSerializer(serializers.ModelSerializer):
     profile_picture = SockProfilePictureSerializer(many=True)
 
     class Meta:
@@ -101,11 +118,18 @@ class UserProfilePicSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    user_match = UserMatchSerializer(many=True)
+
+    user_match = serializers.SerializerMethodField()
     profile_picture = UserProfilePicSerializer(many=True)
     sock = SockSerializer(many=True)
     mail = MailSerializer(many=True)
     chat_sending = ChatSerializer(many=True)
+
+    def get_user_match(self, obj):
+        data = UserMatch.objects.filter(Q(user=obj) | Q(other=obj)).exclude(
+            unmatched=True
+        )
+        return UserMatchSerializer(data, many=True).data
 
     class Meta:
         model = User
@@ -160,3 +184,35 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data["password"] = make_password(validated_data["password"])
         return super(UserUpdateSerializer, self).create(validated_data)
+
+
+class UserForMatchSerializer(serializers.ModelSerializer):
+    profile_picture = UserProfilePicSerializer(many=True)
+    age = serializers.SerializerMethodField()
+
+    def get_age(self, obj):
+        age = abs(date.today() - obj.info_birthday)
+        age = int(age.days / 365.2425)
+        return age
+
+    class Meta:
+        model = User
+        exclude = [
+            "id",
+            "email",
+            "info_birthday",
+            "notification",
+            "password",
+            "groups",
+            "user_permissions",
+            "is_staff",
+            "is_superuser",
+            "is_active",
+        ]
+
+
+class MatchSerializer(serializers.Serializer):
+    user = UserForMatchSerializer()
+    other_user = UserForMatchSerializer()
+    sock = SockForMatchSerializer()
+    other_sock = SockForMatchSerializer()

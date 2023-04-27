@@ -45,7 +45,7 @@ TEST_USER2 = {
 }
 
 
-def token(client, username: str, password: str) -> dict:
+def token(client, username: str, password: str) -> None:
     # request JWT token
     response = client.post(
         reverse("app_restapi:token_obtain_pair"),
