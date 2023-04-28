@@ -7,7 +7,7 @@ from rest_framework.generics import GenericAPIView, ListAPIView, CreateAPIView
 
 from django.shortcuts import get_object_or_404
 
-from app_users.models import UserMatch, User
+from app_users.models import UserMatch, User, MessageChat, MessageMail
 from .serializers_users import MatchSerializer
 
 from app_mail.tasks import celery_send_mail
@@ -41,9 +41,52 @@ class ApiGetSpecificMatch(GenericAPIView):
 
 
 class ApiDeleteSpecificMatch(GenericAPIView):
-    """Doc here"""
+    """View to delete a specific Match"""
 
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, *args, **kwargs):
-        pass
+        
+        # get current user
+        current_user = request.user
+        match = UserMatch.objects.filter(Q(user=current_user) | Q(other=current_user)).filter(pk=kwargs.get("pk"))
+
+        if not match:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+        # get all the chat messages between the users
+        chat_messages = MessageChat.objects.filter(
+            Q(user=match.user, other=match.other)
+            | Q(user=match.other, other=match.user)
+        )
+        # delete the chat messages
+        for message in chat_messages:
+            message.delete()
+
+        # set all the match objects to unmatched = True
+        match.unmatched = True
+        match.save()
+
+        if match.user == current_user:
+            match_user = match.other
+        else:
+            match_user = match.user
+    
+        # email to confirm deleted match
+        match_message = f"The match between {match_user.username} and {current_user.username} has been deleted"
+        celery_send_mail.delay(
+            email_subject=f"You have unmached with {match_user.username}",
+            email_message=match_message,
+            recipient_list=[current_user.email],
+            notification=current_user.notification,
+        )
+        celery_send_mail.delay(
+            email_subject=f"{current_user.username} has unmached you",
+            email_message=match_message,
+            recipient_list=[match_user.email],
+            notification=match_user.notification,
+        )
+
+        # return to match overview
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
