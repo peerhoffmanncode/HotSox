@@ -22,7 +22,6 @@ class ApiGetAllMatches(ListAPIView):
         user = request.user
         matches = UserMatch.objects.filter(Q(user=user) | Q(other=user))
         if matches:
-            print(matches)
             return Response(
                 data=MatchSerializer(matches, many=True).data, status=status.HTTP_200_OK
             )
