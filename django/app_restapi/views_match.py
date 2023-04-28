@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import permissions
+from django.db.models import Q
 
 from rest_framework.generics import GenericAPIView, ListAPIView, CreateAPIView
 
@@ -32,7 +33,9 @@ class ApiGetSpecificMatch(GenericAPIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         try:
-            current_match = UserMatch.objects.get(user=user, pk=kwargs.get("pk"))
+            current_match = UserMatch.objects.get(
+                Q(user=user) | Q(other=user), pk=kwargs.get("pk")
+            )
             serialized_match = MatchSerializer(current_match).data
             return Response(data=serialized_match, status=status.HTTP_200_OK)
         except UserMatch.DoesNotExist:
