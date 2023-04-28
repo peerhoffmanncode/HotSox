@@ -118,7 +118,6 @@ class UserProfilePicSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     user_match = serializers.SerializerMethodField()
     profile_picture = UserProfilePicSerializer(many=True)
     sock = SockSerializer(many=True)
