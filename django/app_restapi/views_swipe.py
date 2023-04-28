@@ -30,7 +30,6 @@ class ApiSwipeNextSock(GenericAPIView):
     serializer_class = SockForMatchWithIDSerializer
 
     def get(self, request, *args, **kwargs):
-
         current_user = request.user
         # get the sock that the user is currently using to swipe
         try:
@@ -94,7 +93,6 @@ class ApiJudgeSock(GenericAPIView):
 
         # Store the decision in the database
         if request.query_params.get("like") == "true":
-
             # we use get_or_create to beware of duplicates!
             sock_instance, sock_like_created = SockLike.objects.get_or_create(
                 sock=current_user_sock, like=sock_to_be_decided_on
@@ -111,7 +109,6 @@ class ApiJudgeSock(GenericAPIView):
 
             # check for user to user match via the socks
             if current_user_sock in sock_to_be_decided_on.get_likes():
-
                 # create match in UserMatchTable if not already exists!
                 try:
                     user_match_object = UserMatch.objects.get(

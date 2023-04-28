@@ -91,7 +91,6 @@ class TestUser(TestCase):
         )
 
     def test_swipe_next_sock(self):
-
         token(self.client, "admin", "admin")
         response = self.client.get(
             reverse("app_restapi:api_next_sock", kwargs={"sock_id": self.sock1.pk}),
@@ -103,7 +102,6 @@ class TestUser(TestCase):
         assert content["id"] == self.sock2.pk
 
     def test_swipe_next_sock_invalide(self):
-
         token(self.client, "admin", "admin")
         response = self.client.get(
             reverse("app_restapi:api_next_sock", kwargs={"sock_id": 2}),
