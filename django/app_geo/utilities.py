@@ -1,8 +1,8 @@
-from django.contrib.gis.geoip2 import GeoIP2    # -> ip zu lat/long
-from geopy.geocoders import Nominatim           # -> str zu lat/long
-from geopy.distance import geodesic             # -> lat/long math
-import geoip2                                   # sdk von MaxMind (database)
-import folium                                   # html/Js map render
+from django.contrib.gis.geoip2 import GeoIP2  # -> ip zu lat/long
+from geopy.geocoders import Nominatim  # -> str zu lat/long
+from geopy.distance import geodesic  # -> lat/long math
+import geoip2  # sdk von MaxMind (database)
+import folium  # html/Js map render
 import socket
 import os
 

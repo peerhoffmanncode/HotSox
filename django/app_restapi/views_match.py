@@ -37,7 +37,18 @@ class ApiGetSpecificMatch(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        pass
+        user = request.user
+        try:
+            current_match = UserMatch.objects.get(
+                Q(user=user) | Q(other=user), pk=kwargs.get("pk")
+            )
+            serialized_match = MatchSerializer(current_match).data
+            return Response(data=serialized_match, status=status.HTTP_200_OK)
+        except UserMatch.DoesNotExist:
+            return Response(
+                {"Message": "Match could not be found"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class ApiDeleteSpecificMatch(GenericAPIView):
