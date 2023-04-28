@@ -41,19 +41,20 @@ class ApiGetSpecificMatch(GenericAPIView):
 
 
 class ApiDeleteSpecificMatch(GenericAPIView):
-    """View to delete a specific Match"""
+    """View to unmatch a specific Match"""
 
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, *args, **kwargs):
-        
         # get current user
         current_user = request.user
-        match = UserMatch.objects.filter(Q(user=current_user) | Q(other=current_user)).filter(pk=kwargs.get("pk"))
+        match = UserMatch.objects.filter(
+            Q(user=current_user) | Q(other=current_user)
+        ).filter(pk=kwargs.get("pk"))
 
         if not match:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-    
+
         # get all the chat messages between the users
         chat_messages = MessageChat.objects.filter(
             Q(user=match.user, other=match.other)
@@ -71,8 +72,8 @@ class ApiDeleteSpecificMatch(GenericAPIView):
             match_user = match.other
         else:
             match_user = match.user
-    
-        # email to confirm deleted match
+
+        # email to confirm unmatch a match
         match_message = f"The match between {match_user.username} and {current_user.username} has been deleted"
         celery_send_mail.delay(
             email_subject=f"You have unmached with {match_user.username}",
@@ -88,5 +89,4 @@ class ApiDeleteSpecificMatch(GenericAPIView):
         )
 
         # return to match overview
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
+        return Response({"messege": "successfully unmatched"}, status=status.HTTP_200_OK)

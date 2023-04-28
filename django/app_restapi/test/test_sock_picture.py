@@ -54,7 +54,6 @@ sock_data2 = {
 
 class TestUser(TestCase):
     def setUp(self):
-
         self.client = APIClient()
         self.user1 = User.objects.create_superuser(**TEST_USER1)
         self.user2 = User.objects.create_user(**TEST_USER2)
