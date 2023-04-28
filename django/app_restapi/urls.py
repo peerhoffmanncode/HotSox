@@ -11,7 +11,7 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 from django.urls import path
-from . import views_users, views_mail, views_chat, views_socks, views_swipe
+from . import views_users, views_mail, views_chat, views_socks, views_swipe, views_match
 
 
 app_name = "app_restapi"
@@ -94,4 +94,19 @@ urlpatterns = [
         name="api_judge_sock",
     ),
     # Match
+    path(
+        "user/matches/",
+        views_match.ApiGetAllMatches.as_view(),
+        name="api_match_list",
+    ),
+    path(
+        "user/matches/<int:pk>",
+        views_match.ApiGetSpecificMatch.as_view(),
+        name="api_match_specific",
+    ),
+    path(
+        "user/matches/<int:pk>/delete",
+        views_match.ApiDeleteSpecificMatch.as_view(),
+        name="api_match_delete",
+    ),
 ]

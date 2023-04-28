@@ -211,8 +211,15 @@ class UserForMatchSerializer(serializers.ModelSerializer):
         ]
 
 
-class MatchSerializer(serializers.Serializer):
+class SwipeMatchSerializer(serializers.Serializer):
     user = UserForMatchSerializer()
     other_user = UserForMatchSerializer()
     sock = SockForMatchSerializer()
     other_sock = SockForMatchSerializer()
+
+
+class MatchSerializer(serializers.Serializer):
+
+    class Meta:
+        model = UserMatch
+        fields = "__all__"

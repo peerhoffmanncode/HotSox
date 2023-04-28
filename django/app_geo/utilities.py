@@ -1,8 +1,8 @@
-from django.contrib.gis.geoip2 import GeoIP2
-from geopy.geocoders import Nominatim
-from geopy.distance import geodesic
-import geoip2
-import folium
+from django.contrib.gis.geoip2 import GeoIP2    # -> ip zu lat/long
+from geopy.geocoders import Nominatim           # -> str zu lat/long
+from geopy.distance import geodesic             # -> lat/long math
+import geoip2                                   # sdk von MaxMind (database)
+import folium                                   # html/Js map render
 import socket
 import os
 
@@ -143,5 +143,3 @@ class GeoMap:
             geo_map.add_child(line)
 
         return geo_map._repr_html_()
-
-    folium.Map()._repr_html_()
