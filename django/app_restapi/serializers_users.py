@@ -118,7 +118,6 @@ class UserProfilePicSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     user_match = serializers.SerializerMethodField()
     profile_picture = UserProfilePicSerializer(many=True)
     sock = SockSerializer(many=True)
@@ -218,8 +217,7 @@ class SwipeMatchSerializer(serializers.Serializer):
     other_sock = SockForMatchSerializer()
 
 
-class MatchSerializer(serializers.Serializer):
-
+class MatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserMatch
         fields = "__all__"
