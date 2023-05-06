@@ -44,12 +44,12 @@ The main features of the APP are:
 
 ## Links to Feature's Documention
 
-[chat module](documentation/hotsox_app_chat.md)
-[geolocalization module](documentation/hotsox_app_geo.md)
-[homepage/swiping module](documentation/hotsox_app_home.md)
-[mail module](documentation/hotsox_app_mail.md)
-[user/socks module](documentation/hotsox_app_user.md)
-[rest api module](documentation/hotsox_app_restapi.md)
+- [chat module](documentation/hotsox_app_chat.md)
+- [geolocalization module](documentation/hotsox_app_geo.md)
+- [homepage/swiping module](documentation/hotsox_app_home.md)
+- [mail module](documentation/hotsox_app_mail.md)
+- [user/socks module](documentation/hotsox_app_user.md)
+- [rest api module](documentation/hotsox_app_restapi.md)
 
 ## User Experience
 
@@ -65,19 +65,19 @@ Pre-requisite: request the env file to our email address: hotsoxproject_at_gmail
 
 To start using HotSox, simply follow these steps:
 
-[+] Clone the HotSox repository to your local machine.
+> [+] clone the HotSox repository to your local machine.
 
-[+] pip install -r requirements.txt to install dependencies
+> [+] pip install -r requirements.txt to install dependencies
 
-[+] python manage.py collect static
+> [+] python manage.py collect static
 
-[+] user docker-compose up --build
+> [+] user docker-compose up --build
 
-[+] connect to the Django application by [http://localhost]
+> [+] connect to the Django application by [http://localhost]
 
-[+] connect to the Djnago Restframework API by [http://api/v1/docs]
+> [+] connect to the Djnago Restframework API by [http://api/v1/docs]
 
-[+] connect to the FastAPI by [http://fastapi/v1/docs]
+> [+] connect to the FastAPI by [http://fastapi/v1/docs]
 
 #### Repository
 
@@ -98,35 +98,35 @@ Possible deployment platforms could be heroku, google cloud or aws.
 
 ## Credits
 
-Python3:
-https://www.python.org
+- Python3:
+  https://www.python.org
 
-Django:
-https://www.djangoproject.com
+- Django:
+  https://www.djangoproject.com
 
-Django Rest Framework:
-https://www.django-rest-framework.org
+- Django Rest Framework:
+  https://www.django-rest-framework.org
 
-FastAPI:
-https://fastapi.tiangolo.com
+- FastAPI:
+  https://fastapi.tiangolo.com
 
-Celery:
-https://docs.celeryq.dev/en/stable/
+- Celery:
+  https://docs.celeryq.dev/en/stable/
 
-CSS/bootstrap:
-https://getbootstrap.com/docs/4.0/components/card/#card-columns
+- CSS/bootstrap:
+  https://getbootstrap.com/docs/4.0/components/card/#card-columns
 
-Redis:
-https://redis.io
+- Redis:
+  https://redis.io
 
-Postgres DB:
-https://www.postgresql.org
+- Postgres DB:
+  https://www.postgresql.org
 
-Cloudinary:
-https://cloudinary.com/documentation/image_upload_api_reference#destroy_method
+- Cloudinary:
+  https://cloudinary.com/documentation/image_upload_api_reference#destroy_method
 
-Docker:
-https://www.docker.com
+- Docker:
+  https://www.docker.com
 
-Nginx:
-https://www.nginx.com
+- Nginx:
+  https://www.nginx.com
