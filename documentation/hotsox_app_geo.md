@@ -1,3 +1,5 @@
+[Return to README.md](../README.md)
+
 # HOTSOX "app_geo-location"
 
 The "app_geo-location" of the HotSox Project handles the User Profiles geolocation and provide of an interactive HTML-based map to visualize user location/s and distances between users on the globe.

@@ -1,6 +1,71 @@
-# HotSox with no boundaries
+# HotSox Web Application
 
-## Installation notes
+## Welcome to HotSox! :P
+
+The ultimate destination for sock enthusiasts and environmental crusaders.
+
+### Introduction
+
+Are you tired of constantly losing your favorite socks to the abyss known as the laundry machine? Are you sick of buying new socks only to have them disappear within a week? Well, my friend, you've come to the right place.
+
+### Purpose
+
+HotSox is a web application with a noble mission: to reunite lost socks with their rightful owners. We believe that every sock deserves a loving home and an equally loving match. Our state-of-the-art matching system utilizes advanced algorithms to connect sock owners with their missing mates. By keeping your socks together, you'll not only avoid the heartache of losing a sock but also contribute to saving the environment. Think about all the resources that go into making new socks. It's like a hug for the planet.
+
+### Objective
+
+Our objective is to connect people. We do this by letting people find their perfect match for one of their single socks.
+Everybody needs a warm pair of socks, but what do you do if your pair of socks gets separated by losing one of the pair.
+You need to find a new single socks for your lonely one - this is where HotSox comes to play.
+
+### Features
+
+The main features of the APP are:
+
+1. **User/Sock(s) Creation**: Basic user profile options
+
+- option to create, edit and delete accounts.
+- ability to have profile pictures (as much as you want)
+- sock profile creation with the option to edit and delete your own socks.
+- ability to have profile pictures for a sock (as much as you want)
+
+2. **Sock Matching System**: Our cutting-edge algorithm ensures that no sock goes unpaired. Say goodbye to the days of mismatched socks and embrace a world of sock harmony.
+
+- geo location detection and visualization via IP or city name
+- realtime chat via websockets
+- email notification about certain actions of a user or the system
+- ability to swipe (like/dislike) socks, see a users matches and view match profiles
+
+### Future Development Features
+
+- **AI base picture detection** of socks to define sock attributes.
+- **Pub/Sub logic** to realize realtime notifications about matches, messages and so on.
+- **Community Forum**: We're not just about socks; we're about community. Our website features a lively forum where sock enthusiasts can connect, share tips and tricks for keeping socks together, and even organize sock-themed meetups. Join the discussion and be a part of the sock revolution!
+
+## Links to Feature's Documention
+
+[chat module](documentation/hotsox_app_chat.md)
+[geolocalization module](documentation/hotsox_app_geo.md)
+[homepage/swiping module](documentation/hotsox_app_home.md)
+[mail module](documentation/hotsox_app_mail.md)
+[user/socks module](documentation/hotsox_app_user.md)
+[rest api module](documentation/hotsox_app_restapi.md)
+
+## User Experience
+
+Users can either use our prove of concept frontend application to create a user account, create a sock and start to find a new matching sock. The matching process is done via a swipe page where a user can decide if a shown sock might fit your own sock.
+Once the user decides to like a sock, the user has to wait and hope, that the owner of the liked sock would also like the users sock too. If both owners of a socks decide to like each others sock you have a valid user match.
+Once a match is set, the users are allowed to see each other's profile and can start a realtime chat.
+
+Users can also use one of the provided API to build a customized frontend. As APIs we provide a FastAPI based api, or a Django Restframework based version.
+
+### Installation Notes
+
+Pre-requisite: request the env file to our email address: hotsoxproject_at_gmail.com
+
+To start using HotSox, simply follow these steps:
+
+[+] Clone the HotSox repository to your local machine.
 
 [+] pip install -r requirements.txt to install dependencies
 
@@ -14,42 +79,9 @@
 
 [+] connect to the FastAPI by [http://fastapi/v1/docs]
 
-## Repository
+#### Repository
 
 https://github.com/Python-E03/hot-sox-teamrando
-
-## Objective
-
-Our objective is to connect people. We do this by letting people find their perfect match for one of their single socks.
-Everybody needs a warm pair of socks, but what do you do if your pair of socks gets separated by losing one of the pair.
-You need to find a new single socks for your lonely one - this is where HotSox comes to play.
-
-## User Experience
-
-Users can either use our prove of concept frontend application to create a user account, create a sock and start to find a new matching sock. The matching process is done via a swipe page where a user can decide if a shown sock might fit your own sock.
-Once the user decides to like a sock, the user has to wait and hope, that the owner of the liked sock would also like the users sock too. If both owners of a socks decide to like each others sock you have a valid user match.
-Once a match is set, the users are allowed to see each other's profile and can start a realtime chat.
-
-Users can also use one of the provided API to build a customized frontend. As APIs we provide a FastAPI based api, or a Django Restframework based version.
-
-## Features
-
-The main features of the APP are,
-
-- user creation with the option to edit and delete accounts.
-- ability to have profile pictures (as much as you want)
-- sock profile creation with the option to edit and delete your own socks.
-- ability to have profile pictures for a sock (as much as you want)
-- geo location detection and visualization via IP or city name
-- realtime chat via websockets
-- email notification about certain cations of a user or the system
-- ability to swipe (like/dislike) socks, see a users matches and view match profiles
-
-### Future Features
-
-- AI base picture detection of socks to define sock attributes
-- Pub/Sub logic to realize realtime notifications about matches, messages and so on.
-- Forum for users to stay in touch
 
 ## Technologies Used
 
