@@ -122,3 +122,6 @@ Possible deployment platforms could be heroku, google cloud or aws.
 
 - Nginx:
   https://www.nginx.com
+
+- Swagger:
+  https://swagger.io

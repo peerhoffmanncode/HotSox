@@ -34,6 +34,7 @@ The following URIs can be appended onto the root URL for both the Django Rest Fr
 <br/><br/>
 
 ### Swagger
+https://swagger.io
 
 Swagger is a powerful framework that simplifies the process of documenting and exploring web APIs. It allows developers to describe API endpoints, request and response payloads, authentication mechanisms, and more in a structured and machine-readable format.
 Swagger also provides tools and libraries to automatically generate client SDKs, server stubs, and API testing frameworks based on the API specification. By leveraging Swagger, you can streamline the API development process, improve collaboration between frontend and backend teams, and enhance the overall developer experience when working with your API.
