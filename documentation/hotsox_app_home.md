@@ -4,7 +4,7 @@
 
 The "app_home" of the HotSox Project contains the pre_prediction algorithm that handles the match preselection between User/Socks profiles.
 
-## MAIN FEATURE Pre-Prediction Algorithm
+## MAIN FEATURE: Pre-Prediction Algorithm
 
 ### Purpose
 
@@ -31,6 +31,37 @@ The Q object is used for complex queries, and the SequenceMatcher is used to cal
 
 ## MAIN FEATURE: Swiping process
 
-### Description
+### Purpose and Description
+
+The Swiping process is handles by the SwipeView which is a template view that handles the rendering and functionality of the swipe page where users swipe left or right on different socks to indicate whether they like or dislike them.
+It uses the **pre-prediction algorithm** to suggest the next sock to swipe on.
+Users can only swipe on socks they have not already swiped on. If a user likes another user's sock and the other user also likes the user's sock, a match is created and a notification email is sent to both users.
+
+### Technical implementation
+
+The **SwipeView class** is a subclass of _TemplateView_ and _HotSoxLogInAndValidationCheckMixin_, which ensures that only authenticated users have access to this view.
+The uses as _model_ attribute the _User_ and as _*template_name*_ attribute, the template file name "**app_home/swipe.html**".
+
+This class is composed of 2 main methods:
+
+<details><summary>The <b>get()</b> method</summary>
+
+It checks whether the user has selected a sock or not, and renders the pre-predicted sock on the screen. If the user has not selected a sock, it redirects them to the sock overview page. If the user has only one sock, it selects that sock automatically.
+
+The **get()** method handles GET requests and shows the initial swipe view with a pre-predicted sock using the _*PrePredictionAlgorithm.get_next_sock()*_ method. It first checks if the user has a sock selected. If yes, it gets the pre-predicted sock and renders the template with the sock and the user's other socks. If not, it gets all the socks of the current user. If the user has only one sock, it selects that sock and redirects to the swipe page. If the user has more than one sock, it sets the redirect URL in the session and redirects to the sock overview page.</details>
+
+<details><summary>The <b>post()</b> method</summary>
+
+It handles user interactions with the sock, allowing them to either like or dislike it. If a user likes a sock, it checks whether the sock they liked has also liked their sock, and if so, creates a match between the two users. If a user dislikes a sock, it simply records that they have disliked the sock and reloads the page with a new sock.
+
+The **post()** method handles POST requests and is responsible for either liking or disliking a sock or changing the selected sock of the user. It first checks if the frontend wants to change the selected user sock. If yes, it sets the sock _PK_ in the session and redirects to the swipe page. If no, it gets the current user sock and the sock to be decided on and checks if the user liked or disliked the sock. If the user liked the sock and the other user also liked the user's sock, it creates a match in the _UserMatch_ table using the _UserMatch.objects.create()_ method. It also sends a notification email to both users using the _celery_send_mail.delay()_ method and renders the template with the matched sock details. It also adds navigation arrows to the template.</details>
+
+### Swiping Process Flowchart
 
 ![user_match_flowchart](pics/app_home/user_match_flowchart.png)
+
+### UX/UI
+
+The generic overview of the UI for HotSox application is as follows:
+
+![sox_swipe](pics/app_home/sox_swipe.png)

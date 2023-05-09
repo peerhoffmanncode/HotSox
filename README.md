@@ -42,7 +42,7 @@ The main features of the APP are:
 - **Pub/Sub logic** to realize realtime notifications about matches, messages and so on.
 - **Community Forum**: We're not just about socks; we're about community. Our website features a lively forum where sock enthusiasts can connect, share tips and tricks for keeping socks together, and even organize sock-themed meetups. Join the discussion and be a part of the sock revolution!
 
-## Links to Feature's Documention
+## Links to Feature's Documentation
 
 - [chat module](documentation/hotsox_app_chat.md)
 - [geolocalization module](documentation/hotsox_app_geo.md)
