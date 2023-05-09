@@ -34,7 +34,7 @@ Swagger also provides tools and libraries to automatically generate client SDKs,
 
 With the use of Swagger, the HotSox project generated comprehensive API documentation that is both human-readable and interactive, making it easier for developers to understand and utilize our API.
 
-> DRF HotSox Swagger endpoint is currently available while running the containerized application on your local host, at the following link [http://0.0.0.0/api/v1/docs/]
+> DRF HotSox Swagger endpoint is currently available while running the application, at the following link [http://<URL>/api/v1/docs/]
 
 ## Redoc
 
@@ -42,10 +42,4 @@ Redoc is a powerful tool designed to transform OpenAPI specifications into visua
 
 Redoc focuses on providing a seamless user experience by offering features such as syntax highlighting, collapsible sections, interactive parameters, and response code snippets. It also supports various customization options, enabling you to tailor the documentation to match your brand or specific needs. By utilizing Redoc, you can present your API in a user-friendly manner, improving its adoption and making it easier for developers to integrate with our services.
 
-> DRF HotSox Redoc endpoint is currently available while running the containerized application on your local host, at the following link [http://0.0.0.0/api/v1/redoc/]
-
-## HotSox FastAPI module
-
-For test purposes, HotSox CTO created also a FastAPI module:
-
-[HotSox FastAPI documentation](hotsox_app_fastapi.md)
+> DRF HotSox Redoc endpoint is currently available while running the application, at the following link [http://<URL>/api/v1/redoc/]

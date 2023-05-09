@@ -44,12 +44,14 @@ The main features of the APP are:
 
 ## Links to Feature's Documentation
 
-- [chat module](documentation/hotsox_app_chat.md)
-- [geolocalization module](documentation/hotsox_app_geo.md)
 - [homepage/swiping module](documentation/hotsox_app_home.md)
-- [mail module](documentation/hotsox_app_mail.md)
 - [user/socks module](documentation/hotsox_app_user.md)
-- [rest api module](documentation/hotsox_app_restapi.md)
+- [geolocalization module](documentation/hotsox_app_geo.md)
+- [mail module](documentation/hotsox_app_mail.md)
+- [chat module](documentation/hotsox_app_chat.md)
+
+- [Django REST framework](documentation/hotsox_app_restapi.md)
+- [FastAPI](documentation/hotsox_app_fastapi.md)
 
 ## User Experience
 
@@ -75,9 +77,9 @@ To start using HotSox, simply follow these steps:
 
 > [+] connect to the Django application by [http://localhost]
 
-> [+] connect to the Djnago Restframework API by [http://api/v1/docs]
+> [+] connect to the Djnago Restframework API by [http://localhost/api/v1/docs]
 
-> [+] connect to the FastAPI by [http://fastapi/v1/docs]
+> [+] connect to the FastAPI by [http://localhost/fastapi/v1/docs]
 
 #### Repository
 

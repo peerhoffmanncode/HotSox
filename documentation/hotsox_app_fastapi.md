@@ -1,7 +1,5 @@
 [Return to README.md](../README.md)
 
-[Return to DRF API documentation](hotsox_app_restapi.md)
-
 ## FastAPI
 
 FastAPI is a cutting-edge web framework that enables rapid development of APIs with Python. It embraces the latest advancements in the Python ecosystem and leverages type hints to provide an intuitive and efficient development experience. With FastAPI, you can build high-performance APIs with minimal effort, thanks to its asynchronous support and automatic generation of OpenAPI and JSON Schema documentation. The framework offers a declarative syntax that allows you to define API endpoints, request and response models, and route handlers using Python functions.
@@ -12,6 +10,6 @@ FastAPI's automatic validation, serialization, and documentation generation stre
 
 Same as for DRF, the Swagger and Redoc interfaces apply for the FastAPI module too:
 
-> FastAPI HotSox Swagger endpoint is currently available while running the containerized application on your local host, at the following link: [http://0.0.0.0/fastapi/v1/docs/]
+> FastAPI HotSox Swagger endpoint is currently available while running application, at the following link: [http://<URL>/fastapi/v1/docs/]
 
-> FastAPI HotSox Redoc endpoint is currently available while running the containerized application on your local host, at the following link: [http://0.0.0.0/fastapi/v1/redoc/]
+> FastAPI HotSox Redoc endpoint is currently available while running application, at the following link: [http://<URL>/fastapi/v1/redoc/]
