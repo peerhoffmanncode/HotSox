@@ -255,16 +255,19 @@ Our user interface aims to be simple and user friendly whilst maintaining some c
 ### Dependencies
 
 Crispy forms:
-`django-crispy-forms==1.14.0`
-`crispy-bootstrap5==0.7`
-<br/><br/>
+```
+django-crispy-forms==1.14.0
+crispy-bootstrap5==0.7
+```
+<br/>
 
 ### Licenses
 
-Django crispy forms (https://django-crispy-forms.readthedocs.io/en/latest/)
-Bootstrap 5 (https://getbootstrap.com/docs/5.3/getting-started/introduction/)
-Bootswatch “Quartz” Theme (https://bootswatch.com/quartz/)
-<br/><br/>
+- Django crispy forms (https://django-crispy-forms.readthedocs.io/en/latest/)
+- Bootstrap 5 (https://getbootstrap.com/docs/5.3/getting-started/introduction/)
+- Bootswatch “Quartz” Theme (https://bootswatch.com/quartz/)
+
+<br/>
 
 ### MAIN FEATURE: Match Overview [^1]
 

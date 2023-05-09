@@ -47,7 +47,7 @@ The generic overview of the UI for HotSox application is as follows:
 ![sox_swipe](pics/app_home/sox_swipe.png)
 <br/><br/><br/>
 
-## MAIN FEATURE: Pre-Prediction Algorithm
+### MAIN FEATURE: Pre-Prediction Algorithm
 The "app_home" of the HotSox Project contains the pre_prediction algorithm that handles the match preselection between User/Socks profiles.
 <br/><br/>
 

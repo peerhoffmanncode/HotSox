@@ -61,6 +61,7 @@ Matching System:
 - [chat module](documentation/hotsox_app_chat.md)
 - [Django REST framework](documentation/hotsox_app_restapi.md)
 - [FastAPI](documentation/hotsox_app_fastapi.md)
+<br/><br/>
 
 ### Installation Notes
 
@@ -68,24 +69,13 @@ Pre-requisite: request the env file to our email address: hotsoxproject_at_gmail
 
 To start using HotSox, simply follow these steps:
 
-> [+] clone the HotSox repository to your local machine.
-
-> [+] pip install -r requirements.txt to install dependencies
-
-> [+] python manage.py collect static
-
-> [+] user docker-compose up --build
-
-> [+] connect to the Django application by [http://localhost]
-
-> [+] connect to the Djnago Restframework API by [http://localhost/api/v1/docs]
-
-> [+] connect to the FastAPI by [http://localhost/fastapi/v1/docs]
-<br/><br/>
-
-### Repository
-
-https://github.com/Python-E03/hot-sox-teamrando
+- clone the HotSox repository to your local machine.
+- pip install -r requirements.txt to install dependencies
+- python manage.py collect static
+- user docker-compose up --build
+- connect to the Django application by [http://localhost]
+- connect to the Djnago Restframework API by [http://localhost/api/v1/docs]
+- connect to the FastAPI by [http://localhost/fastapi/v1/docs]
 <br/><br/>
 
 ### Testing
