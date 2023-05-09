@@ -24,6 +24,8 @@ To enhance the accuracy of the location information, the app incorporated the us
 Overall, the UI/UX of this feature is likely to be fairly simple and straightforward, with a focus on providing an useful geolocation data to the user in a clear and concise manner by the use of Folium to display the OpenStreetMap with Mercator Projection onto the webpage corresponding to the approximate location of the user related to its IP address. A marker icon with a pair of sox will mark the User’s city center location.
 As soon as a user match with another via the app, a connecting line in blue automatically appears on map, connecting the 2 location and simultaneously the map zoom out to fit the relevant scale of the match on the chart.
 
+![geolocalization_user_match](pics/app_geo/geolocalization_user_match.png)
+
 ### Dependencies
 
 In order to work, the Geo App is using 5 dependencies: Folium, geodesic, Nominatim, GeoIP2 and GeoLite2 Database.
@@ -40,8 +42,3 @@ The GeoLite2 end-user license agreement applies to the GeoLite2 database used fo
 
 > “This product includes GeoLite2 data created by MaxMind, available from
 > <a href="https://www.maxmind.com">https://www.maxmind.com</a>.”
-
-<details>
-    <summary> The GeoLite2 end-user license agreement </summary>
-    This product includes GeoLite2 data created by MaxMind, available from: <a href="https://www.maxmind.com">https://www.maxmind.com</a>.
-</details>
