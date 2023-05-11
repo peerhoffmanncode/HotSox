@@ -1,6 +1,7 @@
 [Return to README.md](../README.md)
 
 ### MAIN FEATURE: Websocket based chat-module using “Django Channels“
+
 <br/>
 Folder: [django/app_chat/]
 
@@ -16,7 +17,7 @@ The purpose/ aim of the feature is to realize a realtime chat between two users 
 
 If one user sends a json encoded message using a websocket request to the backend, first it will be stored to the database. Secondly it will be resend from the backend to all subscribed listeners. In our case, this will include the sender itself as well as the “other” user that this message was actually meant for. A message has a string as payload content, a sending date and a seen date.
 Once a message got “seen” in a frontend, it will be marked as seen and therefore stored with the “seen_date” in the database.
-We have a Javascript Ajax function (websocket) waiting for a response (send message) from the backend. Once such a message got received the function will inject this message into a html <div> to show this message to the user. It will also send this message to the backend again, to mark it as “seen”.
+We have a Javascript Ajax function (websocket) waiting for a response (send message) from the backend. Once such a message got received the function will inject this message into a html _div_ to show this message to the user. It will also send this message to the backend again, to mark it as “seen”.
 <br/><br/>
 
 ### Technical implementation
@@ -29,4 +30,7 @@ Our frontend uses native Javascript and its build in websocket support. Alls the
 ### UI/UX
 
 Our user experience should be as simple as possible for the moment. As MVP we decided to have a simple input box for max 160 chars and text box that represents the chat history for a max of the latest 300 messages.
+
+![chat](pics/app_chat/chat.png)
+
 <br/><br/>

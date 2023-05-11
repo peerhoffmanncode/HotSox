@@ -4,7 +4,6 @@
 
 The ultimate destination for sock enthusiasts and environmental crusaders.
 
-
 ### Introduction
 
 Are you tired of constantly losing your favorite socks to the abyss known as the laundry machine? Are you sick of buying new socks only to have them disappear within a week? Well, my friend, you've come to the right place.
@@ -32,36 +31,41 @@ Users can also use one of the provided API to build a customized frontend. As AP
 <br/><br/>
 
 ### Feature overview of the App
+
 Basic profile options
+
 - option to create, edit and delete accounts user and depending sock accounts.
 - ability to have many profile pictures for user and socks (stored on cloudinary CDN)
 
 Matching System:
+
 - Our cutting-edge algorithm ensures that no sock goes unpaired. Say goodbye to the days of mismatched socks and embrace a world of sock harmony.
 - ability to swipe (like/dislike) socks
 - see your current matches and view profiles of a matched user
 - geo location detection and visualization via IP or specified city name
 - realtime chat via websockets between matched users
 - email notification about certain actions of a user or the system (e.g. new match detected)
-<br/><br/>
+  <br/><br/>
 
 ### Future Development Features
 
 - **AI base picture detection** of socks to define sock attributes.
 - **Pub/Sub logic** to realize realtime notifications about matches, messages and so on.
 - **Community Forum**: We're not just about socks; we're about community. Our website features a lively forum where sock enthusiasts can connect, share tips and tricks for keeping socks together, and even organize sock-themed meetups. Join the discussion and be a part of the sock revolution!
-<br/><br/>
+  <br/><br/>
 
 ### Links to Feature's Documentation
 
-- [homepage/swiping module](documentation/hotsox_app_home.md)
-- [user/socks module](documentation/hotsox_app_user.md)
-- [geolocalization module](documentation/hotsox_app_geo.md)
-- [mail module](documentation/hotsox_app_mail.md)
-- [chat module](documentation/hotsox_app_chat.md)
+- [Git workflow and GitHub Actions](documentation/git-documentation.md)
+- [HotSox project - System architecture](documentation/system_architecture.md)
+- [Homepage/Swiping module](documentation/hotsox_app_home.md)
+- [User/Socks module](documentation/hotsox_app_user.md)
+- [Geolocalization module](documentation/hotsox_app_geo.md)
+- [Mail module](documentation/hotsox_app_mail.md)
+- [Chat module](documentation/hotsox_app_chat.md)
 - [Django REST framework](documentation/hotsox_app_restapi.md)
 - [FastAPI](documentation/hotsox_app_fastapi.md)
-<br/><br/>
+  <br/><br/>
 
 ### Installation Notes
 
@@ -76,7 +80,7 @@ To start using HotSox, simply follow these steps:
 - connect to the Django application by [http://localhost]
 - connect to the Djnago Restframework API by [http://localhost/api/v1/docs]
 - connect to the FastAPI by [http://localhost/fastapi/v1/docs]
-<br/><br/>
+  <br/><br/>
 
 ### Testing
 
