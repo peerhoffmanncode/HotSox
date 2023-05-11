@@ -280,9 +280,9 @@ crispy-bootstrap5==0.7
 
 <br>
 
-The Match Overview provides users with a consolidated view of their matches and unmatched profiles.
+The Match Overview provides users with a consolidated view of their matches profiles as well as the possibility to unmatch a profile.
 
-<br><br/>
+<br>
 
 ### Description
 
@@ -292,7 +292,7 @@ When a user accesses the Match Overview, they are presented with a page that dis
 
 The Match Overview page provides a clear and organized presentation of the user's matches and unmatched profiles, enabling them to quickly navigate and interact with their connections. The implementation ensures a seamless user experience, making it easy for users to manage their matches within the Django project.
 
-<br><br/>
+<br>
 
 ### Technical implementation
 
