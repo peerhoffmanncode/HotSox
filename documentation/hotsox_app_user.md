@@ -1,6 +1,7 @@
 [Return to README.md](../README.md)
 
 ## Folder location
+
 Folder: [django/app_users/]
 <br/><br/>
 
@@ -142,7 +143,7 @@ The User Model inherit from the AbstractUser class, which is part of Django's bu
 > <details><summary><b>get_socks</b></summary> Returns a queryset containing all socks associated with the user instance.</details>
 > <details><summary><b>get_mail_messages</b></summary> Returns a queryset containing all mail messages associated with the user instance.</details>
 > <details><summary><b>get_chat_messages</b></summary> Returns a queryset containing all chat messages associated with the user instance.</details>
-<br/><br/>
+> <br/><br/>
 
 #### Sock Model Method Details:
 
@@ -150,7 +151,7 @@ The User Model inherit from the AbstractUser class, which is part of Django's bu
 > <details><summary><b>get_picture_urls</b></summary> Returns a list of URLs for all profile pictures associated with the sock instance.</details>
 > <details><summary><b>get_likes</b></summary> Returns a queryset of Sock instances liked by the current Sock instance.</details>
 > <details><summary><b>get_dislikes</b></summary> Returns a queryset of Sock instances that the current Sock instance has disliked.</details>
-<br/><br/>
+> <br/><br/>
 
 ## MAIN FEATURE: Forms/Templates and Validation
 
@@ -255,10 +256,12 @@ Our user interface aims to be simple and user friendly whilst maintaining some c
 ### Dependencies
 
 Crispy forms:
+
 ```
 django-crispy-forms==1.14.0
 crispy-bootstrap5==0.7
 ```
+
 <br/>
 
 ### Licenses
@@ -267,8 +270,38 @@ crispy-bootstrap5==0.7
 - Bootstrap 5 (https://getbootstrap.com/docs/5.3/getting-started/introduction/)
 - Bootswatch “Quartz” Theme (https://bootswatch.com/quartz/)
 
-<br/>
+<br><br/>
 
-### MAIN FEATURE: Match Overview [^1]
+## MAIN FEATURE: Match Overview
 
-[^1] NOTE: Peer will take care
+<br>
+
+### Purpose
+
+<br>
+
+The Match Overview provides users with a consolidated view of their matches and unmatched profiles.
+
+<br><br/>
+
+### Description
+
+<br>
+
+When a user accesses the Match Overview, they are presented with a page that displays their matched profiles and unmatched profiles. Each matched profile is shown with relevant details such as the user's username, profile picture, and other information. The unmatched profiles are also displayed, allowing the user to easily differentiate between their matches and profiles that haven't been matched yet.
+
+The Match Overview page provides a clear and organized presentation of the user's matches and unmatched profiles, enabling them to quickly navigate and interact with their connections. The implementation ensures a seamless user experience, making it easy for users to manage their matches within the Django project.
+
+<br><br/>
+
+### Technical implementation
+
+<br>
+
+The **Match Overview** is implemented win the project by three Django views (_UserMatches_, _UserMatchProfileDetails_, and _UserMatchDelete_) as classes derived from _TemplateView_ and _HotSoxLogInAndValidationCheckMixin_. These views handle user matching, displaying matched user details, and deleting matched users.
+
+The _UserMatches_ view handles the HTTP GET request. It retrieves the current user's matches and unmatched profiles by calling the **get_matches()** and **get_unmatched()** methods on the user object. The obtained data is stored in the context dictionary, which includes the current user, user matches, and unmatched profiles. Finally, the **render()** function is called to render the _"users/profile_matches.html"_ template with the context.
+
+The _UserMatchProfileDetails_ view also handles the HTTP GET request. It retrieves the current user and the matched user from the URL parameters. Then, it checks if a match exists between the users by querying the UserMatch model. If there is no match, it redirects to the user matches page. Geo-location information (latitude, longitude, and city) of both users is gathered and shown (for further details on this last point, see: [Geolocalization module](hotsox_app_geo.md) documentation).
+
+<br><br/>
