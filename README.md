@@ -57,7 +57,7 @@ Matching System:
 ### Links to Feature's Documentation
 
 - [Git workflow and GitHub Actions](documentation/git-documentation.md)
-- [HotSox project - System architecture](documentation/system_architecture.md)
+- [System architecture](documentation/hotsox_system_architecture.md)
 - [Homepage/Swiping module](documentation/hotsox_app_home.md)
 - [User/Socks module](documentation/hotsox_app_user.md)
 - [Geolocalization module](documentation/hotsox_app_geo.md)
