@@ -132,7 +132,7 @@ sqlalchemy2-stubs==0.0.2a32
 sqlmodel==0.0.8
 sqlparse==0.4.4
 stack-data==0.6.2
-starlette==0.26.1
+starlette==0.27.0
 tomli==2.0.1
 traitlets==5.9.0
 Twisted==22.10.0
