@@ -1,7 +1,9 @@
-from django.shortcuts import redirect, get_object_or_404
-from django.urls import reverse
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import User, Sock
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
+
+from .models import Sock, User
 
 
 def user_validate_hotsox_information(request):
@@ -15,7 +17,20 @@ def user_validate_hotsox_information(request):
         or not current_user.info_gender
         or not current_user.location_city
     ):
+        # flush session and return false!
+        if request.session.get("sock_pk"):
+            request.session.pop("sock_pk")
+        if request.session.get("redirect_url"):
+            request.session.pop("redirect_url")
         return False
+
+    # if user has no profile picture uploaded, advise him to upload a picture
+    if not current_user.get_all_pictures():
+            messages.success(
+                request, "Please upload at least one picture for your user profile"
+            )
+
+    # all good!
     return True
 
 
