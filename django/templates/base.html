@@ -52,7 +52,7 @@
                 {% if request.user.is_authenticated %}
                 <p class="navbar-text my-auto me-2" style="padding: 20px;"><i>{{request.user.username.title}} is
                         Sockin'n'Rollin'!</i></p>
-                <div class="dropdown">
+                <div class="dropdown" style="margin-right: 2em;">
                     <a href="#" data-bs-toggle="dropdown" class="dropdown-toggle" style="text-decoration: none;">
                         <img style="width: 80px; border-radius: 50%;" src="{{ request.user.get_picture_urls.0 }}">
                         <span class="caret"></span>
@@ -66,13 +66,11 @@
                 </div>
                 {% else %}
                 <p class="navbar-text my-auto me-2"><i>Wanna ramp up a sockin' life?</i></p>
-                <div class="navbar dropdown">
-                    <a href="#" data-bs-toggle="dropdown" class="dropdown-toggle">
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a href="/user/login/">Sign In</a></li>
-                        <li><a href="/user/signup/">Sign Up</a></li>
+                <div class="navbar">
+
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item me-2"><a class="nav-link" href="/user/login/">Sign In</a></li>
+                        <li class="nav-item me-2"><a class="nav-link" href="/user/signup/">Sign Up</a></li>
                     </ul>
                 </div>
                 {% endif %}
@@ -86,7 +84,7 @@
         <!-- all django message tags mirror bootstrap, except error/danger -->
         <aside
             class="alert {% if msg.tags == 'error' %}alert-danger{% else %}alert-{{ msg.tags }}{% endif %} text-center alert-dismissible fade show"
-            role="alert">
+            role="alert" style="backdrop-filter: None">
             <h4>{{ msg }}</h4>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"> </button>
         </aside>
