@@ -84,10 +84,12 @@ class GeoMap:
         """Calculate the zoom level for a give distance"""
         if distance <= 100:
             return 12
-        elif distance > 100 and distance <= 5000:
+        elif distance > 100 and distance <= 2000:
             return 6
-        else:
+        elif distance >= 2001 and distance <= 5000:
             return 2
+        else:
+            return 1
 
     @staticmethod
     def get_geo_map(

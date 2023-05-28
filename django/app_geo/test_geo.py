@@ -101,8 +101,12 @@ class Test(TestCase):
             6,
         )
         self.assertEqual(
-            GeoMap.get_location_zoomlevel(5001),
+            GeoMap.get_location_zoomlevel(2001),
             2,
+        )
+        self.assertEqual(
+            GeoMap.get_location_zoomlevel(5001),
+            1,
         )
 
     def test_geomap_get_geo_map(self):
