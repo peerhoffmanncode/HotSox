@@ -34,7 +34,9 @@ def user_validate_hotsox_information(request):
             request.session.pop("redirect_url")
 
         # prompt user for action
-        prompt_user_msg(request, "Please ensure your profile is fully completed and accurate")
+        prompt_user_msg(
+            request, "Please ensure your profile is fully completed and accurate"
+        )
 
         # return not valid!
         return False
@@ -42,7 +44,9 @@ def user_validate_hotsox_information(request):
     # if user has no profile picture uploaded, advise him to upload a picture
     if not current_user.get_all_pictures():
         # prompt user for action
-        prompt_user_msg(request, "Please upload at least one picture to your user profile")
+        prompt_user_msg(
+            request, "Please upload at least one picture to your user profile"
+        )
 
     # if user has no sock added, advise him to add a sock
     if not current_user.get_socks():
