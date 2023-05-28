@@ -123,3 +123,5 @@ For both applications, the workflow installs the required dependencies from the 
 In addition, for the FastAPI application, the workflow runs the black code formatter in check mode to ensure that the code is compliant with the PEP8 style guide.
 
 Overall, the ci.yml file provides an automated pipeline for building, testing, and checking the quality of the Django and FastAPI applications using GitHub Actions.
+
+More details on [GitHub Actions and CI pipeline](hotsox_ci_pipeline.md)
