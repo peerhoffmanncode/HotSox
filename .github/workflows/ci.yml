@@ -54,6 +54,8 @@ jobs:
           GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
         run: cd django && python manage.py migrate
+      - name: Check pep8 with black for Djnago
+        run: cd django && python -m black --check .
       - name: Run django tests (pytest with coverage)
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
@@ -64,6 +66,8 @@ jobs:
       ### CI for FastApi
       - name: Install requirements
         run: cd fastapi && pip install -r requirements.txt
+      - name: Check pep8 with black for fastapi
+        run: cd fastapi && python -m black --check .
       - name: Run fastapi tests (pytest with coverage)
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
@@ -77,23 +81,3 @@ jobs:
           MAIL_SERVER: ${{ secrets.MAIL_SERVER }}
           MAIL_FROM_NAME: ${{ secrets.MAIL_FROM_NAME }}
         run: cd fastapi && pytest -v --cov -p no:cacheprovider
-      - name: Check pep8 with black for fastapi
-        run: cd fastapi && python -m black --check .
-### Possible CD
-# package-job: # package job for building and publishing docker images
-#   runs-on: ubuntu-latest
-#   needs: [health-check-job] # will be fired if and only if health-check-job is passed.
-#   if: ${{ github.event_name == 'push' }} # will be fired if the trigger event is a push event.
-#   steps:
-#     - name: Checkout Code # checking out code.
-#       uses: actions/checkout@v2
-#     - name: Build & Publish Image # we are using a public GitHub Action to build and publish docker image to our GCR registry.
-#       uses: docker/build-push-action@v1
-#       env:
-#         app_name: app
-#       with:
-#         username: _json_key # default for gcr.io
-#         password: ${{ secrets.GKE_PASSWORD }} # service account file to be set as secret
-#         registry: gcr.io # gcr registry domain
-#         repository: ${{secrets.GKE_PROJECT}}/github-django-actions/app # GKE_PROJECT is out GCP Project id to be set as secret.
-#         tag_with_sha: true # this will tag our image with commit id. For example our image our be gcr.io/project-id/github-django-actions/app:sha-7865423 where 7865423 is the short sha of our commit.
