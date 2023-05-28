@@ -38,27 +38,27 @@ class ApiGetSpecificMatch(GenericAPIView):
         user = request.user
         # logged in user is user in the UserMatch object
         try:
-            current_match = UserMatch.objects.get(
-                user=user, pk=kwargs.get("pk")
-            )
+            current_match = UserMatch.objects.get(user=user, pk=kwargs.get("pk"))
             serialized_match = MatchSerializer(current_match).data
             return Response(data=serialized_match, status=status.HTTP_200_OK)
         except UserMatch.DoesNotExist:
             # logged in user is other in the UserMatch object
             try:
-                current_match = UserMatch.objects.get(
-                    other=user, pk=kwargs.get("pk")
-                )
+                current_match = UserMatch.objects.get(other=user, pk=kwargs.get("pk"))
                 serialized_match = MatchSerializer(current_match).data
                 # switch user and other in the serialized data
                 # so that the logged in user is always the user
-                serialized_match["user"], serialized_match["other"] = serialized_match["other"], serialized_match["user"]
+                serialized_match["user"], serialized_match["other"] = (
+                    serialized_match["other"],
+                    serialized_match["user"],
+                )
                 return Response(data=serialized_match, status=status.HTTP_200_OK)
             except UserMatch.DoesNotExist:
                 return Response(
                     {"Message": "Match could not be found"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
 
 class ApiDeleteSpecificMatch(GenericAPIView):
     """View to unmatch a specific match"""
@@ -68,9 +68,11 @@ class ApiDeleteSpecificMatch(GenericAPIView):
     def delete(self, request, *args, **kwargs):
         # get current user
         current_user = request.user
-        match = UserMatch.objects.filter(
-            Q(user=current_user) | Q(other=current_user)
-        ).filter(pk=kwargs.get("pk")).first()
+        match = (
+            UserMatch.objects.filter(Q(user=current_user) | Q(other=current_user))
+            .filter(pk=kwargs.get("pk"))
+            .first()
+        )
 
         if not match:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -106,4 +108,6 @@ class ApiDeleteSpecificMatch(GenericAPIView):
         )
 
         # return to match overview
-        return Response({"message": "successfully unmatched"}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "successfully unmatched"}, status=status.HTTP_200_OK
+        )

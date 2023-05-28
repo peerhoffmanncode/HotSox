@@ -17,22 +17,19 @@ class TestUser(TestCase):
         self.user1 = User.objects.create_superuser(**TEST_USER1)
         self.user2 = User.objects.create_user(**TEST_USER2)
         self.match1 = UserMatch.objects.create(
-                user=self.user1,
-                other=self.user2,
-                unmatched=False,
-                chatroom_uuid=uuid.uuid4(),
-            )
+            user=self.user1,
+            other=self.user2,
+            unmatched=False,
+            chatroom_uuid=uuid.uuid4(),
+        )
 
     def test_all_matches(self):
-
         # login
         token(self.client, username="admin", password="admin")
 
         # call api
         response = self.client.get(
-            reverse(
-                "app_restapi:api_match_list"
-            ),
+            reverse("app_restapi:api_match_list"),
         )
 
         assert response.status_code == 200
@@ -43,9 +40,7 @@ class TestUser(TestCase):
         assert response.json()[0]["user"] == self.user1.pk
         assert response.json()[0]["other"] == self.user2.pk
 
-
-    def test_specific_match( self):
-
+    def test_specific_match(self):
         # login first user
         token(self.client, username="admin", password="admin")
 
@@ -83,7 +78,6 @@ class TestUser(TestCase):
         assert response.json()["unmatched"] == False
         assert len(response.json()["chatroom_uuid"]) == 36
 
-
     @mock.patch("app_restapi.views_match.celery_send_mail")
     def test_delete_match_user1_perspective(self, mock_celery_send_mail):
         mock_celery_send_mail.return_value = "mocked"
@@ -106,7 +100,6 @@ class TestUser(TestCase):
         assert response.status_code == 200
         assert response.json()["message"] == "successfully unmatched"
         assert match_object.unmatched == True
-
 
     @mock.patch("app_restapi.views_match.celery_send_mail")
     def test_delete_match_user2_perspective(self, mock_celery_send_mail):
